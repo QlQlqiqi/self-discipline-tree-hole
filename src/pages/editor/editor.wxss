@@ -1,0 +1,101 @@
+.editor-list-select {
+  height: 60rpx;
+  width: 196rpx; 
+  border: 2rpx solid rgba(187, 187, 187, 1); 
+  position: absolute; 
+  top: 96rpx; 
+  right: 268rpx; 
+  border-radius: 10rpx;
+}
+
+.editor-item-wrap {
+	position: relative;
+	height: 80rpx;
+	width: 686rpx;
+	margin-left: 30rpx;
+	margin-top: 20rpx;
+	border: 2rpx solid rgba(187, 187, 187, 1);
+	border-radius: 18rpx;
+	z-index: 11;
+}
+
+
+
+.editor-item-wrap text {
+	position: absolute;
+	font-size: 20rpx;
+	color: rgba(75, 132, 77, 1);
+	height: 28rpx;
+	line-height: 28rpx;
+	text-align: left;
+}
+
+.editor-item-wrap image {
+	position: absolute;
+	width: 32rpx;
+	height: 32rpx;
+}
+
+.editor-priority-wrap {
+	color: rgba(75, 132, 77, 1);
+	width: 150rpx;
+	height: 28rpx;
+	line-height: 28rpx;
+	font-size: 20rpx;
+	padding: 26rpx 0 26rpx 46rpx;
+}
+
+.editor-priority {
+	height: 58rpx;
+	background-color: white;
+	line-height: 58rpx;
+	z-index: 10;
+}
+
+.editor-priority-show {
+	width: 250rpx;
+	box-shadow: 0 0 10rpx black;
+	margin-top: 10rpx;
+	border: 2rpx solid #BABBBA;
+	margin-left: -40rpx;
+}
+
+.editor-item-ensure {
+	left: 584rpx;
+	position: absolute;
+	width: 160rpx;
+	height: 60rpx;
+	line-height: 60rpx;
+	font-size: 28rpx;
+	color: rgba(16, 16, 16, 1);
+	background-color: rgba(121, 243, 108, 1);
+	border: 2rpx solid rgba(187, 187, 187, 1);
+	top: 0;
+}
+
+.editor-task-content {
+	margin: 56rpx 60rpx 0 100rpx;
+	height: 60rpx;
+	line-height: 60rpx;
+	font-size: 28rpx;
+	text-align: left;
+}
+
+.editor-task-desc {
+	margin: 18rpx 60rpx 0 20rpx;
+	height: 52rpx;
+	text-align: left;
+	font-size: 28rpx;
+}
+
+.editor-delete-warn {
+	margin: 24rpx 10rpx 0 42rpx;
+	height: 30rpx;
+	width: 30rpx;
+}
+
+.editor-delete-text {
+	font-size: 28rpx;
+	color: #ff214c;
+	height: 40rpx;
+}

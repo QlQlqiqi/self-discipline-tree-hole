@@ -1,0 +1,39 @@
+<!-- 
+	接收一个 tasks 数组，包含所有任务
+-->
+<view style="position: relative; height: {{ navHeight * (750 / windowWidth) }}rpx;"></view>
+<navbar page-name="历史">
+  <image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 48rpx; height: 48rpx;"></image>
+</navbar>
+<calendar bind:change="handleDateChange" spot="{{spot}}" defaultTime="{{ defaultTime }}"></calendar>
+<!-- 当天的任务展示 -->
+<view style="position: relative; height: 0; top: 50rpx;">
+	<!-- 完成度相关信息 -->
+	<view class="review-stars-wrap">
+		<image wx:for="{{ stars }}" wx:key="index" mode="aspectFit" class="review-stars"
+			src="{{ starsNumber > index? '/src/image/star-finished.svg': '/src/image/star-unfinished.svg' }}"
+			style="left: {{ item.left + 'rpx' }}; top: {{ item.top + 'rpx' }};"
+		></image>
+		<view class="review-stars-info">
+			<view class="review-stars-info-finish">
+				今日完成：
+				<text>{{ finishedTasks.length }}</text>
+			</view>
+			<view class="review-stars-info-stars">
+				本日评星：
+				<text>{{ starsNumber || 0 }}星</text>
+			</view>
+			<view class="review-stars-info-evalute">
+				本日效率：
+				<text>{{ starsNumber <= 1? "低": starsNumber >= 5? "高": "中" }}</text>
+			</view>
+		</view>
+	</view>
+	<!-- 本日完成的任务 -->
+	<view class="review-tasks-title"><text>完成任务</text></view>
+	<task-item wx:for="{{ finishedTasks }}" wx:key="index" finish="{{ item.finish }}" data-index="{{ index }}" catch:tap="handleSelectTask" content="{{ item.content }}" date="{{ item.finishDate }}">
+		<view slot="finish">
+			<image src="/src/image/review-check-icon.svg" style="display: inline-block; position: absolute; width: 36rpx; height: 36rpx;"></image>
+		</view>
+	</task-item>
+</view>

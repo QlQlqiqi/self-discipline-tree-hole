@@ -1,0 +1,66 @@
+<!-- <view> -->
+<view class="menu-wrap" style="position: relative; left: -750rpx; height: {{ menuHeight }}rpx; background-color: white; z-index: 12; width: 750rpx; overflow-y: scroll;">
+	<!-- 个人信息 -->
+	<view style="position: relative; height: 300rpx;">
+		<!-- 头像 -->
+		<open-data type="userAvatarUrl" class="menu-user-img"></open-data>
+		<!-- 昵称 -->
+		<open-data type="userNickName" class="menu-user-nickname"></open-data>
+		<!-- 个性签名 -->
+		<input class="menu-user-sign" style="width: 400rpx;" value="{{ signText }}" catch:blur="blur" catch:input="input" maxLength="{{ 15 }}"></input>
+	</view>
+	<!-- 聚焦 -->
+	<view style="position: relative; height: 220rpx;">
+		<text class="menu-list" style="left: 230rpx;">聚焦</text>
+		<!-- 今日待办 -->
+		<view>
+			<image class="menu-icon" src="/src/image/menu-to-do-today.svg" mode="aspectFit" style="left: 230rpx; top: 54rpx"></image>
+			<text class="menu-text" catch:tap="handleNavigateToToday" style="left: 284rpx; top: 54rpx">今日待办</text>
+			<text class="menu-remind" style="right: 40rpx; top: 54rpx;">{{ todoListNum }}</text>
+		</view>
+		<!-- 将来做 -->
+		<view>
+			<image class="menu-icon" src="/src/image/menu-to-do-future.svg" mode="aspectFit" style="left: 230rpx; top: 124rpx"></image>
+			<text class="menu-text" catch:tap="handleNavigateToFuture" style="left: 284rpx; top: 124rpx">将来做</text>
+		</view>
+	</view>
+	<!-- 清单列表 -->
+	<view style="position: relative; height: {{ 156 + lists.length * 74 }}rpx;">
+		<text class="menu-list" style="left: 230rpx; top: 0rpx">清单列表</text>
+		<!-- 各类清单 -->
+		<view wx:for="{{ lists }}" wx:key="index">
+			<image class="menu-icon" src="{{ item.icon || '/src/image/menu-self-list0.svg' }}" mode="aspectFit" style="left: 230rpx; top: {{ 58 + 74 * index }}rpx"></image>
+			<text class="menu-text" catch:tap="handleNavigateToList" data-title="{{ item.title }}" style="left: 284rpx; top: {{ 58 + 74 * index }}rpx">{{ item.title }}</text>
+		</view>
+		<!-- 添加清单 -->
+		<view>
+			<image class="menu-icon" src="/src/image/menu-add-list.svg" mode="aspectFit" style="left: 230rpx; top: {{ 58 + 74 * lists.length }}rpx"></image>
+			<text class="menu-text" catch:tap="handleNavigateToAddList" style="left: 284rpx; top: {{ 58 + 74 * lists.length }}rpx">添加清单</text>
+		</view>
+	</view>
+	<!-- 完毕 -->
+	<view style="position: relative; height: 208rpx;">
+		<text class="menu-list" style="left: 230rpx;">完毕</text>
+		<!-- 已完成 -->
+		<view>
+			<image class="menu-icon" src="/src/image/menu-finish.svg" mode="aspectFit" style="left: 230rpx; top: 62rpx"></image>
+			<text class="menu-text" catch:tap="handleNavigateToFinished" style="left: 284rpx; top: 62rpx">已完成</text>
+		</view>
+		<!-- 过期 / 删除任务 -->
+		<view>
+			<image class="menu-icon" src="/src/image/menu-out.svg" mode="aspectFit" style="left: 230rpx; top: 132rpx"></image>
+			<text class="menu-text" catch:tap="handleNavigateToBeforeAndDelete" style="left: 284rpx; top: 132rpx">过期/删除任务</text>
+		</view>
+	</view>
+	<!-- 功能 -->
+	<view style="position: relative; height: 100rpx; margin-bottom: {{ menuBottomBlcakHeight }}rpx;">
+		<text class="menu-list" style="left: 230rpx;">功能</text>
+		<!-- 我的分享 -->
+		<view>
+			<image class="menu-icon" src="/src/image/menu-share.svg" mode="aspectFit" style="left: 230rpx; top: 54rpx"></image>
+			<text class="menu-text" style="left: 284rpx; top: 54rpx">我的分享</text>
+		</view>
+	</view>
+</view>
+<!-- </view> -->
+<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ showDialog }}" title="输入不得为空" buttons="{{ [{text: '确定'}] }}" bindbuttontap="dialogClose"></mp-dialog>

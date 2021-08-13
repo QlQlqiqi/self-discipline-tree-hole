@@ -1,0 +1,8 @@
+{
+	"component": true,
+	"usingComponents": {
+    "navbar": "/src/components/navbar/navbar",
+		"task-item": "/src/components/task-item/task-item",
+		"mp-dialog": "weui-miniprogram/dialog/dialog"
+	}
+}

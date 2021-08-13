@@ -1,0 +1,71 @@
+<!-- 
+	编辑某个任务页面，在跳转页面时需要在 url 中增加一些数据
+	task：任务对象
+	remindRange：可选提醒的数组，默认为：["不提醒", "提前5分钟", "提前2小时", "提前1天", "提前1周"]
+	listRange：可选清单的数组，默认为：["个人清单", "工作清单"]
+-->
+
+<view style="position: relative; height: {{ navHeight * (750 / windowWidth) }}rpx;"></view>
+<!-- 导航栏 -->
+<navbar page-name="编辑代办">
+	<image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 48rpx; height: 48rpx;"></image>
+</navbar>
+<view style="position: relative;"></view>
+
+<!-- 四个选择项 -->
+<view class="editor-item-wrap">
+	<!-- 优先级 -->
+	<image src="/src/image/editor-prioity.svg" mode="aspectFit" style="top: 24rpx; left: 20rpx;"></image>
+	<view catch:tap="handleShowPriority" class="editor-priority-wrap">
+		<view style="text-align: center; font-weight: bold;">{{ priorityRange[task.priority] }}</view>
+		<view wx:if="{{ showPriority }}" class="editor-priority-show">
+			<view wx:for="{{ priorityRange }}" wx:key="index" 
+				catch:tap="handleSelectPriority" class="editor-priority" data-index="{{ index }}"
+				style="color: {{ priorityColor[index] }};"
+			>
+				<image src="{{ priorityIconSrc[index] }}" mode="aspectFill" style="width: 38rpx; height: 38rpx; color: black;position: absolute; top: {{ priorityIcon[index].top }}rpx; left: {{ priorityIcon[index].left }}rpx;"></image>
+				<view style="margin-left: 60rpx;">{{ item }}</view>
+			</view>
+		</view>
+	</view>
+	<!-- 重复 -->
+	<image src="/src/image/task-line.png" mode="aspectFit" style="width: 2rpx; height: 40rpx; position: absolute; top: 20rpx; left: 192rpx;"></image>
+	<image src="/src/image/editor-repeat.svg" mode="aspectFit" style="top: 24rpx; left: 202rpx;"></image>
+	<picker header-text="设置重复天数" mode="selector" value="{{ task.repeat }}" range="{{ repeatRange }}" bindchange="bindRepeatPickerChange">
+		<text style="font-weight: bold; top: 0; left: 190rpx; position: absolute; padding: 26rpx 12rpx 26rpx 50rpx; text-align: center;">{{ repeatRange[task.repeat] }}</text>
+	</picker>
+	<!-- 日期 -->
+	<image src="/src/image/task-line.png" mode="aspectFit" style="width: 2rpx; height: 40rpx; position: absolute; top: 20rpx; left: 310rpx;"></image>
+	<image src="/src/image/editor-date.svg" mode="aspectFit" style="top: 24rpx; left: 324rpx;"></image>
+	<time defaultTime="{{ task.date }}" catch:handleChangeTime="bindDatePickerChange" style="font-weight: bold; position: absolute; top: 0; left: 310rpx; font-size: 24rpx; color: rgba(75, 132, 77, 1); height: 28rpx; line-height: 28rpx; text-align: left; padding: 26rpx 10rpx 26rpx 54rpx;"></time>
+	<!-- 清单 -->
+	<image src="/src/image/task-line.png" mode="aspectFit" style="width: 2rpx; height: 40rpx; position: absolute; top: 20rpx; left: 530rpx;"></image>
+	<image src="/src/image/editor-list.svg" mode="aspectFit" style="top: 24rpx; left: 540rpx;"></image>
+	<picker header-text="设置清单类型" mode="selector" value="{{ selectIndex }}" range="{{ listRange }}" bindchange="bindlistPickerChange">
+		<text style="z-index: 1; font-weight: bold; font-size: 20rpx; position: absolute; top: 0; left: 528rpx; max-width: 120rpx; text-align: left; color: rgba(75, 132, 77, 1); padding: 26rpx 0 26rpx 40rpx; text-align: center; width: 130rpx;">{{ listRange[selectIndex] }}</text>
+	</picker>
+</view>
+<view style="position: relative; height: 2rpx; background-color: rgba(233, 233, 233, .6);"></view>
+<!-- 任务内容 -->
+<!-- <task-item repeat="{{ task.repeat }}" finish="{{ item.finish }}" descShow="{{ false }}">
+	<view slot="finish" bind:tap="handleTaskFinish">
+    <view slot="finish" style="display: inline-block; border: 4rpx solid {{ priorityColor[task.priority] }}; position: absolute; width: 20rpx; height: 20rpx; top: 6rpx; left: 6rpx;"></view>
+    <image wx:if="{{ task.finish }}" slot="finish" src="/src/image/priority0.svg" style="display: inline-block; background-color: {{ priorityColor[task.priority] }}; position: absolute; width: 26rpx; height: 26rpx; top: 6rpx; left: 6rpx;"></image>
+  </view>
+</task-item> -->
+<view style="position: relative; margin-top: 28rpx; margin-left: 30rpx; width: 682rpx; height: 780rpx; border: 2rpx solid rgba(187, 187, 187, 1);">
+	<image src="/src/image/editor-pencil.svg" mode="aspectFit" style="height: 42rpx; width: 42rpx; position: absolute; left: 44rpx; top: 72rpx;"></image>
+	<image src="/src/image/editor-line.png" mode="aspectFit" style="height: 2rpx; width: 564rpx; position: absolute; left: 74rpx; top: 114rpx;"></image>
+	<input class="editor-task-content" value="{{ task.content }}" bind:input="contentInput" focus="{{ true }}" placeholder="请输入任务内容" placeholder-style="color: rgba(66, 66, 66, 0.55); font-size: 24rpx;" maxlength="25" focus="{{ true }}"></input>
+	<!-- 完成 -->
+	<image src="/src/image/editor-ensure.png" catch:tap="ensure" mode="aspectFit" style="height: 88rpx; width: 206rpx; position: absolute; right: 28rpx; bottom: 42rpx;"></image>
+</view>
+<!-- <input class="editor-task-desc" value="{{ task.desc }}" bind:input="descInput" maxlength="200" placeholder="描述说明" placeholder-style="font-size: 24rpx;"></input> -->
+
+<!-- 删除任务 -->
+<!-- <view wx:if="{{ isEditorTask }}">
+	<image src="/src/image/editor-warn.svg" mode="aspectFit" class="editor-delete-warn"></image>
+	<text class="editor-delete-text" bind:tap="handleDeleteData">删除待办</text>
+</view> -->
+<!-- 提示 -->
+<mp-dialog show="{{ showErrorDialog }}" mask="{{ true }}" mask-closable="{{ false }}" buttons="{{ [{text: '确定'}] }}" catch:buttontap="dialogClose">{{ errorDialogMsg }}</mp-dialog>

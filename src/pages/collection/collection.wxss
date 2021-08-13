@@ -1,0 +1,83 @@
+page {
+	height: 100%
+}
+
+page::after{
+  content: '';
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 164rpx;
+  box-shadow: 0 0 20rpx 0 rgba(132, 132, 132, .18);
+  background-color: white;
+  z-index: 9999;
+}
+
+/* 新增任务 */
+.collection-add {
+	position: relative;
+	height: 126rpx;
+}
+
+.collection-add-icon {
+	position: fixed;
+	right: 50rpx;
+	bottom: 380rpx;
+	width: 100rpx;
+	height: 100rpx;
+}
+
+/* .collection-add-text {
+	position: absolute;
+	left: 122rpx;
+	top: 38rpx;
+	width: 114rpx;
+	height: 40rpx;
+	color: rgba(164, 164, 164, 1);
+	font-size: 28rpx;
+	text-align: left;
+} */
+
+/* 今天的任务清单 */
+.collection-task-title {
+	height: 66rpx;
+}
+
+.collection-task-title > text {
+	position: absolute;
+	left: 66rpx;
+	margin-top: 28rpx;
+	height: 42rpx;
+	line-height: 42rpx;
+	text-align: left;
+	font-size: 36rpx;
+	color: rgba(75, 132, 77, 1);
+	font-weight: bold;
+}
+
+.collection-task-item-wrap {
+	width: 668rpx;
+	min-height: 136rpx;
+	margin: 32rpx 20rpx 32rpx 62rpx;
+	border-radius: 24rpx;
+	box-shadow: 0px 0px 26rpx 0px rgba(132, 132, 132, 0.18);
+	padding-bottom: 20rpx;
+	background-color: white;
+}
+
+.task-left-line {
+	position: absolute;
+	height: 177rpx;
+	margin-left: -24rpx;
+	border-left: 4rpx solid rgba(103, 167, 143, 0.7);
+}
+
+.menu-mask {
+	position: absolute;
+	right: 0;
+	width: 750rpx;
+	z-index: 11;
+	background-color: rgba(0, 0, 0, 0.6);
+	transition: all 0.2s ease;
+}

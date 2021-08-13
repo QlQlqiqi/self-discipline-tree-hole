@@ -1,0 +1,94 @@
+page {
+	background-color: rgba(103, 167, 143, 0.7);
+	height: 100%;
+}
+
+page::after{
+  content: '';
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 164rpx;
+  box-shadow: 0 0 20rpx 0 rgba(132, 132, 132, .18);
+  background-color: white;
+  z-index: 9999;
+}
+
+/* 中间完成星星 */
+.review-stars-wrap {
+	position: relative;
+	height: 170rpx;
+}
+
+.review-stars {
+	position: absolute;
+	width: 62rpx;
+	height: 62rpx;
+}
+
+.evalute-title {
+	position: absolute;
+	height: 38rpx;
+	line-height: 38rpx;
+	color: rgba(26, 93, 31, 1);
+	font-size: 32rpx;
+	top: 20rpx;
+}
+
+.evalute-content {
+	position: absolute;
+	top: 60rpx;
+	color: rgba(254, 192, 7, 1);
+	font-size: 48rpx;
+	height: 74rpx;
+	line-height: 74rpx;
+}
+
+.review-stars-info > view {
+	position: absolute;
+	height: 38rpx;
+	top: 114rpx;
+	font-size: 24rpx;
+	color: #999999;
+}
+
+.review-stars-info > view > text {
+	color: #0399f9;
+}
+
+.review-stars-info-finish {
+	left: 24rpx;
+}
+
+.review-stars-info-stars {
+	left: 286rpx;
+}
+
+.review-stars-info-evalute {
+	left: 570rpx;
+}
+
+/* 本日完成的任务 */
+.review-tasks-title {
+	position: relative;
+	height: 40rpx;
+	background-color: rgba(215, 212, 212, .2);
+}
+
+.review-tasks-title > text {
+	position: absolute;
+	left: 24rpx;
+	font-size: 24rpx;
+	color: #999999;
+}
+
+.menu-mask {
+	position: absolute;
+	right: 0;
+	width: 750rpx;
+	height: 1530rpx;
+	z-index: 11;
+	background-color: rgba(0, 0, 0, 0.6);
+	transition: all 0.2s ease;
+}

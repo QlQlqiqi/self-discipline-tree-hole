@@ -1,0 +1,32 @@
+.input-list {
+	margin: 50rpx auto;
+	width: 462rpx;
+	height: 76rpx;
+	line-height: 76rpx;
+	text-align: center;
+	box-shadow: 0px 0px 12rpx 0px rgba(0, 0, 0, 0.4);
+}
+
+.cancel, .ensure {
+	display: inline-block;
+	width: 140rpx;
+	height: 88rpx;
+	line-height: 88rpx;
+	border-radius: 14rpx;
+	text-align: center;
+	border: 2rpx solid rgba(187, 187, 187, 1);
+	font-size: 36rpx;
+	font-weight: bold;
+}
+
+.cancel {
+	background-color: rgba(255, 255, 255, 1);
+	color: rgba(85, 139, 47, .86);
+	margin-left: 226rpx;
+}
+
+.ensure {
+	color: rgba(255, 255, 255, 1);
+	background-color: rgba(85, 139, 47, .86);
+	margin-left: 18rpx;
+}

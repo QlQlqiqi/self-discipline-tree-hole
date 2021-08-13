@@ -1,0 +1,9 @@
+<view class='select_box'>
+ <view class='select' catchtap='selectTap' >
+  <text class='select_text'>{{selectData[index]}}</text>
+  <image class='select_img {{show&&"select_img_rotate"}}' src='/src/image/arrow-left-s-line.svg'></image>   
+ </view>
+ <view class='option_box' style='height:{{show?(selectData.length>5?300:selectData.length*60):0}}rpx;'>
+  <text class='option' wx:for='{{selectData}}' wx:key='this' data-index='{{index}}' catchtap='optionTap'>{{item}}</text>
+ </view>
+</view>

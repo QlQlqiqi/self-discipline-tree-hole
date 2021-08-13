@@ -1,0 +1,64 @@
+<view style="position: relative; height: {{ navHeight * (750 / windowWidth) }}rpx;"></view>
+<!-- 导航栏 -->
+<navbar page-name="收集箱">
+  <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" mode="aspectFit" style="width: 48rpx; height: 48rpx;"></image>
+</navbar>
+<!-- 背景遮掩 -->
+<view wx:if="{{ showMenu }}" class="menu-mask" style="height: {{ (windowHeight - navHeight) * (750 / windowWidth) }}rpx; z-index: 1;" 
+  bind:tap="handleShowMenu" catch:touchmove="catchTouchMove"
+></view>
+<!-- 左侧菜单 -->
+<view wx:if="{{ showMenu }}" style="position: relative; height: 0; top: {{ -navHeight * (750 / windowWidth) }}rpx;">
+  <menu style="position: relative; width: 600rpx; top: {{ menuTop }}rpx;" 
+    menuHeight="{{ windowHeight * (750 / windowWidth) }}" menuBottomBlcakHeight="{{ 320 }}"
+    show="{{ showMenu }}" lists="{{ listsShow }}" todoListNum="{{ todayTasks.length }}" signText="{{ signText }}"
+    catch:touchmove="{{ showMenu? '': '' }}" catch:handleNavigateToAddList="handleNavigateToAddList"
+    catch:handleNavigateToToday="handleNavigateToToday" catch:handleNavigateToFuture="handleNavigateToFuture"
+    catch:handleNavigateToList="handleNavigateToList" catch:handleNavigateToFinished="handleNavigateToFinished"
+    catch:handleNavigateToBeforeAndDelete="handleNavigateToBeforeAndDelete" 
+    catch:handleSignTextEnsure="handleSignTextEnsure"
+  ></menu>
+</view>
+
+<view style="position: relative; height: {{ (windowHeight - navHeight) * (750 / windowWidth) }}rpx; overflow-y: scroll;">
+  <view style="padding-bottom: 500rpx;" bind:touchmove="handleSlideVertical">
+  <!-- 今天的任务清单 -->
+    <view class="collection-task-title">
+      <text>今天</text>
+      <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 32rpx; width: 32rpx; position: absolute; margin-top: 42rpx; margin-left: 24rpx;"></image>
+      <view class="task-left-line" style="margin-left: 38rpx; margin-top: 64rpx; height: 32rpx;"></view>
+    </view>
+    <view wx:for="{{ todayTasks }}" wx:key="index" class="collection-task-item-wrap">
+      <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 16rpx; width: 16rpx; position: absolute; margin-left: -30rpx;"></image>
+      <view class="task-left-line" style="height: {{ index + 1 < todayTasks.length? '224rpx': '177rpx' }};"></view>
+      <task-item catch:tap="handleEditor" catch:handleDeleteTask="handleDeleteTask" finish="{{ item.finish }}" data-id="{{ item.id }}" repeat="{{ item.repeat }}" content="{{ item.content }}" date="{{ item.date }}">
+        <view slot="finish" catch:tap="handleTaskFinish" data-id="{{ item.id }}">
+          <view slot="finish" style="display: inline-block; border: 4rpx solid {{ taskItemColor[item.priority] }}; position: absolute; width: 20rpx; height: 20rpx; top: 6rpx; left: 6rpx;"></view>
+          <image wx:if="{{ item.finish }}" slot="finish" src="/src/image/priority0.svg" style="display: inline-block; background-color: {{ taskItemColor[item.priority] }}; position: absolute; width: 26rpx; height: 26rpx; top: 6rpx; left: 6rpx;"></image>
+        </view>
+      </task-item>
+    </view>
+    <!-- 未来的任务清单 -->
+    <view class="collection-task-title">
+      <text>未来</text>
+      <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 32rpx; width: 32rpx; position: absolute; margin-top: 42rpx; margin-left: 24rpx;"></image>
+      <view class="task-left-line" style="margin-left: 38rpx; margin-top: 64rpx; height: 32rpx;"></view>
+    </view>
+    <view wx:for="{{ futureTasks }}" wx:key="index" class="collection-task-item-wrap">
+      <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 16rpx; width: 16rpx; position: absolute; margin-left: -30rpx;"></image>
+      <view class="task-left-line" style="height: {{ index + 1 < todayTasks.length? '224rpx': '177rpx' }};"></view>
+      <task-item catch:tap="handleEditor" catch:handleDeleteTask="handleDeleteTask" finish="{{ item.finish }}" data-id="{{ item.id }}" repeat="{{ item.repeat }}" content="{{ item.content }}" date="{{ item.date }}">
+        <view slot="finish" catch:tap="handleTaskFinish" data-id="{{ item.id }}">
+          <view slot="finish" style="display: inline-block; border: 4rpx solid {{ taskItemColor[item.priority] }}; position: absolute; width: 20rpx; height: 20rpx; top: 6rpx; left: 6rpx;"></view>
+          <image wx:if="{{ item.finish }}" slot="finish" src="/src/image/priority0.svg" style="display: inline-block; background-color: {{ taskItemColor[item.priority] }}; position: absolute; width: 26rpx; height: 26rpx; top: 6rpx; left: 6rpx;"></image>
+        </view>
+      </task-item>
+    </view>
+  </view>
+</view>
+<!-- 新增任务 -->
+<image src="/src/image/add-task.png" catch:tap="addTask" mode="aspectFit" class="collection-add-icon"></image>
+<!-- <view style="height: 500rpx;"></view> -->
+
+
+<!-- <view style="height: 500rpx; width: 750rpx; position: relative; top: {{ -1320 + (todayTasks.length + futureTasks.length) * 134 }}rpx;"></view> -->

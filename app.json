@@ -1,0 +1,40 @@
+{
+	"pages": [
+		"src/pages/collection/collection",
+		"src/pages/history/history",
+		"src/components/evaluate/evaluate",
+		"src/components/menu/menu",
+		"src/pages/editor/editor",
+		"src/pages/review/review",
+		"src/pages/add-self-list/add-self-list",
+		"src/pages/list/list"
+	],
+	"tabBar": {
+		"custom": true,
+		"color": "#888",
+		"selectedColor": "#66BA69",
+		"borderStyle": "black",
+		"backgroundColor": "#fff",
+		"list": [
+			{
+				"pagePath": "src/pages/collection/collection",
+				"iconPath": "src/image/tabbar-collection-unselected.png",
+				"selectedIconPath": "src/image/tabbar-collection.png",
+				"text": "收集箱"
+			},
+			{
+				"pagePath": "src/pages/review/review",
+				"iconPath": "src/image/tabbar-review-unselected.png",
+				"selectedIconPath": "src/image/tabbar-review.png",
+				"text": "回顾"
+			}
+		]
+	},
+	"window": {
+		"navigationBarBackgroundColor": "#ffffff",
+		"navigationBarTextStyle": "black",
+		"navigationStyle": "custom",
+		"backgroundColorTop": "#fff"
+	},
+	"sitemapLocation": "sitemap.json"
+}

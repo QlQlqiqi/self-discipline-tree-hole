@@ -1,0 +1,43 @@
+<!-- 
+  导航到此 list 页面，需要在 url 中附带数据：
+  pageName: 页面名称
+  tasks: 任务对象的数组
+  isDelete：是否可以删除
+-->
+<view style="position: relative; height: {{ navHeight * (750 / windowWidth) }}rpx;"></view>
+<!-- 导航栏 -->
+<navbar page-name="{{ pageName }}">
+  <image slot="backIcon" src="/src/image/back.png" catch:tap="handleBack" mode="aspectFit" style="width: 48rpx; height: 48rpx;"></image>
+</navbar>
+
+<view style="position: relative;">
+  <!-- 任务清单 -->
+  <view class="collection-task-title">
+    <text>{{ pageName }}</text>
+    <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 32rpx; width: 32rpx; position: absolute; margin-top: 42rpx; margin-left: 24rpx;"></image>
+    <view class="task-left-line" style="margin-left: 38rpx; margin-top: 64rpx; height: 32rpx;"></view>
+  </view>
+  <view wx:for="{{ showTasks }}" wx:key="index" class="collection-task-item-wrap">
+    <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 16rpx; width: 16rpx; position: absolute; margin-left: -30rpx;"></image>
+    <view class="task-left-line"></view>
+    <task-item catch:handleDeleteTask="{{ disabled? '': 'handleDeleteTask' }}" catch:tap="{{ disabled? '': 'handleEditor' }}" finish="{{ item.finish }}" data-id="{{ item.id }}" repeat="{{ item.repeat }}" content="{{ item.content }}" date="{{ item.date }}">
+      <view slot="finish" catch:tap="{{ disabled? '': 'handleTaskFinish' }}" data-id="{{ item.id }}">
+        <view slot="finish" style="display: inline-block; border: 4rpx solid {{ taskItemColor[item.priority] }}; position: absolute; width: 20rpx; height: 20rpx; top: 6rpx; left: 6rpx;"></view>
+        <image wx:if="{{ item.finish }}" slot="finish" src="/src/image/priority0.svg" style="display: inline-block; background-color: {{ taskItemColor[item.priority] }}; position: absolute; width: 26rpx; height: 26rpx; top: 6rpx; left: 6rpx;"></image>
+      </view>
+    </task-item>
+  </view>
+  <!-- 删除清单 -->
+  <view wx:if="{{ isDelete }}" style="position:relative; height: 64rpx;">
+    <image src="/src/image/editor-warn.svg" style="height: 30rpx; width: 30rpx; position: absolute; left: 42rpx; top: 26rpx;"></image>
+    <view catch:tap="handleDeleteList" style="height: 40rpx; line-height: 40rpx; width: 117rpx; color: #FF214C; font-size: 28rpx; position: absolute; top: 22rpx; left: 82rpx;">删除代办</view>
+  </view>
+</view>
+<!-- 新增任务 -->
+<image src="/src/image/add-task.png" wx:if="{{ pageName !== '过期 / 删除任务' }}" catch:tap="addTask" mode="aspectFit" class="collection-add-icon"></image>
+
+<mp-dialog show="{{ showDialog }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" 
+  buttons="{{ [{text: '取消'}, {text: '确定'}] }}" catch:buttontap="handleDialogButtonTap"
+>{{ dialogMsg }}</mp-dialog>
+
+

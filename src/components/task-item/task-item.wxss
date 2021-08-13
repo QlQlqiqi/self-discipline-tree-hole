@@ -1,0 +1,55 @@
+.task-item {
+	position: relative;
+	min-height: 136rpx;
+}
+
+.task-item-time {
+	position: absolute;
+	top: 24rpx;
+	left: 36rpx;
+	height: 30rpx;
+	color: rgba(75, 132, 77, 0.8);
+	font-size: 24rpx;
+	text-align: left;
+}
+
+.task-item-finish-wrap {
+	position: absolute;
+	top: 22rpx;
+	right: 22rpx;
+	width: 36rpx;
+	height: 36rpx;
+}
+
+.task-item-content {
+	max-width: 602rpx;
+	top: 70rpx;
+	left: 38rpx;
+	font-size: 32rpx;
+	padding: 70rpx 0 0 38rpx;
+	text-align: left;
+}
+
+.task-item-repeat {
+	position: absolute;
+	color: rgba(75, 132, 77, 0.8);
+	height: 30rpx;
+	font-size: 24rpx;
+	bottom: 26rpx;
+  right: 74rpx;
+}
+
+.task-item-delete {
+	position: absolute;
+	width: 26rpx;
+	height: 26rpx;
+	top: 86rpx;
+	right: 28rpx;
+}
+
+.task-item-divide-line {
+	border-bottom: 2rpx solid #d7d4d4;
+	position: absolute;
+	top: 136rpx;
+	width: 100%;
+}

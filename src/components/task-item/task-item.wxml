@@ -1,0 +1,17 @@
+<!-- 用于每个任务项的展示 -->
+<view class="task-item">
+	<!-- 任务时间 -->
+	<view class="task-item-time">{{ showDate }}</view>
+	<!-- 前面的完成标记处 -->
+	<view class="task-item-finish-wrap">
+		<slot name="finish"></slot>
+	</view>
+	<!-- 任务主体内容 -->
+	<view class="task-item-content">{{ content }}</view>
+	<!-- 下面的重复标记处 -->
+	<view wx:if="{{ descShow }}" class="task-item-repeat">{{ desc }}</view>
+	<!-- 删除 -->
+	<image src="/src/image/trash-icon.svg" mode="aspectFit" class="task-item-delete" catch:tap="handleDeleteTask"></image>
+	<!-- 下面的分割线 -->
+	<view wx:if="{{ divide }}" class="task-item-divide-line"></view>
+</view>

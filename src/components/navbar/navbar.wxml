@@ -1,0 +1,10 @@
+<view class="navbar custom-class" style='height:{{navHeight * 2}}rpx; background-color:{{bgColor}}; position: fixed;'>
+  <view wx:if="{{showNav}}" class="navbar-action-wrap navbar-action-group row item-center" style='top:{{navTop * 2}}rpx;background-color:rgba(255,255,255,.6)'>
+    <slot name="backIcon"></slot>
+  </view>
+  <view class='navbar-title' style='top:{{navTop * 2}}rpx;'>
+    <slot name="leftIcon"></slot>
+    {{ pageName }}
+    <slot name="rightIcon"></slot>
+  </view>
+</view>

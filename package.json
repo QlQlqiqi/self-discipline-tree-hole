@@ -1,0 +1,16 @@
+{
+  "name": "self-discipline-tree-hole",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "miniprogram-computed": "^4.0.4",
+    "weui-miniprogram": "^1.0.8"
+  },
+  "devDependencies": {},
+  "description": ""
+}

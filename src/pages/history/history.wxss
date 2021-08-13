@@ -1,0 +1,50 @@
+/* 任务展示 */
+/* 中间完成星星 */
+.review-stars-wrap {
+	position: relative;
+	height: 170rpx;
+}
+
+.review-stars {
+	position: absolute;
+	width: 48rpx;
+	height: 48rpx;
+}
+
+.review-stars-info > view {
+	position: absolute;
+	height: 38rpx;
+	top: 114rpx;
+	font-size: 24rpx;
+	color: #999999;
+}
+
+.review-stars-info > view > text {
+	color: #0399f9;
+}
+
+.review-stars-info-finish {
+	left: 24rpx;
+}
+
+.review-stars-info-stars {
+	left: 286rpx;
+}
+
+.review-stars-info-evalute {
+	left: 570rpx;
+}
+
+/* 本日完成的任务 */
+.review-tasks-title {
+	position: relative;
+	height: 40rpx;
+	background-color: rgba(215, 212, 212, .2);
+}
+
+.review-tasks-title > text {
+	position: absolute;
+	left: 24rpx;
+	font-size: 24rpx;
+	color: #999999;
+}

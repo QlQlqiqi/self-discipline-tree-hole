@@ -1,0 +1,18 @@
+/* tabbar 样式 */
+@import "./miniprogram_npm/weui-miniprogram/weui-wxss/dist/style/weui.wxss";
+/* icon 样式 */
+@import "./src/styles/remixicon.wxss";
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 200rpx 0;
+  box-sizing: border-box;
+} 
+
+page {
+  background-color: rgba(242, 242, 242, 0.81);
+}

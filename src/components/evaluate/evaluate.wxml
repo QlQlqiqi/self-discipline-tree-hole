@@ -1,0 +1,19 @@
+<view class="evaluate-wrap">
+	<image src="/src/image/back.png" class="evaluate-back-icon" catch:tap="handleBackFeeling"></image>
+	<image src="/src/image/check-line.svg" class="evaluate-ensure-icon" catch:tap="handleEnsureFeeling"></image>
+	<view style="height: 172rpx;">
+		<view class="evaluate-stars-title">任务完成满意度</view>
+		<image wx:for="{{ stars }}" wx:key="index" src="{{ index < rating? '/src/image/rating-icon0.svg': '/src/image/rating-icon1.svg' }}" mode="aspectFit"
+			style="position: absolute; top: {{ item.top }}rpx; left: {{ item.left }}rpx; width: 38rpx; height: 38rpx;"
+			data-index="{{ index }}" catch:tap="handleChangeRating"
+		></image>
+		<view class="evaluate-stars-rating">Your rating</view>
+	</view>
+	<view style="height: 406rpx;">
+		<view class="evaluate-feeling-title">任务感想</view>
+		<textarea placeholder="请输入你的感想" placeholder-style="font-size: 24rpx;" 
+			maxlength="{{ 1000 }}" auto-focus="{{ true }}" class="evaluate-feeling-desc"
+			value="{{ feeling }}" catch:input="handleInput" disabled="{{ disabled }}"
+		></textarea>
+	</view>
+</view>

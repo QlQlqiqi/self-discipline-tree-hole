@@ -1,0 +1,64 @@
+.menu-user-img {
+	position: absolute;
+	top: 106rpx;
+	left: 214rpx;
+	height: 84rpx;
+	width: 88rpx;
+}
+
+.menu-user-nickname {
+	position: absolute;
+	top: 122rpx;
+	left: 316rpx;
+	height: 34rpx;
+	line-height: 34rpx;
+	font-size: 28rpx;
+	max-width: 400rpx;
+	color: rgba(16, 16, 16, 1);
+	width: 200rpx;
+}
+
+.menu-user-sign {
+	position: absolute;
+	top: 158rpx;
+	left: 316rpx;
+	height: 28rpx;
+	line-height: 28rpx;
+	max-width: 400rpx;
+	color: rgba(204, 204, 204, 1);
+	font-size: 24rpx;
+}
+
+.menu-list {
+	position: absolute;
+	height: 34rpx;
+	text-align: left;
+	color: rgba(153, 153, 153, 1);
+	font-size: 28rpx;
+}
+
+.menu-icon {
+	position: absolute;
+	width: 40rpx;
+	height: 40rpx;
+}
+
+.menu-text {
+	position: absolute;
+	height: 34rpx;
+	line-height: 40rpx;
+	min-width: 200rpx;
+	max-width: 300rpx;
+	color: rgba(0, 0, 0, 1);
+	text-align: left;
+	font-size: 28rpx;
+}
+
+.menu-remind {
+	position: absolute;
+	height: 34rpx;
+	max-width: 50rpx;
+	text-align: right;
+	color: rgba(187, 187, 187, 1);
+}
+

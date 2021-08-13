@@ -1,0 +1,74 @@
+.evaluate-wrap {
+	position: absolute;
+	height: 578rpx;
+	width: 542rpx;
+	border: 2rpx solid rgba(187, 187, 187, 1);
+	text-align: center;
+	line-height: 40rpx;
+	z-index: 1;
+	background-color: white;
+	box-shadow: 0 0 6rpx #888888;
+
+}
+
+.evaluate-back-icon {
+	position: absolute;
+	top: 3rpx;
+	left: 0;
+	width: 48rpx;
+	height: 48rpx;
+}
+
+.evaluate-ensure-icon {
+	position: absolute;
+	top: 3rpx;
+	right: 0;
+	width: 48rpx;
+	height: 48rpx;
+}
+
+.evaluate-stars-title {
+	position: absolute; 
+	width: 200rpx; 
+	height: 40rpx; 
+	font-size: 28rpx; 
+	text-align: left;
+	color: rgba(21, 74, 25, 1);
+	height: 40rpx;
+	top: 40rpx;
+	left: 46rpx;
+}
+
+.evaluate-stars-rating {
+	position: absolute;
+	right: 60rpx;
+	top: 96rpx;
+	color: rgba(0, 0, 0, 0.6);
+	font-size: 12px;
+	width: 144rpx;
+	height: 46rpx;
+}
+
+.evaluate-feeling-title {
+	position: absolute;
+	left: 46rpx;
+	top: 172rpx;
+	height: 40rpx;
+	color: rgba(21, 74, 25, 1);
+	font-size: 28rpx;
+	text-align: left;
+	width: 114rpx;
+}
+
+.evaluate-feeling-desc {
+	position: absolute;
+	top: 234rpx;
+	left: 40rpx;
+	width: 468rpx;
+	height: 276rpx;
+	line-height: 40rpx;
+	color: rgba(136, 136, 136, 1);
+	font-size: 28rpx;
+	text-align: left;
+	border: 1px solid rgba(187, 187, 187, 1);
+}

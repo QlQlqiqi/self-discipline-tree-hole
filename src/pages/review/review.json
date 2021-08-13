@@ -1,0 +1,9 @@
+{
+	"component": true,
+	"usingComponents": {
+		"navbar": "/src/components/navbar/navbar",
+		"task-item": "/src/components/task-item/task-item",
+		"menu": "/src/components/menu/menu",
+		"evaluate": "/src/components/evaluate/evaluate"
+	}
+}

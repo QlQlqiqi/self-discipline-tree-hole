@@ -1,0 +1,54 @@
+.collection-add {
+	position: relative;
+	height: 126rpx;
+}
+
+.collection-add-text {
+	position: absolute;
+	left: 122rpx;
+	top: 38rpx;
+	width: 114rpx;
+	height: 40rpx;
+	color: rgba(164, 164, 164, 1);
+	font-size: 28rpx;
+	text-align: left;
+}
+
+.collection-task-title {
+	height: 66rpx;
+}
+
+.collection-task-title > text {
+	position: absolute;
+	left: 66rpx;
+	margin-top: 28rpx;
+	height: 42rpx;
+	line-height: 42rpx;
+	text-align: left;
+	font-size: 36rpx;
+	color: rgba(75, 132, 77, 1);
+	font-weight: bold;
+}
+
+.collection-task-item-wrap {
+	width: 668rpx;
+	height: 136rpx;
+	margin: 32rpx 20rpx 32rpx 62rpx;
+	border-radius: 24rpx;
+	box-shadow: 0px 0px 26rpx 0px rgba(132, 132, 132, 0.18);
+}
+
+.task-left-line {
+	position: absolute;
+	height: 177rpx;
+	margin-left: -24rpx;
+	border-left: 4rpx solid rgba(103, 167, 143, 0.7);
+}
+
+.collection-add-icon {
+	position: fixed;
+	right: 50rpx;
+	bottom: 380rpx;
+	width: 100rpx;
+	height: 100rpx;
+}
