@@ -65,7 +65,6 @@ Component({
 			let todayDate = util.getDawn(0);
 			let tommorrowDate = util.getDawn(1);
 			let res = data.tasks.filter(function(item) {
-				console.log(item)
 				return item.finish
 					&& item.finishDate.localeCompare(todayDate) >= 0 
 					&& item.finishDate.localeCompare(tommorrowDate) < 0
@@ -333,8 +332,8 @@ Component({
 				showFeeling: false
 			});
 		},
-		// 获取全部数据
-		_getAllData: function() {
+		// 从本地获取全部数据
+		_getAllDataFromLocal: function() {
 			// 获取任务
 			let tasks = JSON.parse(wx.getStorageSync('tasks') || JSON.stringify([]));
 			// 获取清单
@@ -347,8 +346,19 @@ Component({
 			this.setData({
 				tasks: tasks,
 				lists: lists,
-				signText: signText
+				signText: signText,
+				rawTasks: tasks,
+				rawLists: lists,
+				rawSignText: signText
 			});
+			this.token = JSON.parse(wx.getStorageSync('token'));
+			this.owner = JSON.parse(wx.getStorageSync('owner'));
+		},
+		// 保存数据到本地
+		_saveAllDataToLocal: function() {
+			wx.setStorageSync('tasks', JSON.stringify(this.data.tasks));
+			wx.setStorageSync('lists', JSON.stringify(this.data.lists));
+			wx.setStorageSync('uniqueId', JSON.stringify(util.getUniqueId()));
 		},
 		// 拉取并设置数据
 		onLoad: function() {
@@ -360,126 +370,9 @@ Component({
 				windowHeight: app.globalData.windowHeight,
 				windowWidth: app.globalData.windowWidth
 			});
-			this._getAllData();
+			this._getAllDataFromLocal();
 			// 为 util 设置 uniqueId
 			util.setUniqueId(JSON.parse(wx.getStorageSync('uniqueId') || JSON.stringify(10000)));
-		},
-		// 保存数据
-		_saveAllData: function() {
-			wx.setStorageSync('tasks', JSON.stringify(this.data.tasks));
-			wx.setStorageSync('lists', JSON.stringify(this.data.lists));
-			wx.setStorageSync('uniqueId', JSON.stringify(util.getUniqueId()));
-			// 保存在后端
-			// 登录保证不过期
-			let token, owner, successListNum = 0, data = this.data;
-			const url = getApp().globalData.url;
-			util.login(url + 'login/login/')
-			.then(res => {
-				token = res.data.token;
-      	owner = res.data.user_id;
-			})
-			.then(() => {
-				// 先删除后保存 lists
-				util.myRequest({
-					url: url + 'check/taglist/?owner=' + JSON.stringify(owner),
-					header: {token: token},
-					method: "GET"
-				}).then(res => {
-					// 删除 lists
-					res.data.forEach(function(item) {
-						util.myRequest({
-							url: item.url + "?owner=" + JSON.stringify(owner),
-							header: { Authorization: "Token " + token },
-							method: "DELETE"
-						}).then(res => console.log(res))
-					})
-				})
-				// 保存 lists
-				.then(() => {
-					data.lists.forEach(function(item) {
-						let list = {
-							tag: item.title,
-							icon: item.icon,
-							owner: url + 'login/user/' + owner + "/"
-						}
-						util.myRequest({
-							url: url + 'check/taglist/?owner=' + JSON.stringify(owner),
-							header: { Authorization: "Token " + token },
-							method: "POST",
-							data: list
-						})
-						.then(() => { successListNum++; })
-					})
-				});
-			})
-			// 先删除后保存 tasks
-			.then(() => {
-				util.myRequest({
-					url: url + 'check/check/?owner=' + JSON.stringify(owner),
-					header: { token: token },
-					method: "GET"
-				}).then(res => {
-					// 删除 tasks
-					res.data.forEach(function(item) {
-						util.myRequest({
-							url: item.url,
-							header: { Authorization: "Token " + token },
-							method: "DELETE"
-						}).then(res => console.log(res))
-					})
-				})
-				.then(() => {
-					let timeId = setInterval(() => {
-						// 当全部保存好后
-						if(successListNum === data.lists.length) {
-							clearInterval(timeId);
-							// 获取全部的 lists 的 url
-							util.myRequest({
-								url: url + 'check/taglist/?owner=' + JSON.stringify(owner),
-								header: { token: token },
-								method: "GET"
-							}).then(res => {
-								let listUrl = [], listTitle = [];
-								for(let item of res.data) {
-									listUrl.push(item.url);
-									listTitle.push(item.tag);
-								}
-								// 保存 tasks
-								data.tasks.forEach(function(item) {
-									// 根据 remind 和 e_time 得到 c_time
-									let div = [0, 60, 300, 600, 1800, 3600][item.remind] * 1000 + 8 * 60 * 60 * 1000;
-									let date = new Date();
-									date.setTime(new Date(item.date).getTime() - div);
-									let c_time = util.formatDate(date)
-									// 得到 list
-									let list = listUrl[listTitle.indexOf(item.list.title)];
-									let task = {
-										priority: item.priority,
-										repeat: item.repeat,
-										e_time: item.date,
-										c_time: c_time,
-										finish: item.finish? 1: 0,
-										text: item.content,
-										todo_desc: item.desc || "default",
-										tag: list,
-										todo_delete: item.delete? 1: 0,
-										star: item.rating,
-										star_text: item.feeling || "default",
-										owner: url + 'login/user/' + owner + "/",
-										fin_date: item.finishDate || util.formatDate(new Date())
-									}
-									util.myRequest({
-										url: url + 'check/check/?owner=' + JSON.stringify(owner),
-										header: { Authorization: "Token " + token },
-										method: "POST",
-										data: task
-									}).then(res => {console.log("post", res); wx.setStorageSync('tmp', JSON.stringify(res))})
-								})
-							})
-						}
-					}, 500);
-				})
-			})
 		}
 	},
 
@@ -490,21 +383,19 @@ Component({
 		show: function() {
 			// 如果是通过 switchbar 过来的，读取数据
 			if(this.getTabBar().data.selected !== 1) 
-				this._getAllData();
-			// 非 switchbar 过来的，且不是一打开触发的，保存数据到后端
+				this._getAllDataFromLocal();
+			// 非 switchbar 过来的，且不是一打开触发的，保存数据到本地
 			else {
 				if(!this._tmpflag)
 					this._tmpflag = true;
-				else this._saveAllData();
+				else this._saveAllDataToLocal();
 			}
 			// 切换 tabbar 时候显示该页面
 			this.getTabBar().setData({
 				selected: 1
 			})
 		},
-		hide: function() {
-			this._saveAllData();
-		}
+		hide: function() {}
 	},
 
 	/**

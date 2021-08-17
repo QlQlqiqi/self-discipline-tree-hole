@@ -72,7 +72,7 @@ Component({
 	methods: {
 		// 控制上下滑动
 		handleMenuTop: function(e) {
-			console.log(e)
+			// console.log(e)
 			// wx.createSelectorQuery().select('#dom-menu').boundingClientRect(res => {
 			// 	console.log(res)
 			// }).exec();
@@ -124,7 +124,7 @@ Component({
 			this.setData({
 				tasks: tasks
 			});
-			this._saveAllData();
+			this._saveAllDataToLocal();
 		},
 		// 新增任务
 		addTask: function(e) {
@@ -294,8 +294,8 @@ Component({
 				}
 			})
 		},
-		// 获取全部数据
-		_getAllData: function() {
+		// 从本地获取全部数据
+		_getAllDataFromLocal: function() {
 			// 获取任务
 			let tasks = JSON.parse(wx.getStorageSync('tasks') || JSON.stringify([]));
 			// 获取清单
@@ -316,84 +316,14 @@ Component({
 			this.token = JSON.parse(wx.getStorageSync('token'));
 			this.owner = JSON.parse(wx.getStorageSync('owner'));
 		},
-		// 拉取并设置数据
-		onLoad: function() {
-			// 当请求好数据后保存数据
-			let timeId = setInterval(() => {
-				let success = 0;
-				if(typeof getApp === 'function' && getApp().globalData)
-					success = getApp().globalData.success;
-				if(success === 3) {
-					clearInterval(timeId);
-					this._getAllData();
-					// 设置机型相关信息
-					let app = getApp();
-					this.setData({
-						navHeight: app.globalData.navHeight,
-						navTop: app.globalData.navTop,
-						windowHeight: app.globalData.windowHeight,
-						windowWidth: app.globalData.windowWidth
-					});
-					// 为 util 设置 uniqueId
-					util.setUniqueId(JSON.parse(wx.getStorageSync('uniqueId') || JSON.stringify(100000)));
-					// 如果存在一个今天会发生的重复任务，则修改该任务为非重复任务，并自动产生一个日期顺延的重复任务
-					// 如果以前完成了一个重复任务，不管其设置的日期是什么时候，同上处理
-					let res = [];
-					for(let task of this.data.tasks) {
-						if(task.delete || !task.repeat) {
-							res.push(task);
-							continue;
-						}
-						// 每天重复
-						let oldDate = new Date(task.date);
-						let addTime = [0, 1, 7, 30, 365][task.repeat] * 24 * 60 * 60 * 1000;
-						let newDate = new Date(oldDate.getTime() + addTime);
-						let oldDateYMD = util.formatDate(oldDate).substr(0, 10);
-						let todayYMD = util.getDawn(0).substr(0, 10);
-						// 第一种情况，即一个过期的重复任务（无论是否完成）
-						if(oldDateYMD.localeCompare(todayYMD) < 0) {
-							let newTime = oldDate.getTime() + addTime;
-							let todayTime = (new Date(util.getDawn(0))).getTime();
-							do {
-								let tmpTask = JSON.parse(JSON.stringify(task));
-								tmpTask.id = util.getUniqueId();
-								tmpTask.date = util.formatDate(new Date(newTime));
-								tmpTask.finish = false;
-								tmpTask.desc = "";
-								tmpTask.rating = 1;
-								tmpTask.feeling = '';
-								tmpTask.repeat = 0; 
-								res.push(tmpTask);
-								newTime += addTime;
-							} while(newTime <= todayTime);
-							res[res.length - 1].repeat = task.repeat;
-							task.repeat = 0;
-						}
-						// 第二种情况，即一个完成的任务（走到这里肯定不是过期任务）
-						else if(task.finish && task.finishDate.localeCompare(util.getDawn(0)) >= 0) {
-							let tmpTask = JSON.parse(JSON.stringify(task));
-							tmpTask.id = util.getUniqueId();
-							tmpTask.date = util.formatDate(newDate);
-							tmpTask.finish = false;
-							tmpTask.desc = "";
-							tmpTask.rating = 1;
-							tmpTask.feeling = '';
-							res.push(tmpTask);
-							task.repeat = 0;
-						}
-						res.push(task);
-					}
-					this.setData({
-						tasks: res
-					})
-				}
-			}, 300);
-		},
-		// 保存数据
-		_saveAllData: function() {
+		// 保存数据到本地
+		_saveAllDataToLocal: function() {
 			wx.setStorageSync('tasks', JSON.stringify(this.data.tasks));
 			wx.setStorageSync('lists', JSON.stringify(this.data.lists));
 			wx.setStorageSync('uniqueId', JSON.stringify(util.getUniqueId()));
+		},
+		// 保存数据到后端
+		_saveAllDataToSql: function() {
 			// 保存在后端
 			// 登录保证不过期
 			let token, owner, successListNum = 0, data = this.data;
@@ -506,11 +436,86 @@ Component({
 				})
 			})
 		},
-		clear: function() {
-			wx.removeStorageSync('tasks');
-			wx.removeStorageSync('lists');
-			wx.removeStorageSync('signText');
-		}
+		// 拉取并设置数据
+		onLoad: function() {
+			let _this = this;
+			// 每 30s 向后端同步一次数据
+			setInterval(() => {
+				console.log(_this.data.tasks);
+				_this._getAllDataFromLocal();
+				_this._saveAllDataToSql();
+			}, 1000 * 30);
+			// 当请求好数据后保存数据
+			let timeId = setInterval(() => {
+				let success = 0;
+				if(typeof getApp === 'function' && getApp().globalData)
+					success = getApp().globalData.success;
+				if(success === 3) {
+					clearInterval(timeId);
+					this._getAllDataFromLocal();
+					// 设置机型相关信息
+					let app = getApp();
+					this.setData({
+						navHeight: app.globalData.navHeight,
+						navTop: app.globalData.navTop,
+						windowHeight: app.globalData.windowHeight,
+						windowWidth: app.globalData.windowWidth
+					});
+					// 为 util 设置 uniqueId
+					util.setUniqueId(JSON.parse(wx.getStorageSync('uniqueId') || JSON.stringify(100000)));
+					// 如果存在一个今天会发生的重复任务，则修改该任务为非重复任务，并自动产生一个日期顺延的重复任务
+					// 如果以前完成了一个重复任务，不管其设置的日期是什么时候，同上处理
+					let res = [];
+					for(let task of this.data.tasks) {
+						if(task.delete || !task.repeat) {
+							res.push(task);
+							continue;
+						}
+						// 每天重复
+						let oldDate = new Date(task.date);
+						let addTime = [0, 1, 7, 30, 365][task.repeat] * 24 * 60 * 60 * 1000;
+						let newDate = new Date(oldDate.getTime() + addTime);
+						let oldDateYMD = util.formatDate(oldDate).substr(0, 10);
+						let todayYMD = util.getDawn(0).substr(0, 10);
+						// 第一种情况，即一个过期的重复任务（无论是否完成）
+						if(oldDateYMD.localeCompare(todayYMD) < 0) {
+							let newTime = oldDate.getTime() + addTime;
+							let todayTime = (new Date(util.getDawn(0))).getTime();
+							do {
+								let tmpTask = JSON.parse(JSON.stringify(task));
+								tmpTask.id = util.getUniqueId();
+								tmpTask.date = util.formatDate(new Date(newTime));
+								tmpTask.finish = false;
+								tmpTask.desc = "";
+								tmpTask.rating = 1;
+								tmpTask.feeling = '';
+								tmpTask.repeat = 0; 
+								res.push(tmpTask);
+								newTime += addTime;
+							} while(newTime <= todayTime);
+							res[res.length - 1].repeat = task.repeat;
+							task.repeat = 0;
+						}
+						// 第二种情况，即一个完成的任务（走到这里肯定不是过期任务）
+						else if(task.finish && task.finishDate.localeCompare(util.getDawn(0)) >= 0) {
+							let tmpTask = JSON.parse(JSON.stringify(task));
+							tmpTask.id = util.getUniqueId();
+							tmpTask.date = util.formatDate(newDate);
+							tmpTask.finish = false;
+							tmpTask.desc = "";
+							tmpTask.rating = 1;
+							tmpTask.feeling = '';
+							res.push(tmpTask);
+							task.repeat = 0;
+						}
+						res.push(task);
+					}
+					this.setData({
+						tasks: res
+					})
+				}
+			}, 300);
+		},
 	},
 
 	/**
@@ -520,13 +525,13 @@ Component({
 		show: function() {
 			// 如果是通过 switchbar 过来的，读取数据
 			if(this.getTabBar().data.selected) {
-				this._getAllData();
+				this._getAllDataFromLocal();
 			}
-			// 非 switchbar 过来的，且不是一打开触发的，保存数据到后端
+			// 非 switchbar 过来的，且不是一打开触发的，保存数据到本地
 			else {
 				if(!this._tmpflag)
 					this._tmpflag = true;
-				else this._saveAllData();
+				else this._saveAllDataToLocal();
 			}
 			// 切换 tabbar 时候显示该页面
 			this.getTabBar().setData({
