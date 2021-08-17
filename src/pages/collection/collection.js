@@ -77,10 +77,16 @@ Component({
 			// 	console.log(res)
 			// }).exec();
 		},
-		// 控制菜单的显示
+		// 关闭背景遮掩
+		handleCloseMask: function(e) {
+			this.setData({
+				showMenu: false
+			})
+		},
+		// 控制菜单的显示	
 		handleShowMenu: function(e) {
 			this.setData({
-				showMenu: !this.data.showMenu
+				showMenu: true
 			});
 		},
 		// 修改个性签名，并及时保存

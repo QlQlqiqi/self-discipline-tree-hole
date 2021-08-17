@@ -5,7 +5,7 @@
 </navbar>
 <!-- 背景遮掩 -->
 <view wx:if="{{ showMenu }}" class="menu-mask" style="height: {{ (windowHeight - navHeight) * (750 / windowWidth) }}rpx; z-index: 1;" 
-  bind:tap="handleShowMenu" catch:touchmove="catchTouchMove"
+  bind:tap="handleCloseMask" catch:touchmove="catchTouchMove"
 ></view>
 <!-- 左侧菜单 -->
 <view wx:if="{{ showMenu }}" style="position: relative; height: 0; top: {{ -navHeight * (750 / windowWidth) }}rpx;">

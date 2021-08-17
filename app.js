@@ -37,7 +37,6 @@ App({
           ]
         wx.setStorageSync('lists', JSON.stringify(lists));
         _this.globalData.success++;
-        // console.log(lists)
       })
       // 再请求 tasks
       .then(function() {
@@ -109,8 +108,6 @@ App({
       wx.setStorageSync('token', JSON.stringify(token));
       wx.setStorageSync('owner', JSON.stringify(owner));
       wx.setStorageSync('uniqueId', JSON.stringify(10000));
-      // console.log(JSON.parse(wx.getStorageSync('successListNum') || JSON.stringify({})))
-      // console.log(JSON.parse(wx.getStorageSync('tmp') || JSON.stringify({})))
     });
 
     // 获取自定义导航栏信息
@@ -129,7 +126,7 @@ App({
         this.globalData.windowHeight = res.windowHeight;
         // 可使用窗口宽度
         this.globalData.windowWidth = res.windowWidth;
-        console.log(this.globalData)
+        console.log(this.globalData, wx.getMenuButtonBoundingClientRect())
       },
       fail(err) {
         console.error(err);

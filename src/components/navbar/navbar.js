@@ -22,6 +22,10 @@ Component({
     iconColor:{
       type: String,
       value: '#000'
+    },
+    windowWidth: {
+      type: Number,
+      value: 0
     }
   },
 
@@ -35,7 +39,8 @@ Component({
     attached: function () {
       this.setData({
         navHeight: App.globalData.navHeight,
-        navTop: App.globalData.navTop
+        navTop: App.globalData.navTop,
+        windowWidth: App.globalData.windowWidth
       })
      }
   },

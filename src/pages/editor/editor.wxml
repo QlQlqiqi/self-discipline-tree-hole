@@ -53,10 +53,10 @@
     <image wx:if="{{ task.finish }}" slot="finish" src="/src/image/priority0.svg" style="display: inline-block; background-color: {{ priorityColor[task.priority] }}; position: absolute; width: 26rpx; height: 26rpx; top: 6rpx; left: 6rpx;"></image>
   </view>
 </task-item> -->
-<view style="position: relative; margin-top: 28rpx; margin-left: 30rpx; width: 682rpx; height: 780rpx; border: 2rpx solid rgba(187, 187, 187, 1);">
+<view style="background-color: white; position: relative; margin-top: 28rpx; margin-left: 30rpx; width: 682rpx; height: 780rpx; border: 2rpx solid rgba(187, 187, 187, 1);">
 	<image src="/src/image/editor-pencil.svg" mode="aspectFit" style="height: 42rpx; width: 42rpx; position: absolute; left: 44rpx; top: 72rpx;"></image>
 	<image src="/src/image/editor-line.png" mode="aspectFit" style="height: 2rpx; width: 564rpx; position: absolute; left: 74rpx; top: 114rpx;"></image>
-	<input class="editor-task-content" value="{{ task.content }}" bind:input="contentInput" focus="{{ true }}" placeholder="请输入任务内容" placeholder-style="color: rgba(66, 66, 66, 0.55); font-size: 24rpx;" maxlength="25" focus="{{ true }}"></input>
+	<input class="editor-task-content" value="{{ task.content }}" bind:input="contentInput" focus="{{ true }}" placeholder="请输入任务内容......" placeholder-style="color: rgba(66, 66, 66, 0.55); font-size: 24rpx;" maxlength="25" focus="{{ true }}"></input>
 	<!-- 完成 -->
 	<image src="/src/image/editor-ensure.png" catch:tap="ensure" mode="aspectFit" style="height: 88rpx; width: 206rpx; position: absolute; right: 28rpx; bottom: 42rpx;"></image>
 </view>

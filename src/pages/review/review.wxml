@@ -3,8 +3,8 @@
   <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" mode="aspectFit" style="width: 48rpx; height: 48rpx;"></image>
 </navbar>
 <!-- 背景遮掩 -->
-<view wx:if="{{ showMenu }}" class="menu-mask" style="height: {{ (windowHeight - navHeight) * (750 / windowWidth) }}rpx; z-index: 1;" 
-  bind:tap="handleShowMenu" catch:touchmove="catchTouchMove"
+<view wx:if="{{ showMenu || showFeeling }}" class="menu-mask" style="height: {{ (windowHeight - navHeight) * (750 / windowWidth) }}rpx; z-index: 1;" 
+  bind:tap="handleCloseMask" catch:touchmove="catchTouchMove"
 ></view>
 <!-- 左侧菜单 -->
 <view wx:if="{{ showMenu }}" style="position: relative; height: 0; top: {{ -navHeight * (750 / windowWidth) }}rpx;">
@@ -36,8 +36,8 @@
 </view>
 
 <view style="position: relative; width: 666rpx; height: {{ contentHeight }}rpx; margin-top: 16rpx; margin-left: 42rpx; background-color: white; border-radius: 14rpx; color: rgba(21, 74, 25, 1); padding-bottom: 40rpx; overflow-y: scroll;">
-	<text style="margin: 26rpx 0 0 38rpx; font-size: 40rpx;">已完成任务</text>
-	<image src="/src/image/review-history.svg" bind:tap="handleNavigateToHistory" style="position: absolute; width: 48rpx; height: 48rpx; top: 50rpx; right: 24rpx;"></image>
+	<text style="display: inline-block; margin: 26rpx 0 0 38rpx; font-size: 40rpx;">已完成任务</text>
+	<image src="/src/image/review-history.svg" bind:tap="handleNavigateToHistory" style="position: absolute; width: 48rpx; height: 48rpx; top: 40rpx; right: 40rpx;"></image>
 	<view wx:for="{{ finishedTasks }}" wx:key="index" data-index="{{ index }}" catch:tap="handleSelectTask" style="position: relative; width: 626rpx; min-height: 56rpx; margin: 40rpx 0 0 40rpx;">
 		<image src="/src/image/review-finished.svg" mode="aspectFill" style="position: absolute; width: 48rpx; height: 48rpx;"></image>
 		<view style="font-size: 32rpx; line-height: 38rpx; margin-left: 74rpx; width: 500rpx;">{{ item.content }}</view>
@@ -45,9 +45,18 @@
 	</view>
 </view>
 
-<evaluate wx:if="{{ showFeeling }}" style="position: absolute; top: 330rpx; left: 100rpx;" 
+<evaluate wx:if="{{ showFeeling }}" class="review-evaluate" 
 	rating="{{ rating || 1 }}" feeling="{{ feeling }}" catch:handleChangeRating="handleChangeRating"
 	catch:handleBackFeeling="handleBackFeeling" catch:handleInput="handleInput"
 	catch:handleEnsureFeeling="handleEnsureFeeling"
 ></evaluate>
+<!-- <mp-dialog></mp-dialog> -->
 <!-- <view style="height: 500rpx; width: 750rpx; position: relative; top: {{ -1280 + finishedTasks.length * 100 }}rpx;"></view> -->
+<!-- <mp-half-screen-dialog show="{{ showFeeling }}" buttons="{{ [] }}" extClass="some"
+	bind:close="handleBackFeeling"
+>
+	<view>
+		<view style="height: 32rpx; color: rgba(21, 74, 25, 1); font-size: 28rpx;">任务完成满意度</view>
+		
+	</view>
+</mp-half-screen-dialog> -->

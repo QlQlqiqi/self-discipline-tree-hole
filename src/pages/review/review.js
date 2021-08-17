@@ -2,6 +2,9 @@ const computedBehavior = require('miniprogram-computed').behavior;
 const util = require("../../utils/util")
 Component({
 	behaviors: [computedBehavior],
+	options: {
+		multipleSlots: true
+	},
 	/**
 	 * 组件的属性列表
 	 */
@@ -137,10 +140,17 @@ Component({
 	 * 组件的方法列表
 	 */
 	methods: {
+		// 关闭背景遮掩
+		handleCloseMask: function(e) {
+			this.setData({
+				showMenu: false,
+				showFeeling: false
+			})
+		},
 		// 控制菜单的显示
 		handleShowMenu: function(e) {
 			this.setData({
-				showMenu: !this.data.showMenu
+				showMenu: true
 			});
 		},
 		// 进入历史页面

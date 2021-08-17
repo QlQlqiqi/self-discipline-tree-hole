@@ -43,7 +43,7 @@
 	position: absolute;
 	width: 26rpx;
 	height: 26rpx;
-	top: 86rpx;
+	bottom: 0;
 	right: 28rpx;
 }
 

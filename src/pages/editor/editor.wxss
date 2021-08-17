@@ -13,13 +13,11 @@
 	height: 80rpx;
 	width: 686rpx;
 	margin-left: 30rpx;
-	margin-top: 20rpx;
+	margin-top: 100rpx;
 	border: 2rpx solid rgba(187, 187, 187, 1);
 	border-radius: 18rpx;
 	z-index: 11;
 }
-
-
 
 .editor-item-wrap text {
 	position: absolute;
