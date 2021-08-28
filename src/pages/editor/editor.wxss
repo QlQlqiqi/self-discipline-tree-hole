@@ -1,49 +1,68 @@
-.editor-list-select {
-  height: 60rpx;
-  width: 196rpx; 
-  border: 2rpx solid rgba(187, 187, 187, 1); 
-  position: absolute; 
-  top: 96rpx; 
-  right: 268rpx; 
-  border-radius: 10rpx;
+.editor-delete {
+	display: inline-block;
+	margin: 24rpx 0 0 40rpx;
+	width: 106rpx;
+	height: 40rpx;
+	line-height: 40rpx;
+	border-radius: 24rpx;
+	background-color: rgba(229, 56, 52, 1);
+	color: rgba(255, 255, 255, 1);
+	font-size: 24rpx;
+	text-align: center;
+}
+
+.editor-ensure {
+	display: inline-block;
+	margin: 24rpx 0 0 462rpx;
+	width: 106rpx;
+	height: 40rpx;
+	line-height: 40rpx;
+	border-radius: 24rpx;
+	background-color: rgba(75, 132, 77, 1);
+	color: rgba(255, 255, 255, 1);
+	font-size: 24rpx;
+	text-align: center;
 }
 
 .editor-item-wrap {
 	position: relative;
-	height: 80rpx;
+	height: 386rpx;
 	width: 686rpx;
 	margin-left: 30rpx;
 	margin-top: 100rpx;
 	border: 2rpx solid rgba(187, 187, 187, 1);
 	border-radius: 18rpx;
 	z-index: 11;
+	background-color: rgba(170, 170, 170, .1);
 }
 
 .editor-item-wrap text {
 	position: absolute;
-	font-size: 20rpx;
+	font-size: 28rpx;
 	color: rgba(75, 132, 77, 1);
-	height: 28rpx;
-	line-height: 28rpx;
-	text-align: left;
+	height: 84rpx;
+	line-height: 84rpx;
+	width: 610rpx;
+	top: 0;
+	text-align: right;
+	font-weight: bold;
 }
 
 .editor-item-wrap image {
 	position: absolute;
-	width: 32rpx;
-	height: 32rpx;
+	width: 40rpx;
+	height: 40rpx;
 }
 
 .editor-priority-wrap {
 	color: rgba(75, 132, 77, 1);
-	width: 150rpx;
-	height: 28rpx;
-	line-height: 28rpx;
-	font-size: 20rpx;
-	padding: 26rpx 0 26rpx 46rpx;
+	height: 94rpx;
+	line-height: 94rpx;
+	font-size: 28rpx;
 }
 
 .editor-priority {
+	position: relative;
 	height: 58rpx;
 	background-color: white;
 	line-height: 58rpx;
@@ -58,17 +77,41 @@
 	margin-left: -40rpx;
 }
 
-.editor-item-ensure {
-	left: 584rpx;
-	position: absolute;
-	width: 160rpx;
-	height: 60rpx;
-	line-height: 60rpx;
+.editor-repeat-wrap {
+	position: relative;
+	color: rgba(75, 132, 77, 1);
+	height: 94rpx;
+	line-height: 94rpx;
 	font-size: 28rpx;
-	color: rgba(16, 16, 16, 1);
-	background-color: rgba(121, 243, 108, 1);
-	border: 2rpx solid rgba(187, 187, 187, 1);
+}
+
+.editor-time-text {
+	position: absolute;
+	font-size: 28rpx;
+	color: rgba(75, 132, 77, 1);
+	height: 84rpx;
+	line-height: 84rpx;
+	width: 610rpx;
 	top: 0;
+	text-align: right;
+	font-weight: bold;
+	right: 70rpx;
+}
+
+.editor-time-wrap {
+	position: relative;
+	color: rgba(75, 132, 77, 1);
+	height: 94rpx;
+	line-height: 94rpx;
+	font-size: 28rpx;
+}
+
+.editor-list-wrap {
+	position: relative;
+	color: rgba(75, 132, 77, 1);
+	height: 94rpx;
+	line-height: 94rpx;
+	font-size: 28rpx;
 }
 
 .editor-task-content {
@@ -77,23 +120,4 @@
 	line-height: 60rpx;
 	font-size: 28rpx;
 	text-align: left;
-}
-
-.editor-task-desc {
-	margin: 18rpx 60rpx 0 20rpx;
-	height: 52rpx;
-	text-align: left;
-	font-size: 28rpx;
-}
-
-.editor-delete-warn {
-	margin: 24rpx 10rpx 0 42rpx;
-	height: 30rpx;
-	width: 30rpx;
-}
-
-.editor-delete-text {
-	font-size: 28rpx;
-	color: #ff214c;
-	height: 40rpx;
 }

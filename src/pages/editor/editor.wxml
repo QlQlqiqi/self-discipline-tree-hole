@@ -12,12 +12,24 @@
 </navbar>
 <view style="position: relative;"></view>
 
+<!-- 完成删除 -->
+<view class="editor-delete" catch:tap="handleDelete">删除</view>
+<view class="editor-ensure" catch:tap="handleEnsure">完成</view>
+
+<!-- 任务内容 -->
+<view style="background-color: white; position: relative; margin-top: 40rpx; margin-left: 30rpx; width: 682rpx; height: 182rpx; border: 2rpx solid rgba(187, 187, 187, 1);">
+	<image src="/src/image/editor-pencil.svg" mode="aspectFit" style="height: 42rpx; width: 42rpx; position: absolute; left: 44rpx; top: 72rpx;"></image>
+	<input class="editor-task-content" value="{{ task.content }}" bind:input="contentInput" focus="{{ true }}" placeholder="请输入任务内容......" placeholder-style="color: rgba(66, 66, 66, 0.55); font-size: 24rpx;" maxlength="25" focus="{{ true }}"></input>
+	<!-- 完成 -->
+</view>
+
 <!-- 四个选择项 -->
 <view class="editor-item-wrap">
 	<!-- 优先级 -->
-	<image src="/src/image/editor-prioity.svg" mode="aspectFit" style="top: 24rpx; left: 20rpx;"></image>
+	<image src="/src/image/editor-prioity.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
 	<view catch:tap="handleShowPriority" class="editor-priority-wrap">
-		<view style="text-align: center; font-weight: bold;">{{ priorityRange[task.priority] }}</view>
+		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">优先级</view>
+		<view style="display: inline-block; margin-left: 300rpx; font-weight: bold;">{{ priorityRange[task.priority] }}</view>
 		<view wx:if="{{ showPriority }}" class="editor-priority-show">
 			<view wx:for="{{ priorityRange }}" wx:key="index" 
 				catch:tap="handleSelectPriority" class="editor-priority" data-index="{{ index }}"
@@ -28,34 +40,35 @@
 			</view>
 		</view>
 	</view>
-	<!-- 重复 -->
-	<image src="/src/image/task-line.png" mode="aspectFit" style="width: 2rpx; height: 40rpx; position: absolute; top: 20rpx; left: 192rpx;"></image>
-	<image src="/src/image/editor-repeat.svg" mode="aspectFit" style="top: 24rpx; left: 202rpx;"></image>
-	<picker header-text="设置重复天数" mode="selector" value="{{ task.repeat }}" range="{{ repeatRange }}" bindchange="bindRepeatPickerChange">
-		<text style="font-weight: bold; top: 0; left: 190rpx; position: absolute; padding: 26rpx 12rpx 26rpx 50rpx; text-align: center;">{{ repeatRange[task.repeat] }}</text>
-	</picker>
-	<!-- 日期 -->
-	<image src="/src/image/task-line.png" mode="aspectFit" style="width: 2rpx; height: 40rpx; position: absolute; top: 20rpx; left: 310rpx;"></image>
-	<image src="/src/image/editor-date.svg" mode="aspectFit" style="top: 24rpx; left: 324rpx;"></image>
-	<time defaultTime="{{ task.date }}" catch:handleChangeTime="bindDatePickerChange" style="font-weight: bold; position: absolute; top: 0; left: 310rpx; font-size: 24rpx; color: rgba(75, 132, 77, 1); height: 28rpx; line-height: 28rpx; text-align: left; padding: 26rpx 10rpx 26rpx 54rpx;"></time>
-	<!-- 清单 -->
-	<image src="/src/image/task-line.png" mode="aspectFit" style="width: 2rpx; height: 40rpx; position: absolute; top: 20rpx; left: 530rpx;"></image>
-	<image src="/src/image/editor-list.svg" mode="aspectFit" style="top: 24rpx; left: 540rpx;"></image>
-	<picker header-text="设置清单类型" mode="selector" value="{{ selectIndex }}" range="{{ listRange }}" bindchange="bindlistPickerChange">
-		<text style="z-index: 1; font-weight: bold; font-size: 20rpx; position: absolute; top: 0; left: 528rpx; max-width: 120rpx; text-align: left; color: rgba(75, 132, 77, 1); padding: 26rpx 0 26rpx 40rpx; text-align: center; width: 130rpx;">{{ listRange[selectIndex] }}</text>
-	</picker>
-</view>
-<view style="position: relative; height: 2rpx; background-color: rgba(233, 233, 233, .6);"></view>
-<!-- 任务内容 -->
-<view style="background-color: white; position: relative; margin-top: 28rpx; margin-left: 30rpx; width: 682rpx; height: 780rpx; border: 2rpx solid rgba(187, 187, 187, 1);">
-	<image src="/src/image/editor-pencil.svg" mode="aspectFit" style="height: 42rpx; width: 42rpx; position: absolute; left: 44rpx; top: 72rpx;"></image>
-	<image src="/src/image/editor-line.png" mode="aspectFit" style="height: 2rpx; width: 564rpx; position: absolute; left: 74rpx; top: 114rpx;"></image>
-	<input class="editor-task-content" value="{{ task.content }}" bind:input="contentInput" focus="{{ true }}" placeholder="请输入任务内容......" placeholder-style="color: rgba(66, 66, 66, 0.55); font-size: 24rpx;" maxlength="25" focus="{{ true }}"></input>
-	<!-- 完成 -->
-	<image src="/src/image/editor-ensure.png" catch:tap="ensure" mode="aspectFit" style="height: 88rpx; width: 206rpx; position: absolute; right: 28rpx; bottom: 42rpx;"></image>
-</view>
-<!-- <input class="editor-task-desc" value="{{ task.desc }}" bind:input="descInput" maxlength="200" placeholder="描述说明" placeholder-style="font-size: 24rpx;"></input> -->
 
+	<view style="height: 2rpx; border-top: 2rpx rgba(255, 255, 255, 0.63) solid;"></view>
+	<!-- 重复 -->
+	<view class="editor-repeat-wrap" bindchange="bindRepeatPickerChange">
+		<image src="/src/image/editor-repeat.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
+		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">重复</view>
+		<picker header-text="设置重复天数" mode="selector" value="{{ task.repeat }}" range="{{ repeatRange }}">
+			<text>{{ repeatRange[task.repeat] }}</text>
+		</picker>
+	</view>
+
+	<view style="height: 2rpx; border-top: 2rpx rgba(255, 255, 255, 0.63) solid;"></view>
+	<!-- 日期 -->
+	<view class="editor-time-wrap" catch:handleChangeTime="bindDatePickerChange">
+		<image src="/src/image/editor-date.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
+		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">时间</view>
+		<time class="editor-time-text" defaultTime="{{ task.date }}"></time>
+	</view>
+	
+	<view style="height: 2rpx; border-top: 2rpx rgba(255, 255, 255, 0.63) solid;"></view>
+	<!-- 清单 -->
+	<view class="editor-list-wrap">
+		<image src="/src/image/editor-list.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
+		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">清单类型</view>
+		<picker header-text="设置清单类型" mode="selector" value="{{ selectIndex }}" range="{{ listRange }}" bindchange="bindlistPickerChange">
+			<text>{{ listRange[selectIndex] }}</text>
+		</picker>
+	</view>
+</view>
 
 <!-- 提示 -->
 <mp-dialog show="{{ showErrorDialog }}" mask="{{ true }}" mask-closable="{{ false }}" buttons="{{ [{text: '确定'}] }}" catch:buttontap="dialogClose">{{ errorDialogMsg }}</mp-dialog>

@@ -218,7 +218,10 @@ Component({
 					util.myRequest({
 						url: 'https://witime.wizzstudio.com/problem/problem',
 						method: 'POST',
-						data: `自律树洞用户反馈如下：\n${_this.data.dialogTextAreaValue}`
+						data: {
+							text: `自律树洞用户反馈如下：\n${_this.data.dialogTextAreaValue}`,
+							mail: ''
+						}
 					})
 					.then(res => console.log(res.data))
 				}

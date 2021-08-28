@@ -594,7 +594,6 @@ Component({
 			this.getTabBar().setData({
 				selected: 0
 			})
-			console.log(this.data)
 		},
 		hide: function() {}
 	},

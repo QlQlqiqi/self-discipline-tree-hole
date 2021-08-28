@@ -157,7 +157,7 @@ Component({
 			console.log(this.data.task)
 		},
 		// 删除任务，并触发 _handleSaveData 事件，返回上一个页面
-		handleDeleteData: function(e) {
+		handleDelete: function(e) {
 			let task = this.data.task;
 			task.delete = true;
 			const eventChannel = this.getOpenerEventChannel();
@@ -167,7 +167,7 @@ Component({
 			wx.navigateBack()
 		},
 		// 点击完成，检查数据是否合法，并触发 _handleSaveData 事件，返回上一个页面
-		ensure: function() {
+		handleEnsure: function() {
 			if(!this.data.task.content.length) {
 				this.setData({
 					errorDialogMsg: "任务内容不得为空",
