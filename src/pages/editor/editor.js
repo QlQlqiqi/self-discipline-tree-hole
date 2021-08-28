@@ -20,15 +20,10 @@ Component({
 		priorityColor: ['#D01929', '#F0AD4D', '#CF92FF', '#BABBBA'],
 		priorityIconSrc: ['/src/image/priority0.png', '/src/image/priority1.png',
 			'/src/image/priority2.png', '/src/image/priority3.png'],
-		priorityIcon: [
-			{ top: '61', left: '28' },
-			{ top: '124', left: '28' },
-			{ top: '182', left: '28' },
-			{ top: '240', left: '30' },
-			// { top:  }
-		],
+		// 优先级展开的 margin-left 位置(单位：px)
+		showPriorityLeft: 0,
 		// 重复种类
-		repeatRange: ["不重复", "每天", "每周", "每月", "每年"],
+		repeatRange: ["不重复", "每天", "每周", "每月", "每年"]
 	},
 
 	computed: {
@@ -102,7 +97,8 @@ Component({
 		// 显示优先级
 		handleShowPriority: function(e){
 			this.setData({
-				showPriority: !this.data.showPriority
+				showPriority: !this.data.showPriority,
+				showPriorityLeft: e.detail.x
 			})
 		},
 		// 优先级选择器改变时

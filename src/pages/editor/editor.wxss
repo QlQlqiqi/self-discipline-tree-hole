@@ -29,7 +29,7 @@
 	height: 386rpx;
 	width: 686rpx;
 	margin-left: 30rpx;
-	margin-top: 100rpx;
+	margin-top: 46rpx;
 	border: 2rpx solid rgba(187, 187, 187, 1);
 	border-radius: 18rpx;
 	z-index: 11;
@@ -74,7 +74,7 @@
 	box-shadow: 0 0 10rpx black;
 	margin-top: 10rpx;
 	border: 2rpx solid #BABBBA;
-	margin-left: -40rpx;
+	margin-left: 200rpx;
 }
 
 .editor-repeat-wrap {

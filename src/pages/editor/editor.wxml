@@ -30,12 +30,12 @@
 	<view catch:tap="handleShowPriority" class="editor-priority-wrap">
 		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">优先级</view>
 		<view style="display: inline-block; margin-left: 300rpx; font-weight: bold;">{{ priorityRange[task.priority] }}</view>
-		<view wx:if="{{ showPriority }}" class="editor-priority-show">
+		<view wx:if="{{ showPriority }}" class="editor-priority-show" style="margin-left: {{ showPriorityLeft }}rpx;">
 			<view wx:for="{{ priorityRange }}" wx:key="index" 
 				catch:tap="handleSelectPriority" class="editor-priority" data-index="{{ index }}"
 				style="color: {{ priorityColor[index] }};"
 			>
-				<image src="{{ priorityIconSrc[index] }}" mode="aspectFill" style="width: 38rpx; height: 38rpx; color: black;position: absolute; top: {{ priorityIcon[index].top }}rpx; left: {{ priorityIcon[index].left }}rpx;"></image>
+				<image src="{{ priorityIconSrc[index] }}" mode="aspectFill" style="width: 38rpx; height: 38rpx; color: black; margin-top: 10rpx; margin-left: 16rpx;"></image>
 				<view style="margin-left: 60rpx;">{{ item }}</view>
 			</view>
 		</view>
