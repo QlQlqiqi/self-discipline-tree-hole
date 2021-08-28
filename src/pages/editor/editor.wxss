@@ -55,6 +55,7 @@
 }
 
 .editor-priority-wrap {
+	position: relative;
 	color: rgba(75, 132, 77, 1);
 	height: 94rpx;
 	line-height: 94rpx;

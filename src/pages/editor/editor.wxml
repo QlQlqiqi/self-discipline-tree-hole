@@ -25,20 +25,11 @@
 
 <!-- 四个选择项 -->
 <view class="editor-item-wrap">
-	<!-- 优先级 -->
-	<image src="/src/image/editor-prioity.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
-	<view catch:tap="handleShowPriority" class="editor-priority-wrap">
-		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">优先级</view>
-		<view style="display: inline-block; margin-left: 300rpx; font-weight: bold;">{{ priorityRange[task.priority] }}</view>
-		<view wx:if="{{ showPriority }}" class="editor-priority-show" style="margin-left: {{ showPriorityLeft }}rpx;">
-			<view wx:for="{{ priorityRange }}" wx:key="index" 
-				catch:tap="handleSelectPriority" class="editor-priority" data-index="{{ index }}"
-				style="color: {{ priorityColor[index] }};"
-			>
-				<image src="{{ priorityIconSrc[index] }}" mode="aspectFill" style="width: 38rpx; height: 38rpx; color: black; margin-top: 10rpx; margin-left: 16rpx;"></image>
-				<view style="margin-left: 60rpx;">{{ item }}</view>
-			</view>
-		</view>
+	<!-- 日期 -->
+	<view class="editor-time-wrap">
+		<image src="/src/image/editor-date.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
+		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">时间</view>
+		<time class="editor-time-text" defaultTime="{{ task.date }}" catch:handleChangeTime="handleChangeTime"></time>
 	</view>
 
 	<view style="height: 2rpx; border-top: 2rpx rgba(255, 255, 255, 0.63) solid;"></view>
@@ -52,11 +43,20 @@
 	</view>
 
 	<view style="height: 2rpx; border-top: 2rpx rgba(255, 255, 255, 0.63) solid;"></view>
-	<!-- 日期 -->
-	<view class="editor-time-wrap">
-		<image src="/src/image/editor-date.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
-		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">时间</view>
-		<time class="editor-time-text" defaultTime="{{ task.date }}" catch:handleChangeTime="handleChangeTime"></time>
+	<!-- 优先级 -->
+	<view catch:tap="handleShowPriority" class="editor-priority-wrap">
+		<image src="/src/image/editor-prioity.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
+		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">优先级</view>
+		<view style="display: inline-block; margin-left: 300rpx; font-weight: bold;">{{ priorityRange[task.priority] }}</view>
+		<view wx:if="{{ showPriority }}" class="editor-priority-show" style="margin-left: {{ showPriorityLeft }}rpx;">
+			<view wx:for="{{ priorityRange }}" wx:key="index" 
+				catch:tap="handleSelectPriority" class="editor-priority" data-index="{{ index }}"
+				style="color: {{ priorityColor[index] }};"
+			>
+				<image src="{{ priorityIconSrc[index] }}" mode="aspectFill" style="width: 38rpx; height: 38rpx; color: black; margin-top: 10rpx; margin-left: 16rpx;"></image>
+				<view style="margin-left: 60rpx;">{{ item }}</view>
+			</view>
+		</view>
 	</view>
 	
 	<view style="height: 2rpx; border-top: 2rpx rgba(255, 255, 255, 0.63) solid;"></view>

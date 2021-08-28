@@ -11,7 +11,7 @@
 	<!-- 下面的重复标记处 -->
 	<view wx:if="{{ descShow }}" class="task-item-repeat">{{ desc }}</view>
 	<!-- 删除 -->
-	<image src="/src/image/trash-icon.svg" mode="aspectFit" class="task-item-delete" catch:tap="handleDeleteTask"></image>
+	<!-- <image src="/src/image/trash-icon.svg" mode="aspectFit" class="task-item-delete" catch:tap="handleDeleteTask"></image> -->
 	<!-- 下面的分割线 -->
 	<view wx:if="{{ divide }}" class="task-item-divide-line"></view>
 </view>
