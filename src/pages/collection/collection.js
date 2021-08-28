@@ -223,18 +223,22 @@ Component({
 					_handleSaveData: (data) => { util._handleSaveData(_this, data); },
 					// 删除清单
 					_handleDeleteList: (data) => {
+						console.log(data)
 						let tasks = [], lists = [];
-						for(let task of _this.data.tasks) {
-							if(task.list.title === data.pageName)
-								task.delete = true;
-							tasks.push(task);
-						}
-						for(let list of _this.data.lists) {
+						for(let list of this.data.lists) {
 							if(list.title === data.pageName)
 								continue;
 							lists.push(list);
 						}
-						_this.setData({
+						for(let task of this.data.tasks) {
+							if(task.list.title === data.pageName)
+								task.list = {
+									icon: "/src/image/menu-self-list0.svg",
+									title: "个人清单"
+								};
+							tasks.push(task);
+						}
+						this.setData({
 							tasks: tasks,
 							lists: lists
 						});
@@ -245,16 +249,18 @@ Component({
 		// 删除清单
 		handleDeleteList: function(e) {
 			let tasks = [], lists = [], data = e.detail;
-			for(let task of this.data.tasks) {
-				if(task.list.title === data.listTitle)
-					task.delete = true;
-				tasks.push(task);
-			}
 			for(let list of this.data.lists) {
-				console.log(list.title, data.listTitle)
 				if(list.title === data.listTitle)
 					continue;
 				lists.push(list);
+			}
+			for(let task of this.data.tasks) {
+				if(task.list.title === data.listTitle)
+					task.list = {
+						icon: "/src/image/menu-self-list0.svg",
+						title: "个人清单"
+					};
+				tasks.push(task);
 			}
 			this.setData({
 				tasks: tasks,
@@ -344,7 +350,7 @@ Component({
 		_saveAllDataToSql: function() {
 			// 保存在后端
 			// 登录保证不过期
-			let token, owner, successListNum = 0, data = this.data;
+			let token, owner, successListNum = 0, data = this.data, _this = this;
 			const url = getApp().globalData.url;
 			util.login(url + 'login/login/')
 			.then(res => {
@@ -358,7 +364,19 @@ Component({
 					header: {token: token},
 					method: "GET"
 				}).then(res => {
-					// 删除 lists
+					// PUT 或 POST lists
+					// console.log(...res.data);
+					// for(let localList of _this.data.lists) {
+					// 	for(let remoteList of res.data) {
+					// 		// 修改
+					// 		if(remoteList.tag === localList.title) {
+
+					// 			break;
+					// 		}
+					// 	}
+					// }
+
+					// DELETE
 					res.data.forEach(function(item) {
 						util.myRequest({
 							url: item.url + "?owner=" + JSON.stringify(owner),
@@ -453,10 +471,31 @@ Component({
 					}, 500);
 				})
 			})
+			.then(() => {
+				util.myRequest({
+					url: url + 'check/sign/?owner=' + JSON.stringify(owner),
+					header: { token: token },
+					method: "GET"
+				})
+				.then(res => {
+					console.log(res.data, res.data[0].owner)
+					util.myRequest({
+						url: res.data[0].url,
+						header: { Authorization: "Token " + token },
+						method: "PUT",
+						data: {
+							owner: res.data[0].owner,
+							signText: _this.data.signText
+						}
+					})
+					.then(res => console.log(res))
+				})
+			})
 		},
 		// 拉取并设置数据
 		onLoad: function() {
 			let _this = this;
+			_this._saveAllDataToSql();
 			// 每 30s 向后端同步一次数据
 			setInterval(() => {
 				console.log(_this.data.tasks);

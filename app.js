@@ -11,7 +11,6 @@ App({
     // 数据同步了就不必再从后端获取
     // 数据同步包括：任务 tasks、清单 lists 和 个性签名 signText
     let exist = wx.getStorageSync('exist');
-    console.log(exist)
     // 获取数据并保存在本地
     if(!exist) {
       util.login(_this.globalData.url + 'login/login/')
@@ -123,7 +122,6 @@ App({
     let menuButtonObject = wx.getMenuButtonBoundingClientRect();
     wx.getSystemInfo({
       success: res => {
-        console.log(res)
         let statusBarHeight = res.statusBarHeight,
           navTop = menuButtonObject.top,
           navHeight = statusBarHeight + menuButtonObject.height + (menuButtonObject.top - statusBarHeight)*2;
@@ -135,7 +133,6 @@ App({
         this.globalData.windowHeight = res.windowHeight;
         // 可使用窗口宽度
         this.globalData.windowWidth = res.windowWidth;
-        console.log(this.globalData, wx.getMenuButtonBoundingClientRect())
       },
       fail(err) {
         console.error(err);
