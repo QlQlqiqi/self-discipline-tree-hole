@@ -9,7 +9,7 @@
 <!-- 左侧菜单 -->
 <view wx:if="{{ showMenu }}" style="position: relative; height: 0; top: {{ -navHeight * (750 / windowWidth) }}rpx;">
   <menu style="position: relative; width: 600rpx; top: {{ menuTop }}rpx;" 
-    menuHeight="{{ windowHeight * (750 / windowWidth) }}" menuBottomBlcakHeight="{{ 320 }}"
+    menuHeight="{{ windowHeight * (750 / windowWidth) }}" menuBottomBlcakHeight="{{ 0 }}"
     show="{{ showMenu }}" lists="{{ listsShow }}" todoListNum="{{ todayTasks.length }}" signText="{{ signText }}"
     catch:handleNavigateToAddList="handleNavigateToAddList"
     catch:handleNavigateToToday="handleNavigateToToday" catch:handleNavigateToFuture="handleNavigateToFuture"

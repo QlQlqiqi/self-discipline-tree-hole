@@ -28,16 +28,12 @@
 	<view style="position: relative; height: {{ 156 + lists.length * 74 }}rpx;">
 		<text class="menu-list" style="left: 230rpx; top: 0rpx; position: relative;">清单列表</text>
 		<!-- 各类清单 -->
-		<!-- <view wx:for="{{ lists }}" wx:key="index" catch:touchmove="handle" style="height: 40rpx; margin: 40rpx 0 40rpx 228rpx;">
-			<image class="menu-icon" src="{{ item.icon || '/src/image/menu-self-list0.svg' }}" mode="aspectFit"></image>
-			<text class="menu-text" catch:tap="handleNavigateToList" data-title="{{ item.title }}" style="margin-left: 50rpx;">{{ item.title }}</text>
-		</view> -->
 		<movable-area wx:for="{{ lists }}" wx:key="index" style="min-width: 240rpx; height: 40rpx; margin: 40rpx 0 40rpx 188rpx;">
 			<movable-view out-of-bounds="{{ true }}" data-index="{{ index }}" bind:change="handleShowTrash" direction="horizontal" style="min-width: 200rpx; height: 40rpx; margin-left: 40rpx;">
 				<image class="menu-icon" src="{{ item.icon || '/src/image/menu-self-list0.svg' }}" mode="aspectFit"></image>
 				<text class="menu-text" catch:tap="handleNavigateToList" data-title="{{ item.title }}" style="margin-left: 50rpx;">{{ item.title }}</text>
 			</movable-view>
-			<view wx:if="{{ trashIndex === index }}" bind:tap="handleDeleteList" style="opacity: {{ trashOpacity }}; margin-left: 400rpx; background-color: red; padding-left: 20rpx; height: 40rpx; width: 60rpx;">
+			<view wx:if="{{ trashIndex === index }}" bind:tap="handleDeleteList" style="opacity: {{ trashOpacity }}; margin-left: 400rpx; background-color: #E53834; padding-left: 20rpx; height: 40rpx; width: 60rpx;">
 				<image src="/src/image/trash-icon.svg" mode="aspectFit" style="width: 40rpx; height: 40rpx;"></image>
 			</view>
 		</movable-area>
@@ -62,14 +58,22 @@
 		</view>
 	</view>
 	<!-- 功能 -->
-	<view style="position: relative; height: 100rpx; margin-bottom: {{ menuBottomBlcakHeight }}rpx;">
+	<view style="position: relative; height: 200rpx; margin-bottom: {{ menuBottomBlcakHeight }}rpx;">
 		<text class="menu-list" style="left: 230rpx;">功能</text>
 		<!-- 我的分享 -->
 		<view>
 			<image class="menu-icon" src="/src/image/menu-share.svg" mode="aspectFit" style="left: 230rpx; top: 54rpx"></image>
 			<text catch:tap="handleNavigateToShare" class="menu-text" style="left: 284rpx; top: 54rpx">我的分享</text>
 		</view>
+		<!-- 问题反馈 -->
+		<view>
+			<image class="menu-icon" src="/src/image/menu-question.svg" mode="aspectFit" style="left: 230rpx; top: 124rpx"></image>
+			<text catch:tap="handleFeedBack" class="menu-text" style="left: 284rpx; top: 124rpx">问题反馈</text>
+		</view>
 	</view>
 </view>
 <!-- </view> -->
-<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ showDialog }}" title="{{ dialogTitle }}" buttons="{{ buttons }}" bindbuttontap="handleDialogButtons">{{ dialogContent }}</mp-dialog>
+<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ showDialog }}" title="{{ dialogTitle }}" buttons="{{ buttons }}" bindbuttontap="handleDialogButtons">
+	<textarea wx:if="{{ showTextArea }}" bind:input="handleSyncDialogTextArea" value="{{ dialogTextAreaValue }}" auto-focus="{{ true }}" placeholder="感谢您的反馈，我们会不断改进的~" style="height: 200rpx; margin-left: -30rpx; border: 2rpx black solid; border-radius: 20rpx;"></textarea>
+	<view wx:else>{{ dialogContent }}</view>
+</mp-dialog>

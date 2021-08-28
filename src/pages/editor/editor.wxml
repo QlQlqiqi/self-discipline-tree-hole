@@ -47,12 +47,6 @@
 </view>
 <view style="position: relative; height: 2rpx; background-color: rgba(233, 233, 233, .6);"></view>
 <!-- 任务内容 -->
-<!-- <task-item repeat="{{ task.repeat }}" finish="{{ item.finish }}" descShow="{{ false }}">
-	<view slot="finish" bind:tap="handleTaskFinish">
-    <view slot="finish" style="display: inline-block; border: 4rpx solid {{ priorityColor[task.priority] }}; position: absolute; width: 20rpx; height: 20rpx; top: 6rpx; left: 6rpx;"></view>
-    <image wx:if="{{ task.finish }}" slot="finish" src="/src/image/priority0.svg" style="display: inline-block; background-color: {{ priorityColor[task.priority] }}; position: absolute; width: 26rpx; height: 26rpx; top: 6rpx; left: 6rpx;"></image>
-  </view>
-</task-item> -->
 <view style="background-color: white; position: relative; margin-top: 28rpx; margin-left: 30rpx; width: 682rpx; height: 780rpx; border: 2rpx solid rgba(187, 187, 187, 1);">
 	<image src="/src/image/editor-pencil.svg" mode="aspectFit" style="height: 42rpx; width: 42rpx; position: absolute; left: 44rpx; top: 72rpx;"></image>
 	<image src="/src/image/editor-line.png" mode="aspectFit" style="height: 2rpx; width: 564rpx; position: absolute; left: 74rpx; top: 114rpx;"></image>
@@ -62,10 +56,6 @@
 </view>
 <!-- <input class="editor-task-desc" value="{{ task.desc }}" bind:input="descInput" maxlength="200" placeholder="描述说明" placeholder-style="font-size: 24rpx;"></input> -->
 
-<!-- 删除任务 -->
-<!-- <view wx:if="{{ isEditorTask }}">
-	<image src="/src/image/editor-warn.svg" mode="aspectFit" class="editor-delete-warn"></image>
-	<text class="editor-delete-text" bind:tap="handleDeleteData">删除待办</text>
-</view> -->
+
 <!-- 提示 -->
 <mp-dialog show="{{ showErrorDialog }}" mask="{{ true }}" mask-closable="{{ false }}" buttons="{{ [{text: '确定'}] }}" catch:buttontap="dialogClose">{{ errorDialogMsg }}</mp-dialog>

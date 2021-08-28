@@ -1,4 +1,5 @@
 const computedBehavior = require("miniprogram-computed").behavior;
+const util = require('../../utils/util');
 Component({
 	behaviors: [computedBehavior],
 	/**
@@ -32,7 +33,8 @@ Component({
 		dialogContent: '',
 		dialogTitle: '',
 		trashIndex: -1,
-		trashOpacity: 0
+		trashOpacity: 0,
+		dialogTextAreaValue: ''
 	},
 
 	computed: {
@@ -53,13 +55,9 @@ Component({
 	methods: {
 		// 控制 dialog 的 buttons 功能
 		handleDialogButtons: function(e) {
-			if(e.detail.index === 1) 
-				this.triggerEvent('handleDeleteList', {
-					listTitle: this.data.lists[this.data.trashIndex].title
-				})
-			this.setData({
-				showDialog: false
-			})
+			this._handleDialogButtons[e.detail.index](e);
+			// 不可删除 _handleDialogButtons 字段，因为存在嵌套
+			// delete this._handleDialogButtons;
 		},
 		// 展示删除键
 		handleShowTrash: function(e) {
@@ -138,6 +136,47 @@ Component({
 				dialogContent: '是否删除该清单？（清单内任务自动进入[个人清单]内）',
 				buttons: [{text: '取消'}, {text: '确认'}]
 			})
+			let _this = this;
+			// 点击不同摁纽触发的功能
+			this._handleDialogButtons = {
+				// 取消
+				0: function(e) {
+					_this.setData({
+						showDialog: false
+					})
+				},
+				// 确认
+				1: function(e) {
+					_this.setData({
+						showDialog: false
+					})
+					// 不能删除“个人清单”和“工作清单”
+					let listTitle = _this.data.lists[_this.data.trashIndex].title;
+					if(listTitle === '个人清单' || listTitle === '工作清单') {
+						_this.setData({
+							showDialog: true,
+							dialogTitle: '提示',
+							dialogContent: `[${listTitle}]不可删除~`,
+							buttons: [{text: '确认'}]
+						})
+						_this._handleDialogButtons = {
+							0: function() {
+								_this.setData({
+									showDialog: false
+								})
+							}
+						}
+					}
+					else {
+						_this.triggerEvent('handleDeleteList', {
+							listTitle: _this.data.lists[_this.data.trashIndex].title
+						})
+						_this.setData({
+							trashIndex: -1
+						})
+					}
+				}
+			}
 		},
 		// 触发“添加清单”事件
 		handleNavigateToAddList: function(e) {
@@ -154,6 +193,42 @@ Component({
 		// 触发“我的分享”事件
 		handleNavigateToShare: function(e) {
 			this.triggerEvent("handleNavigateToShare");
+		},
+		// 触发“问题反馈”事件
+		handleFeedBack: function(e) {
+			this.setData({
+				showTextArea: true,
+				showDialog: true,
+				dialogTitle: '问题反馈',
+				buttons: [{text: '取消'}, {text: '确定'}]
+			})
+			let _this = this;
+			_this._handleDialogButtons = {
+				0: function() {
+					_this.setData({
+						showTextArea: false,
+						showDialog: false
+					})
+				},
+				1: function() {
+					_this.setData({
+						showTextArea: false,
+						showDialog: false
+					})
+					util.myRequest({
+						url: 'https://witime.wizzstudio.com/problem/problem',
+						method: 'POST',
+						data: `自律树洞用户反馈如下：\n${_this.data.dialogTextAreaValue}`
+					})
+					.then(res => console.log(res.data))
+				}
+			}
+		},
+		// 同步 dialogTextArea 的输入
+		handleSyncDialogTextArea: function(e) {
+			this.setData({
+				dialogTextAreaValue: e.detail.value
+			})
 		},
 		some(e) {
 			console.log(e)

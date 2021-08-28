@@ -175,7 +175,7 @@ Component({
 		handleDeleteList: function(e) {
 			this.setData({
 				showDialog: true,
-				dialogMsg: "是否删除该清单及其该清单中所有任务（包括曾经完成或未完成的任务）？"
+				dialogMsg: "是否删除该清单？（清单内任务自动进入[个人清单]内）"
 			});
 			// 如果“确定”则执行下面
 			this._handleDialogDefine = function(_this) {

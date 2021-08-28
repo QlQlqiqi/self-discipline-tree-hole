@@ -495,7 +495,7 @@ Component({
 		// 拉取并设置数据
 		onLoad: function() {
 			let _this = this;
-			_this._saveAllDataToSql();
+			// _this._saveAllDataToSql();
 			// 每 30s 向后端同步一次数据
 			setInterval(() => {
 				console.log(_this.data.tasks);
