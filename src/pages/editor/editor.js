@@ -114,7 +114,7 @@ Component({
 			});
 		},
 		// 重复选择器改变时
-		bindRepeatPickerChange: function(e) {
+		handleRepeatPickerChange: function(e) {
 			let val = {...this.data.task};
 			val.repeat = e.detail.value;
 			this.setData({
@@ -122,7 +122,7 @@ Component({
 			});
 		},
 		// 日期选择器改变时
-		bindDatePickerChange: function(e) {
+		handleChangeTime: function(e) {
 			console.log(e.detail)
 			let time = e.detail.time.split(' ');
 			let val = {...this.data.task};
@@ -131,15 +131,7 @@ Component({
 			this.setData({
 				task: val
 			});
-			console.log(val)
-		},
-		// 提醒选择器改变时
-		bindRemindPickerChange: function(e) {
-			let val = {...this.data.task};
-			val.remind = e.detail.value;
-			this.setData({
-				task: val
-			});
+			console.log(this.data.task)
 		},
 		// 控制任务的完成与否
 		handleTaskFinish: function(e) {
@@ -173,6 +165,7 @@ Component({
 			}
 			// 触发事件并回退上一个页面
 			const eventChannel = this.getOpenerEventChannel();
+			console.log(this.data.task)
 			eventChannel.emit("_handleSaveData", {
 				tasks: [this.data.task]
 			});

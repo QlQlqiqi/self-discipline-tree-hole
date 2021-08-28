@@ -410,11 +410,7 @@ Component({
 			if(this.getTabBar().data.selected !== 1) 
 				this._getAllDataFromLocal();
 			// 非 switchbar 过来的，且不是一打开触发的，保存数据到本地
-			else {
-				if(!this._tmpflag)
-					this._tmpflag = true;
-				else this._saveAllDataToLocal();
-			}
+			this._saveAllDataToLocal();
 			// 切换 tabbar 时候显示该页面
 			this.getTabBar().setData({
 				selected: 1

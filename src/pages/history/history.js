@@ -23,7 +23,11 @@ Component({
 			{ top: '0', left: '350'},
 			{ top: '20', left: '416'},
 			{ top: '42', left: '480'}
-		]
+		],
+		// 选定的任务
+		task: {},
+		// 显示感想
+		showFeeling: false
 	},
 
 	computed: {
@@ -112,6 +116,26 @@ Component({
 	 * 组件的方法列表
 	 */
 	methods: {
+		// 关闭背景遮掩
+		handleCloseMask: function(e) {
+			this.setData({
+				showFeeling: false
+			})
+		},
+		// 点击任务，展开感想
+		handleSelectTask: function(e) {
+			let task = this.data.finishedTasks[e.currentTarget.dataset.index];
+			this.setData({
+				showFeeling: true,
+				task: task
+			})
+		},
+		// 关闭任务
+		handleBackFeeling: function(e) {
+			this.setData({
+				showFeeling: false
+			})
+		},
 		// 选中日期改变
 		handleDateChange(e) {
 			this.setData({

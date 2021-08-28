@@ -50,13 +50,3 @@
 	catch:handleBackFeeling="handleBackFeeling" catch:handleInput="handleInput"
 	catch:handleEnsureFeeling="handleEnsureFeeling"
 ></evaluate>
-<!-- <mp-dialog></mp-dialog> -->
-<!-- <view style="height: 500rpx; width: 750rpx; position: relative; top: {{ -1280 + finishedTasks.length * 100 }}rpx;"></view> -->
-<!-- <mp-half-screen-dialog show="{{ showFeeling }}" buttons="{{ [] }}" extClass="some"
-	bind:close="handleBackFeeling"
->
-	<view>
-		<view style="height: 32rpx; color: rgba(21, 74, 25, 1); font-size: 28rpx;">任务完成满意度</view>
-		
-	</view>
-</mp-half-screen-dialog> -->

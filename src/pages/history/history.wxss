@@ -48,3 +48,31 @@
 	font-size: 24rpx;
 	color: #999999;
 }
+
+.history-evaluate {
+	position: absolute;
+	top: 330rpx;
+	left: 100rpx;
+	height: 578rpx;
+	width: 542rpx;
+	animation: move-in 0.5s;
+}
+
+@keyframes move-in {
+	from {
+		top: 2000rpx;
+	}
+	to {
+		top: 330rpx;
+	}
+}
+
+.history-mask {
+	position: absolute;
+	right: 0;
+	width: 750rpx;
+	height: 1530rpx;
+	z-index: 11;
+	background-color: rgba(0, 0, 0, 0.6);
+	transition: all 0.2s ease;
+}

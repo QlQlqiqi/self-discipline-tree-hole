@@ -18,7 +18,7 @@
 
 <!-- 任务内容 -->
 <view style="background-color: white; position: relative; margin-top: 40rpx; margin-left: 30rpx; width: 682rpx; height: 182rpx; border: 2rpx solid rgba(187, 187, 187, 1);">
-	<image src="/src/image/editor-pencil.svg" mode="aspectFit" style="height: 42rpx; width: 42rpx; position: absolute; left: 44rpx; top: 72rpx;"></image>
+	<image src="/src/image/editor-pencil.svg" mode="aspectFit" style="height: 42rpx; width: 42rpx; position: absolute; left: 44rpx; top: 60rpx;"></image>
 	<input class="editor-task-content" value="{{ task.content }}" bind:input="contentInput" focus="{{ true }}" placeholder="请输入任务内容......" placeholder-style="color: rgba(66, 66, 66, 0.55); font-size: 24rpx;" maxlength="25" focus="{{ true }}"></input>
 	<!-- 完成 -->
 </view>
@@ -43,20 +43,20 @@
 
 	<view style="height: 2rpx; border-top: 2rpx rgba(255, 255, 255, 0.63) solid;"></view>
 	<!-- 重复 -->
-	<view class="editor-repeat-wrap" bindchange="bindRepeatPickerChange">
+	<view class="editor-repeat-wrap">
 		<image src="/src/image/editor-repeat.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
 		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">重复</view>
-		<picker header-text="设置重复天数" mode="selector" value="{{ task.repeat }}" range="{{ repeatRange }}">
+		<picker header-text="设置重复天数" bind:change="handleRepeatPickerChange" mode="selector" value="{{ task.repeat }}" range="{{ repeatRange }}">
 			<text>{{ repeatRange[task.repeat] }}</text>
 		</picker>
 	</view>
 
 	<view style="height: 2rpx; border-top: 2rpx rgba(255, 255, 255, 0.63) solid;"></view>
 	<!-- 日期 -->
-	<view class="editor-time-wrap" catch:handleChangeTime="bindDatePickerChange">
+	<view class="editor-time-wrap">
 		<image src="/src/image/editor-date.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
 		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">时间</view>
-		<time class="editor-time-text" defaultTime="{{ task.date }}"></time>
+		<time class="editor-time-text" defaultTime="{{ task.date }}" catch:handleChangeTime="handleChangeTime"></time>
 	</view>
 	
 	<view style="height: 2rpx; border-top: 2rpx rgba(255, 255, 255, 0.63) solid;"></view>
@@ -71,4 +71,4 @@
 </view>
 
 <!-- 提示 -->
-<mp-dialog show="{{ showErrorDialog }}" mask="{{ true }}" mask-closable="{{ false }}" buttons="{{ [{text: '确定'}] }}" catch:buttontap="dialogClose">{{ errorDialogMsg }}</mp-dialog>
+<mp-dialog show="{{ showErrorDialog }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" buttons="{{ [{text: '确定'}] }}" catch:buttontap="dialogClose">{{ errorDialogMsg }}</mp-dialog>

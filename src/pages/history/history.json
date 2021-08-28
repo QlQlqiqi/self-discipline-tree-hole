@@ -3,6 +3,7 @@
 	"usingComponents": {
 		"navbar": "/src/components/navbar/navbar",
 		"calendar": "/src/components/calendar/calendar",
-		"task-item": "/src/components/task-item/task-item"
+		"task-item": "/src/components/task-item/task-item",
+		"evaluate": "/src/components/evaluate/evaluate"
 	}
 }

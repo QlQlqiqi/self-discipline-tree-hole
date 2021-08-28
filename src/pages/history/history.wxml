@@ -5,6 +5,13 @@
 <navbar page-name="历史">
   <image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 48rpx; height: 48rpx;"></image>
 </navbar>
+
+
+<!-- 背景遮掩 -->
+<view wx:if="{{ showFeeling }}" class="history-mask" style="height: {{ (windowHeight - navHeight) * (750 / windowWidth) }}rpx; z-index: 1;" 
+  bind:tap="handleCloseMask" catch:touchmove="catchTouchMove"
+></view>
+
 <calendar bind:change="handleDateChange" spot="{{spot}}" defaultTime="{{ defaultTime }}"></calendar>
 <!-- 当天的任务展示 -->
 <view style="position: relative; height: 0; top: 50rpx;">
@@ -31,9 +38,17 @@
 	</view>
 	<!-- 本日完成的任务 -->
 	<view class="review-tasks-title"><text>完成任务</text></view>
-	<task-item wx:for="{{ finishedTasks }}" wx:key="index" finish="{{ item.finish }}" data-index="{{ index }}" catch:tap="handleSelectTask" content="{{ item.content }}" date="{{ item.finishDate }}">
+	<task-item wx:for="{{ finishedTasks }}" wx:key="index" finish="{{ item.finish }}" 
+	data-index="{{ index }}" catch:tap="handleSelectTask" content="{{ item.content }}" 
+	date="{{ item.finishDate }}"
+	>
 		<view slot="finish">
 			<image src="/src/image/review-check-icon.svg" style="display: inline-block; position: absolute; width: 36rpx; height: 36rpx;"></image>
 		</view>
 	</task-item>
 </view>
+
+<evaluate wx:if="{{ showFeeling }}" class="history-evaluate" disabled="{{ true }}"
+	rating="{{ task['rating'] || 1 }}" feeling="{{ task['feeling'] }}" catch:handleBackFeeling="handleBackFeeling"
+	catch:handleEnsureFeeling="handleBackFeeling"
+></evaluate>
