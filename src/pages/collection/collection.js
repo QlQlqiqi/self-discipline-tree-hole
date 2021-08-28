@@ -70,13 +70,6 @@ Component({
 	 * 组件的方法列表
 	 */
 	methods: {
-		// 控制上下滑动
-		handleMenuTop: function(e) {
-			// console.log(e)
-			// wx.createSelectorQuery().select('#dom-menu').boundingClientRect(res => {
-			// 	console.log(res)
-			// }).exec();
-		},
 		// 关闭背景遮掩
 		handleCloseMask: function(e) {
 			this.setData({
@@ -89,25 +82,23 @@ Component({
 				showMenu: true
 			});
 		},
-		// 修改个性签名，并及时保存
+		// 修改个性签名
 		handleSignTextEnsure: function(e) {
 			this.setData({
 				signText: e.detail.signText
 			});
-			wx.setStorage({
-				key: "signText",
-				data: JSON.stringify(e.detail.signText)
-			});
-			let _this = this, appData = getApp().globalData;
-			util.myRequest({
-				url: JSON.parse(wx.getStorageSync('signTextUrl')),
-				method: "PUT",
-				header: { Authorization: 'Token ' + _this.token },
-				data: {
-					signText: e.detail.signText,
-					owner: appData.loginUrl + 'user/' + _this.owner + '/'
-				}
-			})
+			console.log(this.data.signText)
+			wx.setStorageSync('signText', JSON.stringify(e.detail.signText));
+			// let _this = this, appData = getApp().globalData;
+			// util.myRequest({
+			// 	url: JSON.parse(wx.getStorageSync('signTextUrl')),
+			// 	method: "PUT",
+			// 	header: { Authorization: 'Token ' + _this.token },
+			// 	data: {
+			// 		signText: e.detail.signText,
+			// 		owner: appData.loginUrl + 'user/' + _this.owner + '/'
+			// 	}
+			// })
 		},
 		// 控制任务的完成与否
 		handleTaskFinish: function(e) {
@@ -230,6 +221,7 @@ Component({
 				events: {
 					// 触发事件保存数据
 					_handleSaveData: (data) => { util._handleSaveData(_this, data); },
+					// 删除清单
 					_handleDeleteList: (data) => {
 						let tasks = [], lists = [];
 						for(let task of _this.data.tasks) {
@@ -249,6 +241,25 @@ Component({
 					}
 				}
 			})
+		},
+		// 删除清单
+		handleDeleteList: function(e) {
+			let tasks = [], lists = [], data = e.detail;
+			for(let task of this.data.tasks) {
+				if(task.list.title === data.listTitle)
+					task.delete = true;
+				tasks.push(task);
+			}
+			for(let list of this.data.lists) {
+				console.log(list.title, data.listTitle)
+				if(list.title === data.listTitle)
+					continue;
+				lists.push(list);
+			}
+			this.setData({
+				tasks: tasks,
+				lists: lists
+			});
 		},
 		// 导航到“添加清单”页面
 		handleNavigateToAddList: function(e) {
@@ -283,7 +294,7 @@ Component({
 			let tasks = this.data.tasks.filter(function(item) {
 				return item.date.localeCompare(todayDate) < 0
 					|| item.delete;
-			})
+			});
 			wx.navigateTo({
 				url: '/src/pages/list/list?tasks=' + JSON.stringify(tasks)
 					+ "&pageName=" + JSON.stringify("过期 / 删除任务")
@@ -293,6 +304,13 @@ Component({
 					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
 				}
 			})
+		},
+		// 导航到“我的分享”页面
+		// 目前还未实现该功能
+		handleNavigateToShare: function(e) {
+			wx.navigateTo({
+				url: '/src/pages/share/share',
+			});
 		},
 		// 从本地获取全部数据
 		_getAllDataFromLocal: function() {
@@ -537,6 +555,7 @@ Component({
 			this.getTabBar().setData({
 				selected: 0
 			})
+			console.log(this.data)
 		},
 		hide: function() {}
 	},

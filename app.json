@@ -7,7 +7,8 @@
 		"src/pages/editor/editor",
 		"src/pages/review/review",
 		"src/pages/add-self-list/add-self-list",
-		"src/pages/list/list"
+		"src/pages/list/list",
+		"src/pages/share/share"
 	],
 	"tabBar": {
 		"custom": true,

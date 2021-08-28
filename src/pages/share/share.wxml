@@ -1,0 +1,1 @@
+<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ showDialog }}" title="提示" buttons="{{ [{text: '确定'}] }}" bind:buttontap="dialogClose">树洞模式即将上线~</mp-dialog>

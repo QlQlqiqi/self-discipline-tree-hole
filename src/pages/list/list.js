@@ -41,9 +41,7 @@ Component({
 				navHeight: app.globalData.navHeight,
 				navTop: app.globalData.navTop,
 				windowHeight: app.globalData.windowHeight,
-				windowWidth: app.globalData.windowWidth
-			});
-			this.setData({
+				windowWidth: app.globalData.windowWidth,
 				tasks: JSON.parse(options.tasks || JSON.stringify([])),
 				pageName: JSON.parse(options.pageName || JSON.stringify("")),
 				isDelete: JSON.parse(options.isDelete || JSON.stringify(false)),
@@ -51,7 +49,6 @@ Component({
 				rawTasks: JSON.parse(options.tasks || JSON.stringify([])),
 				rawPageName: JSON.parse(options.pageName || JSON.stringify(""))
 			});
-			console.log(this.data)
 		},
 		// 返回上一页面，如果修改过数据，则弹窗询问是否保存数据
 		handleBack: function() {

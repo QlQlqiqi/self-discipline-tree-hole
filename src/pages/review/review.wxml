@@ -11,11 +11,11 @@
   <menu style="position: relative; width: 600rpx; top: {{ menuTop }}rpx;" 
     menuHeight="{{ windowHeight * (750 / windowWidth) }}" menuBottomBlcakHeight="{{ 320 }}"
     show="{{ showMenu }}" lists="{{ listsShow }}" todoListNum="{{ todayTasks.length }}" signText="{{ signText }}"
-    catch:touchmove="{{ showMenu? '': '' }}" catch:handleNavigateToAddList="handleNavigateToAddList"
+    catch:handleNavigateToAddList="handleNavigateToAddList"
     catch:handleNavigateToToday="handleNavigateToToday" catch:handleNavigateToFuture="handleNavigateToFuture"
     catch:handleNavigateToList="handleNavigateToList" catch:handleNavigateToFinished="handleNavigateToFinished"
-    catch:handleNavigateToBeforeAndDelete="handleNavigateToBeforeAndDelete" 
-    catch:handleSignTextEnsure="handleSignTextEnsure"
+    catch:handleNavigateToBeforeAndDelete="handleNavigateToBeforeAndDelete" catch:handleNavigateToShare="handleNavigateToShare"
+    catch:handleSignTextEnsure="handleSignTextEnsure" catch:handleDeleteList="handleDeleteList"
   ></menu>
 </view>
 

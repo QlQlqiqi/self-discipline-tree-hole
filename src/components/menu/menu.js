@@ -28,7 +28,11 @@ Component({
 	 * 组件的初始数据
 	 */
 	data: {
-		showDialog: false
+		showDialog: false,
+		dialogContent: '',
+		dialogTitle: '',
+		trashIndex: -1,
+		trashOpacity: 0
 	},
 
 	computed: {
@@ -47,6 +51,34 @@ Component({
 	 * 组件的方法列表
 	 */
 	methods: {
+		// 控制 dialog 的 buttons 功能
+		handleDialogButtons: function(e) {
+			if(e.detail.index === 1) 
+				this.triggerEvent('handleDeleteList', {
+					listTitle: this.data.lists[this.data.trashIndex].title
+				})
+			this.setData({
+				showDialog: false
+			})
+		},
+		// 展示删除键
+		handleShowTrash: function(e) {
+			let index = e.currentTarget.dataset.index;
+			let x = e.detail.x;
+			if(x >= -10) {
+				if(this.data.trashIndex === index) {
+					this.setData({
+						trashIndex: -1
+					})
+				}
+			}
+			else {
+				this.setData({
+					trashIndex: index,
+					trashOpacity: (x + 10) / -10
+				})
+			}
+		},
 		// 展示菜单
 		showMenu: function() {
 			this.animate(".menu-wrap", [
@@ -67,25 +99,21 @@ Component({
 				signText: e.detail.value
 			})
 		},
-		// 关闭
-		dialogClose: function() {
-			this.setData({
-				showDialog: false,
-				signText: "好好学习 天天向上"
-			})
-		},
 		blur: function(e) {
+			let value = e.detail.value;
 			// 如果输入为空，则提示
-			if(!this.properties.signText.length) {
+			if(!value) {
+				value = '好好学习 天天向上';
 				this.setData({
-					showDialog: true
+					showDialog: true,
+					dialogTitle: '提示',
+					dialogContent: '输入不得为空！',
+					buttons: [{text: '确认'}]
 				})
 			}
-			else {
-				this.triggerEvent("handleSignTextEnsure", {
-					signText: e.detail.value
-				})
-			}
+			this.triggerEvent("handleSignTextEnsure", {
+				signText: value
+			})
 		},
 		// 触发“今日待办”事件
 		handleNavigateToToday: function(e) {
@@ -101,6 +129,16 @@ Component({
 				title: e.currentTarget.dataset.title
 			})
 		},
+		// 触发“删除”清单事件
+		handleDeleteList: function(e) {
+			// 询问是否删除
+			this.setData({
+				showDialog: true,
+				dialogTitle: '提示',
+				dialogContent: '是否删除该清单？（清单内任务自动进入[个人清单]内）',
+				buttons: [{text: '取消'}, {text: '确认'}]
+			})
+		},
 		// 触发“添加清单”事件
 		handleNavigateToAddList: function(e) {
 			this.triggerEvent("handleNavigateToAddList");
@@ -112,6 +150,13 @@ Component({
 		// 触发“过期 / 删除任务”事件
 		handleNavigateToBeforeAndDelete: function(e) {
 			this.triggerEvent("handleNavigateToBeforeAndDelete");
+		},
+		// 触发“我的分享”事件
+		handleNavigateToShare: function(e) {
+			this.triggerEvent("handleNavigateToShare");
+		},
+		some(e) {
+			console.log(e)
 		}
 	},
 	lifetimes: {
