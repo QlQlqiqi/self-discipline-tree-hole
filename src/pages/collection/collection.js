@@ -529,11 +529,13 @@ Component({
 							continue;
 						}
 						// 每天重复
-						let oldDate = new Date(task.date);
+						// 此处 oldDate 属于特殊处理，将本地时间转化为世界时间
+						let oldDate = new Date((new Date(task.date)).getTime() - 8 * 60 * 60 * 1000);
 						let addTime = [0, 1, 7, 30, 365][task.repeat] * 24 * 60 * 60 * 1000;
-						let newDate = new Date(oldDate.getTime() + addTime);
 						let oldDateYMD = util.formatDate(oldDate).substr(0, 10);
 						let todayYMD = util.getDawn(0).substr(0, 10);
+						console.log(task)
+						console.log(oldDate, oldDateYMD, todayYMD)
 						// 第一种情况，即一个过期的重复任务（无论是否完成）
 						if(oldDateYMD.localeCompare(todayYMD) < 0) {
 							let newTime = oldDate.getTime() + addTime;
@@ -555,6 +557,8 @@ Component({
 						}
 						// 第二种情况，即一个完成的任务（走到这里肯定不是过期任务）
 						else if(task.finish && task.finishDate.localeCompare(util.getDawn(0)) >= 0) {
+							let newDate = new Date(oldDate.getTime() + addTime);
+							console.log(util.formatDate(newDate))
 							let tmpTask = JSON.parse(JSON.stringify(task));
 							tmpTask.id = util.getUniqueId();
 							tmpTask.date = util.formatDate(newDate);
@@ -570,6 +574,7 @@ Component({
 					this.setData({
 						tasks: res
 					})
+					wx.setStorageSync('tasks', JSON.stringify(res));
 				}
 			}, 300);
 		},

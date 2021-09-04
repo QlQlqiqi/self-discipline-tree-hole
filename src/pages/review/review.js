@@ -356,6 +356,7 @@ Component({
 				feeling: task.feeling,
 				showFeeling: false
 			});
+			this._saveAllDataToLocal();
 		},
 		// 从本地获取全部数据
 		_getAllDataFromLocal: function() {
@@ -410,7 +411,7 @@ Component({
 			if(this.getTabBar().data.selected !== 1) 
 				this._getAllDataFromLocal();
 			// 非 switchbar 过来的，且不是一打开触发的，保存数据到本地
-			this._saveAllDataToLocal();
+			else this._saveAllDataToLocal();
 			// 切换 tabbar 时候显示该页面
 			this.getTabBar().setData({
 				selected: 1
