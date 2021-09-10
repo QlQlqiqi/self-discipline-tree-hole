@@ -133,7 +133,7 @@ Component({
 			this.setData({
 				showDialog: true,
 				dialogTitle: '提示',
-				dialogContent: '是否删除该清单？（清单内任务自动进入[个人清单]内）',
+				dialogContent: '是否删除该清单？（清单内任务自动进入「个人清单」内）',
 				buttons: [{text: '取消'}, {text: '确认'}]
 			})
 			let _this = this;

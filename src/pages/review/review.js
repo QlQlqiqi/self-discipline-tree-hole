@@ -1,5 +1,7 @@
 const computedBehavior = require('miniprogram-computed').behavior;
+const app = getApp();
 const util = require("../../utils/util")
+const store = require('../../store/store');
 Component({
 	behaviors: [computedBehavior],
 	options: {
@@ -155,152 +157,119 @@ Component({
 		// 进入历史页面
 		handleNavigateToHistory: function(e){
 			wx.navigateTo({
-				url: '/src/pages/history/history?tasks=' + JSON.stringify(this.data.tasks)
+				url: '/src/pages/history/history'
 			})
 		},
 		// 修改个性签名
-		handleSignTextEnsure: function(e) {
+		handleSignTextEnsure: async function(e) {
+			wx.showLoading({
+				title: '正在保存数据...',
+				mask: true
+			})
 			this.setData({
 				signText: e.detail.signText
 			});
-			console.log(this.data.signText)
 			wx.setStorageSync('signText', JSON.stringify(e.detail.signText));
-			// let _this = this, appData = getApp().globalData;
-			// util.myRequest({
-			// 	url: JSON.parse(wx.getStorageSync('signTextUrl')),
-			// 	method: "PUT",
-			// 	header: { Authorization: 'Token ' + _this.token },
-			// 	data: {
-			// 		signText: e.detail.signText,
-			// 		owner: appData.loginUrl + 'user/' + _this.owner + '/'
-			// 	}
-			// })
+			let {token, owner} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			let signTextSql = await store.getDataFromSqlByUrl(app.globalData.url + 'check/sign/', {owner, token});
+			signTextSql = signTextSql[0];
+			util.myRequest({
+				url: signTextSql.url,
+				header: { Authorization: "Token " + token },
+				method: "PUT",
+				data: {
+					signText: signTextSql.signText,
+					owner: app.globalData.url + 'login/user/' + owner + '/'
+				}
+			})
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: '已完成',
+						duration: 800
+					})
+				},
+			})
 		},
 		// 导航到“今日待办”页面
 		handleNavigateToToday: function(e) {
-			let _this = this;
-			let tasks = this.data.todayTasks;
 			wx.navigateTo({
-				url: '/src/pages/list/list?tasks=' + JSON.stringify(tasks)
-					+ "&pageName=" + JSON.stringify("今日待办"),
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
-				}
+				url: '/src/pages/list/list?pageName=' + JSON.stringify('今日待办')
 			});
 		},
 		// 导航到“将来做”页面
 		handleNavigateToFuture: function(e) {
-			let _this = this;
-			let tasks = this.data.futureTasks;
 			wx.navigateTo({
-				url: '/src/pages/list/list?tasks=' + JSON.stringify(tasks)
-					+ "&pageName=" + JSON.stringify("将来做"),
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
-				}
+				url: '/src/pages/list/list?pageName=' + JSON.stringify('将来做')
 			})
 		},
 		// 导航到“各类清单”页面
 		handleNavigateToList: function(e) {
-			let _this = this;
-			let tasks = this.data.tasks.filter(function(item) {
-				return item.list.title === e.detail.title
-					&& !item.finish
-					&& !item.delete;
-			})
 			// 不允许删除默认清单
 			let isDelete = e.detail.title !== "个人清单" && e.detail.title !== "工作清单";
 			wx.navigateTo({
-				url: '/src/pages/list/list?tasks=' + JSON.stringify(tasks)
-					+ "&pageName=" + JSON.stringify(e.detail.title)
-					+ "&isDelete=" + JSON.stringify(isDelete),
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); },
-					// 删除清单
-					_handleDeleteList: (data) => {
-						let tasks = [], lists = [];
-						for(let task of _this.data.tasks) {
-							if(task.list.title === data.pageName)
-								task.delete = true;
-							tasks.push(task);
-						}
-						for(let list of _this.data.lists) {
-							if(list.title === data.pageName)
-								continue;
-							lists.push(list);
-						}
-						_this.setData({
-							tasks: tasks,
-							lists: lists
-						});
-					}
-				}
+				url: '/src/pages/list/list?pageName=' + JSON.stringify(e.detail.title)
+					+ "&isDelete=" + JSON.stringify(isDelete)
 			})
 		},
 		// 删除清单
-		handleDeleteList: function(e) {
-			let tasks = [], lists = [], data = e.detail;
+		handleDeleteList: async function(e) {
+			wx.showLoading({
+				title: '正在保存数据...',
+				mask: true
+			})
+			let tasks = [], lists = [], tasksSave = [], listDelete = null;
+			for(let list of this.data.lists)
+				list.title === e.detail.listTitle? listDelete = list: lists.push(list);
 			for(let task of this.data.tasks) {
-				if(task.list.title === data.listTitle)
-					task.delete = true;
+				if(task.list.title === e.detail.listTitle) {
+					task.list = {
+						icon: "/src/image/menu-self-list0.svg",
+						title: "个人清单"
+					};
+					tasksSave.push(task);
+				}
 				tasks.push(task);
 			}
-			for(let list of this.data.lists) {
-				console.log(list.title, data.listTitle)
-				if(list.title === data.listTitle)
-					continue;
-				lists.push(list);
-			}
+			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			await store.saveTasksToSql(tasksSave, lists, {owner, token});
+			await util.myRequest({
+				url: listDelete.urlSql,
+				header: { Authorization: 'Token ' + token },
+				method: 'DELETE'
+			})
 			this.setData({
 				tasks: tasks,
 				lists: lists
 			});
+			wx.setStorageSync('tasks', JSON.stringify(tasks));
+			wx.setStorageSync('lists', JSON.stringify(lists));
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: '已完成',
+						duration: 800
+					})
+				},
+			})
 		},
 		// 导航到“添加清单”页面
 		handleNavigateToAddList: function(e) {
-			let _this = this;
 			wx.navigateTo({
-				url: '/src/pages/add-self-list/add-self-list',
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
-				}
+				url: '/src/pages/add-self-list/add-self-list'
 			})
 		},
 		// 导航到“已完成”页面
 		handleNavigateToFinished: function(e) {
-			let _this = this;
-			let tasks = this.data.tasks.filter(function(item) {
-				return item.finish && !item.delete;
-			})
 			wx.navigateTo({
-				url: '/src/pages/list/list?tasks=' + JSON.stringify(tasks)
-					+ "&pageName=" + JSON.stringify("已完成"),
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
-				}
+				url: '/src/pages/list/list?pageName=' + JSON.stringify('已完成')
 			});
 		},
 		// 导航到“过期 / 删除任务”页面
 		handleNavigateToBeforeAndDelete: function(e) {
-			let _this = this;
-			let todayDate = util.getDawn(0);
-			let tasks = this.data.tasks.filter(function(item) {
-				return item.date.localeCompare(todayDate) < 0
-					|| item.delete;
-			})
 			wx.navigateTo({
-				url: '/src/pages/list/list?tasks=' + JSON.stringify(tasks)
-					+ "&pageName=" + JSON.stringify("过期 / 删除任务")
-					+ "&disabled=" + JSON.stringify(true),
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
-				}
+				url: '/src/pages/list/list?pageName=' + JSON.stringify('过期 / 删除任务')
+					+ "&disabled=" + JSON.stringify(true)
 			})
 		},
 		// 导航到“我的分享”页面
@@ -340,8 +309,13 @@ Component({
 			})
 		},
 		// 保存输入框信息
-		handleEnsureFeeling: function() {
-			let index, task;
+		handleEnsureFeeling: async function() {
+			wx.showLoading({
+				title: '正在保存数据...',
+				mask: true
+			})
+			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			let index, task = null;
 			for(let i = 0; i < this.data.tasks.length; i++)
 				if(this.data.tasks[i].id === this._selectedId) {
 					index = i;
@@ -350,55 +324,47 @@ Component({
 				}
 			task.feeling = this.data.feeling;
 			task.rating = this.data.rating;
+			await store.saveTasksToSql([task], this.data.lists, {owner, token});
 			let key = `tasks[${index}]`;
 			this.setData({
 				[key]: task,
 				feeling: task.feeling,
 				showFeeling: false
 			});
-			this._saveAllDataToLocal();
+			wx.setStorageSync('tasks', JSON.stringify(this.data.tasks));
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: '已完成',
+						duration: 800
+					})
+				},
+			})
 		},
 		// 从本地获取全部数据
 		_getAllDataFromLocal: function() {
 			// 获取任务
-			let tasks = JSON.parse(wx.getStorageSync('tasks') || JSON.stringify([]));
+			let tasks = JSON.parse(wx.getStorageSync('tasks'));
 			// 获取清单
-			let lists = JSON.parse(wx.getStorageSync('lists') || JSON.stringify([
-				{ title: "个人清单", icon: "/src/image/menu-self-list3.svg" },
-				{ title: "工作清单", icon: "/src/image/menu-self-list4.svg" }
-			]));
+			let lists = JSON.parse(wx.getStorageSync('lists'));
 			// 用户昵称
-			let signText = JSON.parse(wx.getStorageSync('signText') || JSON.stringify("好好学习 天天向上"));
+			let signText = JSON.parse(wx.getStorageSync('signText'));
 			this.setData({
 				tasks: tasks,
 				lists: lists,
-				signText: signText,
-				rawTasks: tasks,
-				rawLists: lists,
-				rawSignText: signText
+				signText: signText
 			});
-			this.token = JSON.parse(wx.getStorageSync('token'));
-			this.owner = JSON.parse(wx.getStorageSync('owner'));
-		},
-		// 保存数据到本地
-		_saveAllDataToLocal: function() {
-			wx.setStorageSync('tasks', JSON.stringify(this.data.tasks));
-			wx.setStorageSync('lists', JSON.stringify(this.data.lists));
-			wx.setStorageSync('uniqueId', JSON.stringify(util.getUniqueId()));
+			console.log(this.data);	
 		},
 		// 拉取并设置数据
 		onLoad: function() {
 			// 设置机型相关信息
-			let app = getApp();
 			this.setData({
 				navHeight: app.globalData.navHeight,
 				navTop: app.globalData.navTop,
 				windowHeight: app.globalData.windowHeight,
 				windowWidth: app.globalData.windowWidth
 			});
-			this._getAllDataFromLocal();
-			// 为 util 设置 uniqueId
-			util.setUniqueId(JSON.parse(wx.getStorageSync('uniqueId') || JSON.stringify(10000)));
 		}
 	},
 
@@ -407,11 +373,8 @@ Component({
 	 */
 	pageLifetimes: {
 		show: function() {
-			// 如果是通过 switchbar 过来的，读取数据
-			if(this.getTabBar().data.selected !== 1) 
-				this._getAllDataFromLocal();
-			// 非 switchbar 过来的，且不是一打开触发的，保存数据到本地
-			else this._saveAllDataToLocal();
+			// 保存数据
+			this._getAllDataFromLocal();
 			// 切换 tabbar 时候显示该页面
 			this.getTabBar().setData({
 				selected: 1

@@ -1,6 +1,8 @@
 const computedBehavior = require("miniprogram-computed").behavior;
 const util = require("../../utils/util");
-// const app = getApp();
+const store = require("../../store/store");
+const app = getApp();
+
 Component({
 	behaviors: [computedBehavior],
 	/**
@@ -83,25 +85,43 @@ Component({
 			});
 		},
 		// 修改个性签名
-		handleSignTextEnsure: function(e) {
+		handleSignTextEnsure: async function(e) {
+			wx.showLoading({
+				title: '正在保存数据...',
+				mask: true
+			})
 			this.setData({
 				signText: e.detail.signText
 			});
-			console.log(this.data.signText)
 			wx.setStorageSync('signText', JSON.stringify(e.detail.signText));
-			// let _this = this, appData = getApp().globalData;
-			// util.myRequest({
-			// 	url: JSON.parse(wx.getStorageSync('signTextUrl')),
-			// 	method: "PUT",
-			// 	header: { Authorization: 'Token ' + _this.token },
-			// 	data: {
-			// 		signText: e.detail.signText,
-			// 		owner: appData.loginUrl + 'user/' + _this.owner + '/'
-			// 	}
-			// })
+			let {token, owner} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			let signTextSql = await store.getDataFromSqlByUrl(app.globalData.url + 'check/sign/', {owner, token});
+			signTextSql = signTextSql[0];
+			util.myRequest({
+				url: signTextSql.url,
+				header: { Authorization: "Token " + token },
+				method: "PUT",
+				data: {
+					signText: signTextSql.signText,
+					owner: app.globalData.url + 'login/user/' + owner + '/'
+				}
+			})
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: '已完成',
+						duration: 800
+					})
+				},
+			})
 		},
 		// 控制任务的完成与否
-		handleTaskFinish: function(e) {
+		handleTaskFinish: async function(e) {
+			wx.showLoading({
+				title: '正在保存数据...',
+				mask: true
+			})
+			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
 			// 修改 finish
 			let tasks = [];
 			for(let item of this.data.tasks) {
@@ -109,206 +129,116 @@ Component({
 					item.finish = !item.finish;
 					if(item.finish)
 						item.finishDate = util.formatDate(new Date());
+					await store.saveTasksToSql([item], this.data.lists, {owner, token});
 				}
 				tasks.push(item);
 			}
 			this.setData({
 				tasks: tasks
 			});
-			this._saveAllDataToLocal();
+			wx.setStorageSync('tasks', JSON.stringify(tasks));
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: '已完成',
+						duration: 800
+					})
+				},
+			})
 		},
 		// 新增任务
 		addTask: function(e) {
-			let task = {
-				id: util.getUniqueId(),
-				priority: 0,
-				repeat: 0,
-				date: util.formatDate(new Date()),
-				remind: 0,
-				finish: false,
-				content: "",	
-				desc: "",
-				list: { title: "个人清单", icon: "/src/image/menu-self-list3.svg" },
-				delete: false,
-				rating: 1,
-				feeling: '',
-				finishDate: util.formatDate(new Date())
-			};
-			let lists = this.data.lists || JSON.parse(wx.getStorageSync('lists'));
-			let _this = this;
 			wx.navigateTo({
-				url: '/src/pages/editor/editor?task=' + JSON.stringify(task)
-					+ "&lists=" + JSON.stringify(lists),
-				events: {
-					// 编辑页面完成编辑后，触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
-				}
-			});
-		},
-		// 删除任务
-		handleDeleteTask: function(e) {
-			let id = e.currentTarget.dataset.id;
-			for(let task of this.data.tasks)
-				if(task.id === id) {
-					task.delete = true;
-					break;
-				}
-			this.setData({
-				tasks: this.data.tasks
+				url: '/src/pages/editor/editor'
 			});
 		},
 		// 跳转编辑任务
 		handleEditor: function(e) {
-			let task;
-			for(let item of this.data.tasks) {
-				if(item.id === e.currentTarget.dataset.id) {
-					task = item;
-					break;
-				}
-			}
-			let lists = this.data.lists || JSON.parse(wx.getStorageSync('lists'));
-			let _this = this;
+			let taskId = e.currentTarget.dataset.id;
 			wx.navigateTo({
-				url: '/src/pages/editor/editor?task=' + JSON.stringify(task)
-					+ "&lists=" + JSON.stringify(lists)
-					+ "&isEditorTask=" + JSON.stringify(true),
-				events: {
-					// 编辑页面完成编辑后，触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
-				}
+				url: '/src/pages/editor/editor?taskId=' + JSON.stringify(taskId)
+					+ "&isEditorTask=" + JSON.stringify(true)
 			})
 		},
 		// 导航到“今日待办”页面
 		handleNavigateToToday: function(e) {
-			let _this = this;
-			let tasks = this.data.todayTasks;
 			wx.navigateTo({
-				url: '/src/pages/list/list?tasks=' + JSON.stringify(tasks)
-					+ "&pageName=" + JSON.stringify("今日待办"),
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
-				}
+				url: '/src/pages/list/list?pageName=' + JSON.stringify('今日待办')
 			});
 		},
 		// 导航到“将来做”页面
 		handleNavigateToFuture: function(e) {
-			let _this = this;
-			let tasks = this.data.futureTasks;
 			wx.navigateTo({
-				url: '/src/pages/list/list?tasks=' + JSON.stringify(tasks)
-					+ "&pageName=" + JSON.stringify("将来做"),
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
-				}
+				url: '/src/pages/list/list?pageName=' + JSON.stringify('将来做')
 			})
 		},
 		// 导航到“各类清单”页面
 		handleNavigateToList: function(e) {
-			let _this = this;
-			let tasks = this.data.tasks.filter(function(item) {
-				return item.list.title === e.detail.title
-					&& !item.finish
-					&& !item.delete;
-			})
 			// 不允许删除默认清单
 			let isDelete = e.detail.title !== "个人清单" && e.detail.title !== "工作清单";
 			wx.navigateTo({
-				url: '/src/pages/list/list?tasks=' + JSON.stringify(tasks)
-					+ "&pageName=" + JSON.stringify(e.detail.title)
-					+ "&isDelete=" + JSON.stringify(isDelete),
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); },
-					// 删除清单
-					_handleDeleteList: (data) => {
-						console.log(data)
-						let tasks = [], lists = [];
-						for(let list of this.data.lists) {
-							if(list.title === data.pageName)
-								continue;
-							lists.push(list);
-						}
-						for(let task of this.data.tasks) {
-							if(task.list.title === data.pageName)
-								task.list = {
-									icon: "/src/image/menu-self-list0.svg",
-									title: "个人清单"
-								};
-							tasks.push(task);
-						}
-						this.setData({
-							tasks: tasks,
-							lists: lists
-						});
-					}
-				}
+				url: '/src/pages/list/list?pageName=' + JSON.stringify(e.detail.title)
+					+ "&isDelete=" + JSON.stringify(isDelete)
 			})
 		},
 		// 删除清单
-		handleDeleteList: function(e) {
-			let tasks = [], lists = [], data = e.detail;
-			for(let list of this.data.lists) {
-				if(list.title === data.listTitle)
-					continue;
-				lists.push(list);
-			}
+		handleDeleteList: async function(e) {
+			wx.showLoading({
+				title: '正在保存数据...',
+				mask: true
+			})
+			let tasks = [], lists = [], tasksSave = [], listDelete = null;
+			for(let list of this.data.lists)
+				list.title === e.detail.listTitle? listDelete = list: lists.push(list);
 			for(let task of this.data.tasks) {
-				if(task.list.title === data.listTitle)
+				if(task.list.title === e.detail.listTitle) {
 					task.list = {
 						icon: "/src/image/menu-self-list0.svg",
 						title: "个人清单"
 					};
+					tasksSave.push(task);
+				}
 				tasks.push(task);
 			}
+			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			await store.saveTasksToSql(tasksSave, lists, {owner, token});
+			await util.myRequest({
+				url: listDelete.urlSql,
+				header: { Authorization: 'Token ' + token },
+				method: 'DELETE'
+			})
 			this.setData({
 				tasks: tasks,
 				lists: lists
 			});
+			wx.setStorageSync('tasks', JSON.stringify(tasks));
+			wx.setStorageSync('lists', JSON.stringify(lists));
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: '已完成',
+						duration: 800
+					})
+				},
+			})
 		},
 		// 导航到“添加清单”页面
 		handleNavigateToAddList: function(e) {
-			let _this = this;
 			wx.navigateTo({
-				url: '/src/pages/add-self-list/add-self-list',
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
-				}
+				url: '/src/pages/add-self-list/add-self-list'
 			})
 		},
 		// 导航到“已完成”页面
 		handleNavigateToFinished: function(e) {
-			let _this = this;
-			let tasks = this.data.tasks.filter(function(item) {
-				return item.finish && !item.delete;
-			})
 			wx.navigateTo({
-				url: '/src/pages/list/list?tasks=' + JSON.stringify(tasks)
-					+ "&pageName=" + JSON.stringify("已完成"),
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
-				}
+				url: '/src/pages/list/list?pageName=' + JSON.stringify('已完成')
 			});
 		},
 		// 导航到“过期 / 删除任务”页面
 		handleNavigateToBeforeAndDelete: function(e) {
-			let _this = this;
-			let todayDate = util.getDawn(0);
-			let tasks = this.data.tasks.filter(function(item) {
-				return item.date.localeCompare(todayDate) < 0
-					|| item.delete;
-			});
 			wx.navigateTo({
-				url: '/src/pages/list/list?tasks=' + JSON.stringify(tasks)
-					+ "&pageName=" + JSON.stringify("过期 / 删除任务")
-					+ "&disabled=" + JSON.stringify(true),
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { util._handleSaveData(_this, data); }
-				}
+				url: '/src/pages/list/list?pageName=' + JSON.stringify('过期 / 删除任务')
+					+ "&disabled=" + JSON.stringify(true)
 			})
 		},
 		// 导航到“我的分享”页面
@@ -321,262 +251,196 @@ Component({
 		// 从本地获取全部数据
 		_getAllDataFromLocal: function() {
 			// 获取任务
-			let tasks = JSON.parse(wx.getStorageSync('tasks') || JSON.stringify([]));
+			let tasks = JSON.parse(wx.getStorageSync('tasks'));
 			// 获取清单
-			let lists = JSON.parse(wx.getStorageSync('lists') || JSON.stringify([
-				{ title: "个人清单", icon: "/src/image/menu-self-list3.svg" },
-				{ title: "工作清单", icon: "/src/image/menu-self-list4.svg" }
-			]));
+			let lists = JSON.parse(wx.getStorageSync('lists'));
 			// 用户昵称
-			let signText = JSON.parse(wx.getStorageSync('signText') || JSON.stringify("好好学习 天天向上"));
+			let signText = JSON.parse(wx.getStorageSync('signText'));
 			this.setData({
 				tasks: tasks,
 				lists: lists,
-				signText: signText,
-				rawTasks: tasks,
-				rawLists: lists,
-				rawSignText: signText
+				signText: signText
 			});
-			this.token = JSON.parse(wx.getStorageSync('token'));
-			this.owner = JSON.parse(wx.getStorageSync('owner'));
+			console.log(this.data);	
 		},
 		// 保存数据到本地
 		_saveAllDataToLocal: function() {
 			wx.setStorageSync('tasks', JSON.stringify(this.data.tasks));
 			wx.setStorageSync('lists', JSON.stringify(this.data.lists));
-			wx.setStorageSync('uniqueId', JSON.stringify(util.getUniqueId()));
-		},
-		// 保存数据到后端
-		_saveAllDataToSql: function() {
-			// 保存在后端
-			// 登录保证不过期
-			let token, owner, successListNum = 0, data = this.data, _this = this;
-			const url = getApp().globalData.url;
-			util.login(url + 'login/login/')
-			.then(res => {
-				token = res.data.token;
-      	owner = res.data.user_id;
-			})
-			.then(() => {
-				// 先删除后保存 lists
-				util.myRequest({
-					url: url + 'check/taglist/?owner=' + JSON.stringify(owner),
-					header: {token: token},
-					method: "GET"
-				}).then(res => {
-					// PUT 或 POST lists
-					// console.log(...res.data);
-					// for(let localList of _this.data.lists) {
-					// 	for(let remoteList of res.data) {
-					// 		// 修改
-					// 		if(remoteList.tag === localList.title) {
-
-					// 			break;
-					// 		}
-					// 	}
-					// }
-
-					// DELETE
-					res.data.forEach(function(item) {
-						util.myRequest({
-							url: item.url + "?owner=" + JSON.stringify(owner),
-							header: { Authorization: "Token " + token },
-							method: "DELETE"
-						}).then(res => console.log(res))
-					})
-				})
-				// 保存 lists
-				.then(() => {
-					data.lists.forEach(function(item) {
-						let list = {
-							tag: item.title,
-							icon: item.icon,
-							owner: url + 'login/user/' + owner + "/"
-						}
-						util.myRequest({
-							url: url + 'check/taglist/?owner=' + JSON.stringify(owner),
-							header: { Authorization: "Token " + token },
-							method: "POST",
-							data: list
-						})
-						.then(() => { successListNum++; })
-					})
-				});
-			})
-			// 先删除后保存 tasks
-			.then(() => {
-				util.myRequest({
-					url: url + 'check/check/?owner=' + JSON.stringify(owner),
-					header: { token: token },
-					method: "GET"
-				}).then(res => {
-					// 删除 tasks
-					res.data.forEach(function(item) {
-						util.myRequest({
-							url: item.url,
-							header: { Authorization: "Token " + token },
-							method: "DELETE"
-						}).then(res => console.log(res))
-					})
-				})
-				.then(() => {
-					let timeId = setInterval(() => {
-						// 当全部保存好后
-						if(successListNum === data.lists.length) {
-							clearInterval(timeId);
-							// 获取全部的 lists 的 url
-							util.myRequest({
-								url: url + 'check/taglist/?owner=' + JSON.stringify(owner),
-								header: { token: token },
-								method: "GET"
-							}).then(res => {
-								let listUrl = [], listTitle = [];
-								for(let item of res.data) {
-									listUrl.push(item.url);
-									listTitle.push(item.tag);
-								}
-								// 保存 tasks
-								data.tasks.forEach(function(item) {
-									// 根据 remind 和 e_time 得到 c_time
-									let div = [0, 60, 300, 600, 1800, 3600][item.remind] * 1000 + 8 * 60 * 60 * 1000;
-									let date = new Date();
-									date.setTime(new Date(item.date).getTime() - div);
-									let c_time = util.formatDate(date)
-									// 得到 list
-									let list = listUrl[listTitle.indexOf(item.list.title)];
-									let task = {
-										priority: item.priority,
-										repeat: item.repeat,
-										e_time: item.date,
-										c_time: c_time,
-										finish: item.finish? 1: 0,
-										text: item.content,
-										todo_desc: item.desc || "default",
-										tag: list,
-										todo_delete: item.delete? 1: 0,
-										star: item.rating,
-										star_text: item.feeling || "default",
-										owner: url + 'login/user/' + owner + "/",
-										fin_date: item.finishDate || util.formatDate(new Date())
-									}
-									util.myRequest({
-										url: url + 'check/check/?owner=' + JSON.stringify(owner),
-										header: { Authorization: "Token " + token },
-										method: "POST",
-										data: task
-									}).then(res => {console.log("post", res); wx.setStorageSync('tmp', JSON.stringify(res))})
-								})
-							})
-						}
-					}, 500);
-				})
-			})
-			.then(() => {
-				util.myRequest({
-					url: url + 'check/sign/?owner=' + JSON.stringify(owner),
-					header: { token: token },
-					method: "GET"
-				})
-				.then(res => {
-					console.log(res.data, res.data[0].owner)
-					util.myRequest({
-						url: res.data[0].url,
-						header: { Authorization: "Token " + token },
-						method: "PUT",
-						data: {
-							owner: res.data[0].owner,
-							signText: _this.data.signText
-						}
-					})
-					.then(res => console.log(res))
-				})
-			})
 		},
 		// 拉取并设置数据
-		onLoad: function() {
-			let _this = this;
-			// _this._saveAllDataToSql();
-			// 每 30s 向后端同步一次数据
-			setInterval(() => {
-				console.log(_this.data.tasks);
-				_this._getAllDataFromLocal();
-				_this._saveAllDataToSql();
-			}, 1000 * 30);
-			// 当请求好数据后保存数据
-			let timeId = setInterval(() => {
-				let success = 0;
-				if(typeof getApp === 'function' && getApp().globalData)
-					success = getApp().globalData.success;
-				if(success === 3) {
-					clearInterval(timeId);
-					this._getAllDataFromLocal();
-					// 设置机型相关信息
-					let app = getApp();
-					this.setData({
-						navHeight: app.globalData.navHeight,
-						navTop: app.globalData.navTop,
-						windowHeight: app.globalData.windowHeight,
-						windowWidth: app.globalData.windowWidth
+		onLoad: async function() {
+			let {token, owner} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			// console.log(token, owner);
+			// util.myRequest({
+			// 	url: app.globalData.url + 'check/check/?owner=' + JSON.stringify(owner),
+			// 	header: { Authorization: 'Token ' + token },
+			// 	method: 'POST',
+			// 	data:
+			// 		{"url":app.globalData.url + 'check/check/?owner=' + JSON.stringify(owner),
+			// 		"task_num":761,
+			// 		"repeat":0,
+			// 		"s_date":"2021-08-09",
+			// 		"c_time":"2021-08-09T02:07:20.468192Z",
+			// 		"e_time":"2021-08-09T10:05:32Z",
+			// 		"text":"UI重做",
+			// 		"priority":0,
+			// 		"finish":0,
+			// 		"fin_date":"2021-08-09T10:05:32Z",
+			// 		"star":1,
+			// 		"star_text":"default",
+			// 		"todo_delete":0,
+			// 		"todo_desc":"ui重做",
+			// 		"owner": app.globalData.url + 'login/user/' + owner + '/',
+			// 		"tag":app.globalData.url + "check/taglist/1/"
+			// 	}
+			// })
+			// .then(res => console.log(res));
+			// return;
+			// 从后端拉取数据
+			wx.showLoading({
+				title: '正在获取数据',
+				mask: true
+			})
+			// 请求 lists
+			let listsLocal = [];
+			let lists = util.formatListsFromSqlToLocal(await store.getDataFromSqlByUrl(app.globalData.url + 'check/taglist/', {owner, token}));
+			// 如果没有清单，则自动为其补充两个
+			if(!lists.length) {
+				lists = [
+					{ title: "个人清单", icon: "/src/image/menu-self-list0.svg" },
+          { title: "工作清单", icon: "/src/image/menu-self-list1.svg" }
+				];
+				util.formatListsFromLocalToSql(lists, {owner})
+				.forEach(async item => {
+					await util.myRequest({
+						url: app.globalData.url + 'check/taglist/?owner=' + JSON.stringify(owner),
+						header: { Authorization: "Token " + token },
+						method: "POST",
+						data: item
 					});
-					// 为 util 设置 uniqueId
-					util.setUniqueId(JSON.parse(wx.getStorageSync('uniqueId') || JSON.stringify(100000)));
-					// 如果存在一个今天会发生的重复任务，则修改该任务为非重复任务，并自动产生一个日期顺延的重复任务
-					// 如果以前完成了一个重复任务，不管其设置的日期是什么时候，同上处理
-					let res = [];
-					for(let task of this.data.tasks) {
-						if(task.delete || !task.repeat) {
-							res.push(task);
-							continue;
+				})
+				let listsSql = await store.getDataFromSqlByUrl(app.globalData.url + 'check/taglist/', {owner, token});
+				lists.forEach(listLocal => {
+					for(let listSql of listsSql)
+						if(listLocal.title == listSql.tag) {
+							listLocal.urlSql = listSql.url;
+							break;
 						}
-						// 每天重复
-						// 此处 oldDate 属于特殊处理，将本地时间转化为世界时间
-						let oldDate = new Date((new Date(task.date)).getTime() - 8 * 60 * 60 * 1000);
-						let addTime = [0, 1, 7, 30, 365][task.repeat] * 24 * 60 * 60 * 1000;
-						let oldDateYMD = util.formatDate(oldDate).substr(0, 10);
-						let todayYMD = util.getDawn(0).substr(0, 10);
-						console.log(task)
-						console.log(oldDate, oldDateYMD, todayYMD)
-						// 第一种情况，即一个过期的重复任务（无论是否完成）
-						if(oldDateYMD.localeCompare(todayYMD) < 0) {
-							let newTime = oldDate.getTime() + addTime;
-							let todayTime = (new Date(util.getDawn(0))).getTime();
-							do {
-								let tmpTask = JSON.parse(JSON.stringify(task));
-								tmpTask.id = util.getUniqueId();
-								tmpTask.date = util.formatDate(new Date(newTime));
-								tmpTask.finish = false;
-								tmpTask.desc = "";
-								tmpTask.rating = 1;
-								tmpTask.feeling = '';
-								tmpTask.repeat = 0; 
-								res.push(tmpTask);
-								newTime += addTime;
-							} while(newTime <= todayTime);
-							res[res.length - 1].repeat = task.repeat;
-							task.repeat = 0;
-						}
-						// 第二种情况，即一个完成的任务（走到这里肯定不是过期任务）
-						else if(task.finish && task.finishDate.localeCompare(util.getDawn(0)) >= 0) {
-							let newDate = new Date(oldDate.getTime() + addTime);
-							console.log(util.formatDate(newDate))
-							let tmpTask = JSON.parse(JSON.stringify(task));
-							tmpTask.id = util.getUniqueId();
-							tmpTask.date = util.formatDate(newDate);
-							tmpTask.finish = false;
-							tmpTask.desc = "";
-							tmpTask.rating = 1;
-							tmpTask.feeling = '';
-							res.push(tmpTask);
-							task.repeat = 0;
-						}
-						res.push(task);
-					}
-					this.setData({
-						tasks: res
-					})
-					wx.setStorageSync('tasks', JSON.stringify(res));
+				});
+			}
+			listsLocal = lists;
+
+			// 请求 tasks
+			let tasksLocal = util.formatTasksFromSqlToLocal(
+				await store.getDataFromSqlByUrl(app.globalData.url + 'check/check/', {owner, token}), 
+				listsLocal,
+				{owner, token}
+			);
+
+			// 设置 id
+			tasksLocal.forEach(item => util.setUniqueId(item.id));
+
+			// 如果存在一个今天会发生的重复任务，则修改该任务为非重复任务，并自动产生一个日期顺延的重复任务
+			// 如果以前完成了一个重复任务，不管其设置的日期是什么时候，同上处理
+			let res = [], tasksPost = [];
+			for(let task of tasksLocal) {
+				if(task.delete || !task.repeat) {
+					res.push(task);
+					continue;
 				}
-			}, 300);
+				// 每天重复
+				// 此处 oldDate 属于特殊处理，将本地时间转化为世界时间
+				let oldDate = new Date((new Date(task.date)).getTime() - 8 * 60 * 60 * 1000);
+				let addTime = [0, 1, 7, 30, 365][task.repeat] * 24 * 60 * 60 * 1000;
+				let oldDateYMD = util.formatDate(oldDate).substr(0, 10);
+				let todayYMD = util.getDawn(0).substr(0, 10);
+				// 第一种情况，即一个过期的重复任务（无论是否完成）
+				if(oldDateYMD.localeCompare(todayYMD) < 0) {
+					let newTime = oldDate.getTime() + addTime;
+					let tomorrowTime = (new Date(util.getDawn(1))).getTime();
+					do {
+						let tmpTask = JSON.parse(JSON.stringify(task));
+						tmpTask.id = util.getUniqueId();
+						tmpTask.date = util.formatDate(new Date(newTime));
+						tmpTask.finish = false;
+						tmpTask.desc = "";
+						tmpTask.rating = 1;
+						tmpTask.feeling = '';
+						tmpTask.repeat = 0;
+						delete tmpTask.urlSql;
+						res.push(tmpTask);
+						tasksPost.push(tmpTask);
+						newTime += addTime;
+					} while(newTime < tomorrowTime);
+					res[res.length - 1].repeat = task.repeat;
+					task.repeat = 0;
+					tasksPost.push(task);
+				}
+				// 第二种情况，即一个完成的任务（走到这里肯定不是过期任务）
+				else if(task.finish && task.finishDate.localeCompare(util.getDawn(0)) >= 0) {
+					let newDate = new Date(oldDate.getTime() + addTime);
+					let tmpTask = JSON.parse(JSON.stringify(task));
+					tmpTask.id = util.getUniqueId();
+					tmpTask.date = util.formatDate(newDate);
+					tmpTask.finish = false;
+					tmpTask.desc = "";
+					tmpTask.rating = 1;
+					tmpTask.feeling = '';
+					delete tmpTask.urlSql;
+					res.push(tmpTask);
+					tasksPost.push(tmpTask);
+					task.repeat = 0;
+					tasksPost.push(task);
+				}
+				res.push(task);
+			}
+			// post 修改和增加过的数据
+			await store.saveTasksToSql(tasksPost, listsLocal, {owner, token});
+			tasksLocal = res;
+
+			// 请求 signText
+			let signTextLocal = "好好学习 天天向上";
+			let signText = await store.getDataFromSqlByUrl(app.globalData.url + 'check/sign/', {owner, token});
+			if(signText.length) 
+				signTextLocal = signText[0].signText;
+			else {
+				signText = '好好学习 天天向上';
+				util.myRequest({
+					url: app.globalData.url + 'check/sign/?owner=' + JSON.stringify(owner),
+					header: { Authorization: "Token " + token },
+					method: "POST",
+					data: {
+						signText: signText,
+						owner: app.globalData.url + 'login/user/' + owner + "/"
+					}
+				});
+			}
+
+			// 设置机型相关信息
+			let {navHeight, navTop, windowHeight, windowWidth} = app.globalData;
+			
+			this.setData({
+				tasks: tasksLocal,
+				lists: listsLocal,
+				signText: signTextLocal,
+				navHeight,
+				navTop,
+				windowHeight,
+				windowWidth
+			})
+			this._saveAllDataToLocal();
+			console.log(this.data.tasks);
+
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: '成功',
+						icon: 'success',
+						duration: 800
+					})
+				},
+			})
 		},
 	},
 
@@ -593,7 +457,7 @@ Component({
 			else {
 				if(!this._tmpflag)
 					this._tmpflag = true;
-				else this._saveAllDataToLocal();
+				else this._getAllDataFromLocal();
 			}
 			// 切换 tabbar 时候显示该页面
 			this.getTabBar().setData({

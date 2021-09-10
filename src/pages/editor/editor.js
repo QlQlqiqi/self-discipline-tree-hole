@@ -1,5 +1,7 @@
 const computedBehavior = require("miniprogram-computed").behavior;
+const app = getApp();
 const util = require("../../utils/util");
+const store = require('../../store/store');
 Component({
 	behaviors: [computedBehavior],
 	/**
@@ -32,12 +34,12 @@ Component({
 
 	watch: {
 		"task.date": function(date) {
+			console.log(this.data.task, this.data)
 			if(this.data.task.date.localeCompare(this.data.startDate) < 0
 			|| this.data.task.date.localeCompare(this.data.endDate) > 0) {
-				let val = {...this.data.task};
-				val.date = date;
+				this.data.task.date = date;
 				this.setData({
-					task: val
+					task: this.data.task
 				});
 			}
 		}
@@ -48,38 +50,51 @@ Component({
 	 */
 	methods: {
 		onLoad: function(options) {
-			// 设置机型相关信息
-			let app = getApp();
+			let tasks = JSON.parse(wx.getStorageSync('tasks')), lists = JSON.parse(wx.getStorageSync('lists'));
+			let task = JSON.parse(options.task || JSON.stringify({
+				id: util.getUniqueId(),
+				priority: 0,
+				repeat: 0,
+				date: util.formatDate(new Date()),
+				remind: 0,
+				finish: false,
+				content: "",	
+				desc: "",
+				list: { title: "个人清单", icon: "/src/image/menu-self-list0.svg" },
+				delete: false,
+				rating: 1,
+				feeling: '',
+				finishDate: util.formatDate(new Date())
+			}));
+			let taskId = JSON.parse(options.taskId || JSON.stringify(false));
+			let isEditorTask = JSON.parse(options.isEditorTask || JSON.stringify(false));
+			// 如果是新建任务
+			if(!isEditorTask) {
+				tasks = util.mergeById(tasks, task);
+			}
+			else {
+				for(let tmp of tasks) {
+					if(tmp.id === taskId) {
+						task = tmp;
+						break;
+					}
+				}
+			}
+			// 清单种类
+			let listRange = lists.map(item => item.title);
 			this.setData({
+				tasks: tasks,
+				task: task,
+				lists: lists,
+				listRange: listRange,
+				startDate: util.formatDate(new Date()),
+				selectIndex: listRange.indexOf(task.list.title),
+				isEditorTask: isEditorTask,
 				navHeight: app.globalData.navHeight,
 				navTop: app.globalData.navTop,
 				windowHeight: app.globalData.windowHeight,
 				windowWidth: app.globalData.windowWidth
 			});
-			// 任务
-			let task = JSON.parse(options.task);
-			let rawTask = JSON.parse(options.task);
-			// 提醒种类
-			let remindRange = options.remindRange
-				? JSON.parse(options.remindRange)
-				: ["不提醒", "提前1分钟", "提前5分钟", "提前10分钟", "提前30分钟", "提前1小时"];
-			// 清单种类
-			let listRange = [];
-			for(let list of JSON.parse(options.lists)) {
-				listRange.push(list.title);
-			}
-			// 是否是任务编辑
-			let isEditorTask = JSON.parse(options.isEditorTask || JSON.stringify(false));
-			this.setData({
-				task: task,
-				rawTask: rawTask,
-				remindRange: remindRange,
-				listRange: listRange,
-				startDate: util.formatDate(new Date()),
-				selectIndex: listRange.indexOf(task.list.title),
-				isEditorTask: isEditorTask
-			});
-			console.log(this.data)
 		},
 		// 控制页面回退
 		handleBack: function() {
@@ -87,10 +102,9 @@ Component({
 		},
 		// 清单选择器改变时
 		bindlistPickerChange: function(e) {
-			let val = {...this.data.task};
-			val.list.title = this.data.listRange[e.detail.value];
+			this.data.task.list.title = this.data.listRange[e.detail.value];
 			this.setData({
-				task: val,
+				task: this.data.task,
 				selectIndex: e.detail.value
 			});
 		},
@@ -103,35 +117,25 @@ Component({
 		},
 		// 优先级选择器改变时
 		handleSelectPriority: function(e) {
-			let index = e.currentTarget.dataset.index;
-			// let priority = this.data.priorityRange[index];
-			let val = {...this.data.task};
-			val.priority = index;
+			this.data.task.priority = e.currentTarget.dataset.index;
 			this.setData({
-				task: val,
-				// priorityIndex: index,
+				task: this.data.task,
 				showPriority: false
 			});
 		},
 		// 重复选择器改变时
 		handleRepeatPickerChange: function(e) {
-			let val = {...this.data.task};
-			val.repeat = e.detail.value;
+			this.data.task.repeat = e.detail.value;
 			this.setData({
-				task: val
+				task: this.data.task
 			});
 		},
 		// 日期选择器改变时
 		handleChangeTime: function(e) {
-			console.log(e.detail)
-			let time = e.detail.time.split(' ');
-			let val = {...this.data.task};
-			val.date = time[0];
-			val.time = time[1];
+			this.data.task.date = e.detail.time;
 			this.setData({
-				task: val
+				task: this.data.task
 			});
-			console.log(this.data.task)
 		},
 		// 控制任务的完成与否
 		handleTaskFinish: function(e) {
@@ -142,34 +146,46 @@ Component({
 			this.setData({
 				task: task
 			});
-			console.log(this.data.task)
 		},
-		// 删除任务，并触发 _handleSaveData 事件，返回上一个页面
+		// 删除任务，保存数据并返回上一个页面
 		handleDelete: function(e) {
+			// 如果是新增任务，则直接返回
+			if(!this.data.isEditorTask) {
+				this.handleBack();
+				return;
+			}
 			let task = this.data.task;
 			task.delete = true;
-			const eventChannel = this.getOpenerEventChannel();
-			eventChannel.emit("_handleSaveData", {
-				tasks: [task]
-			});
-			wx.navigateBack()
+			this.handleEnsure();
 		},
-		// 点击完成，检查数据是否合法，并触发 _handleSaveData 事件，返回上一个页面
-		handleEnsure: function() {
-			if(!this.data.task.content.length) {
+		// 点击完成，检查数据是否合法，保存数据，并返回上一个页面
+		handleEnsure: async function() {
+			let {tasks, task} = this.data;
+			if(!task.content.length) {
 				this.setData({
 					errorDialogMsg: "任务内容不得为空",
 					showErrorDialog: true
 				});
 				return;
 			}
-			// 触发事件并回退上一个页面
-			const eventChannel = this.getOpenerEventChannel();
-			console.log(this.data.task)
-			eventChannel.emit("_handleSaveData", {
-				tasks: [this.data.task]
-			});
-			wx.navigateBack();
+			// 保存数据
+			wx.showLoading({
+				title: '正在保存数据...',
+				mask: true
+			})
+			tasks = util.mergeById(tasks, [task]);
+			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			await store.saveTasksToSql([task], this.data.lists, {owner, token});
+			wx.setStorageSync('tasks', JSON.stringify(tasks));
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: '已完成',
+						duration: 800
+					})
+				},
+			})
+			this.handleBack();
 		},
 		// 关闭弹窗
 		dialogClose: function(e) {
@@ -179,38 +195,17 @@ Component({
 		},
 		// 任务内容绑定输入
 		contentInput: function(e) {
-			let task = this.data.task;
-			task.content = e.detail.value;
+			this.data.task.content = e.detail.value;
 			this.setData({
-				task: task
+				task: this.data.task
 			})
 		},
 		// 描述说明绑定输入
 		descInput: function(e) {
-			let task = this.data.task;
-			task.desc = e.detail.value;
+			this.data.task.desc = e.detail.value;
 			this.setData({
-				task: task
+				task: this.data.task
 			})
 		}
-	},
-	
-	/**
-	 * 组件生命周期
-	 */
-	lifetimes: {
-		attached: function() {
-			
-		}
-	},
-
-	/**
-	 * 页面生命周期
-	 */
-	pageLifetimes: {
-		show: function() {
-			
-		}
-		
 	}
 })

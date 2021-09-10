@@ -1,4 +1,6 @@
+const app = getApp();
 const util = require("../../utils/util");
+const store = require('../../store/store');
 Component({
 	/**
 	 * 组件的属性列表
@@ -29,23 +31,46 @@ Component({
 	 * 组件的方法列表
 	 */
 	methods: {
-		// 检查输入名是否合法，然后保存数据到本地
-		ensure: function() {
+		// 检查输入名是否合法，然后保存数据
+		ensure: async function() {
 			if(!this.data.listTitle.length) {
 				this.setData({
 					show: true
 				});
 				return;
 			}
-			// 触发事件并回退上一个页面
-			const eventChannel = this.getOpenerEventChannel();
-			eventChannel.emit("_handleSaveData", {
-				lists: [{ 
-					title: this.data.listTitle, 
-					icon: this.properties.listIcon[this.data.selectedIcon] 
-				}]
+			wx.showLoading({
+				title: '正在保存数据...',
+				mask: true
+			})
+			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			let list = {
+				title: this.data.listTitle, 
+				icon: this.properties.listIcon[this.data.selectedIcon] 
+			}
+			await util.myRequest({
+				url: app.globalData.url + 'check/taglist/?owner=' + JSON.stringify(owner),
+				header: { Authorization: "Token " + token },
+				method: "POST",
+				data: util.formatListsFromLocalToSql([list], {owner})[0]
 			});
-			wx.navigateBack()
+			(await store.getDataFromSqlByUrl(app.globalData.url + 'check/taglist/', {owner, token}))
+			.forEach(listSql => {
+				if(listSql.tag === list.title)
+					list.urlSql = listSql.url;
+			})
+			let lists = JSON.parse(wx.getStorageSync('lists'));
+			lists.push(list);
+			wx.setStorageSync('lists', JSON.stringify(lists));
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: '已完成',
+						duration: 800
+					})
+				},
+			})
+			this.handleBack()
 		},
 		dialogClose: function() {
 			this.setData({
@@ -73,7 +98,6 @@ Component({
 				windowHeight: app.globalData.windowHeight,
 				windowWidth: app.globalData.windowWidth
 			});
-		},
-		onUnload: function() {}
+		}
 	}
 })

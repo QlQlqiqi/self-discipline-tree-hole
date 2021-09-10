@@ -81,7 +81,6 @@ Component({
 		// 显示日期
 		_showDate: function() {
 			let showDate = util.dateInToOut(this.properties.date);
-			console.log(showDate)
 			this.setData({
 				showDate: showDate
 			})

@@ -1,4 +1,5 @@
 const computedBehavior = require('miniprogram-computed').behavior;
+let app = getApp();
 const util = require("../../utils/util")
 Component({
 	behaviors: [computedBehavior],
@@ -148,23 +149,17 @@ Component({
 		},
 		// 处理数据
 		onLoad: function(options) {
-			// 设置机型相关信息
-			let app = getApp();
+			// 默认时间
+			let date = new Date();
+			let defaultTime =  `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
 			this.setData({
+				tasks: JSON.parse(wx.getStorageSync('tasks')),
+				defaultTime: defaultTime,
 				navHeight: app.globalData.navHeight,
 				navTop: app.globalData.navTop,
 				windowHeight: app.globalData.windowHeight,
 				windowWidth: app.globalData.windowWidth
 			});
-			// 任务
-			let tasks = JSON.parse(options.tasks || JSON.stringify([]));
-			// 默认时间
-			let date = new Date();
-			let defaultTime =  `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
-			this.setData({
-				tasks: tasks,
-				defaultTime: defaultTime
-			})
 		}
 	},
 })

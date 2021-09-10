@@ -1,5 +1,7 @@
 const computedBehavior = require("miniprogram-computed").behavior;
+const app = getApp();
 const util = require("../../utils/util");
+const store = require('../../store/store');
 Component({
 	behaviors: [computedBehavior],
 	/**
@@ -22,9 +24,36 @@ Component({
 
 	computed: {
 		showTasks: function(data) {
-			let res = data.tasks.filter(function(item) {
-				return (!item.delete || data.pageName === "过期 / 删除任务");
-			});
+			let todayDate = util.getDawn(0), tomorrowDate = util.getDawn(1);
+			let res = [];
+			// 过期 / 删除任务
+			if(data.pageName === '过期 / 删除任务')
+				res = data.tasks.filter(item => item.date.localeCompare(todayDate) < 0 || item.delete);
+			// 今日待办
+			else if(data.pageName === '今日待办')
+				res = data.tasks.filter(item => 
+					item.date.localeCompare(tomorrowDate) < 0 
+					&& item.date.localeCompare(todayDate) >= 0
+					&& !item.delete
+				);
+			// 将来做
+			else if(data.pageName === '将来做')
+				res = data.tasks.filter(item => 
+					item.date.localeCompare(tomorrowDate) >= 0 
+					&& !item.delete
+				);
+			// 已完成
+			else if(data.pageName === '已完成')
+				res = data.tasks.filter(item => 
+					item.finish
+					&& !item.delete
+				);
+			// 各种清单
+			else 
+				res = data.tasks.filter(item => 
+					!item.list.title.localeCompare(data.pageName)
+					&& !item.delete
+				);
 			res.sort((a, b) => a.date.localeCompare(b.date) );
 			return res;
 		}
@@ -35,45 +64,19 @@ Component({
 	methods: {
 		// 获取数据
 		onLoad: function(options) {
-			// 设置机型相关信息
-			let app = getApp();
 			this.setData({
 				navHeight: app.globalData.navHeight,
 				navTop: app.globalData.navTop,
 				windowHeight: app.globalData.windowHeight,
 				windowWidth: app.globalData.windowWidth,
-				tasks: JSON.parse(options.tasks || JSON.stringify([])),
-				pageName: JSON.parse(options.pageName || JSON.stringify("")),
+				pageName: JSON.parse(options.pageName || JSON.stringify("$")),
 				isDelete: JSON.parse(options.isDelete || JSON.stringify(false)),
-				disabled: JSON.parse(options.disabled || JSON.stringify(false)),
-				rawTasks: JSON.parse(options.tasks || JSON.stringify([])),
-				rawPageName: JSON.parse(options.pageName || JSON.stringify(""))
+				disabled: JSON.parse(options.disabled || JSON.stringify(false))
 			});
 		},
-		// 返回上一页面，如果修改过数据，则弹窗询问是否保存数据
+		// 返回上一页面
 		handleBack: function() {
-			if(this.data.editor) {
-				this.setData({
-					showDialog: true,
-					dialogMsg: "是否保存数据？",
-					editor: false
-				});
-				// 确定
-				this._handleDialogDefine = function(_this) {
-					this.getOpenerEventChannel().emit("_handleSaveData", {
-						tasks: this.data.tasks
-					})
-					wx.navigateBack();
-					delete _this._handleDialogDefine;
-				}
-				// 取消
-				this._handleDialogCancel = function(_this) {
-					wx.navigateBack();
-					delete _this._handleDialogCancel;
-				}
-			}
-			else wx.navigateBack();
-			console.log(this.data)
+			wx.navigateBack();
 		},
 		// 新增任务
 		addTask: function(e) {
@@ -86,7 +89,7 @@ Component({
 				finish: false,
 				content: "",
 				desc: "",
-				list: { title: "个人清单", icon: "/src/image/menu-self-list3.svg" },
+				list: { title: "个人清单", icon: "/src/image/menu-self-list0.svg" },
 				delete: false,
 				rating: 1,
 				feeling: '',
@@ -98,64 +101,26 @@ Component({
 				if(list.title === this.data.pageName) 
 					task.list = list;
 			}
-			let _this = this;
 			wx.navigateTo({
-				url: '/src/pages/editor/editor?task=' + JSON.stringify(task)
-					+ "&lists=" + JSON.stringify(lists),
-				events: {
-					// 触发事件保存数据
-					_handleSaveData: (data) => { 
-						util._handleSaveData(_this, data);
-						this.setData({
-							editor: true
-						});
-					}
-				}
-			});
-			
-		},
-		// 删除任务
-		handleDeleteTask: function(e) {
-			let id = e.currentTarget.dataset.id;
-			for(let task of this.data.tasks)
-				if(task.id === id) {
-					task.delete = true;
-					break;
-				}
-			this.setData({
-				tasks: this.data.tasks,
-				editor: true
+				url: '/src/pages/editor/editor?taskId=' + JSON.stringify(task.id) 
+					+ '&task=' + JSON.stringify(task)
 			});
 		},
 		// 编辑每一个任务
 		handleEditor: function(e) {
-			let task;
-			for(let item of this.data.tasks) {
-				if(item.id === e.currentTarget.dataset.id) {
-					task = item;
-					break;
-				}
-			}
-			let lists = JSON.parse(wx.getStorageSync('lists'));
-			let _this = this;
+			let taskId = e.currentTarget.dataset.id;
 			wx.navigateTo({
-				url: '/src/pages/editor/editor?task=' + JSON.stringify(task)
-					+ "&lists=" + JSON.stringify(lists)
-					+ "&isEditorTask=" + JSON.stringify(true),
-				events: {
-					// 编辑页面完成编辑后，触发事件保存数据
-					_handleSaveData: (data) => {
-						util._handleSaveData(_this, data);
-						_this.setData({
-							tasks: _this.data.tasks,
-							editor: true
-						})
-					}
-				}
+				url: '/src/pages/editor/editor?taskId=' + JSON.stringify(taskId)
+					+ "&isEditorTask=" + JSON.stringify(true)
 			})
 		},
 		// 控制任务完成与否
-		handleTaskFinish: function(e) {
+		handleTaskFinish: async function(e) {
+			wx.showLoading({
+				title: '正在保存数据...',
+				mask: true
+			})
+			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
 			// 修改 finish
 			let tasks = [];
 			for(let item of this.data.tasks) {
@@ -163,40 +128,92 @@ Component({
 					item.finish = !item.finish;
 					if(item.finish)
 						item.finishDate = util.formatDate(new Date());
+					await store.saveTasksToSql([item], this.data.lists, {owner, token});
 				}
 				tasks.push(item);
 			}
 			this.setData({
-				tasks: tasks,
-				editor: true
+				tasks: tasks
 			});
+			wx.setStorageSync('tasks', JSON.stringify(tasks));
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: '已完成',
+						duration: 800
+					})
+				},
+			})
 		},
 		// 删除清单，显示弹窗询问是否删除
 		handleDeleteList: function(e) {
 			this.setData({
 				showDialog: true,
-				dialogMsg: "是否删除该清单？（清单内任务自动进入[个人清单]内）"
+				dialogMsg: "是否删除该清单？（清单内任务自动进入「个人清单」内）"
 			});
 			// 如果“确定”则执行下面
-			this._handleDialogDefine = function(_this) {
-				this.getOpenerEventChannel().emit("_handleDeleteList", {
-					pageName: _this.data.rawPageName
+			this._handleDialogDefine = async function(_this) {
+				wx.showLoading({
+					title: '正在保存数据...',
+					mask: true
+				})
+				let tasks = [], lists = [], tasksSave = [], listDelete = null;
+				for(let list of _this.data.lists)
+					list.title === _this.data.pageName? listDelete = list: lists.push(list);
+				for(let task of _this.data.tasks) {
+					if(task.list.title === _this.data.pageName) {
+						task.list = {
+							icon: "/src/image/menu-self-list0.svg",
+							title: "个人清单"
+						};
+						tasksSave.push(task);
+					}
+					tasks.push(task);
+				}
+				let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+				await store.saveTasksToSql(tasksSave, lists, {owner, token});
+				await util.myRequest({
+					url: listDelete.urlSql,
+					header: { Authorization: 'Token ' + token },
+					method: 'DELETE'
+				})
+				_this.setData({
+					tasks: tasks,
+					lists: lists
 				});
+				wx.setStorageSync('tasks', JSON.stringify(tasks));
+				wx.setStorageSync('lists', JSON.stringify(lists));
 				delete _this._handleDialogDefine;
+				wx.hideLoading({
+					success: () => {
+						wx.showToast({
+							title: '已完成',
+							duration: 800
+						})
+					},
+				})
 				wx.navigateBack();
 			}
 		},
 		// 当点击弹窗“确定”时，关闭弹窗，告诉父组件删除清单及任务，并返回上一层
-		handleDialogButtonTap: function(e) {
+		handleDialogButtonTap: async function(e) {
 			let index = e.detail.index;
 			if(index === 1 && typeof this._handleDialogDefine === "function")
-				this._handleDialogDefine(this);
+				await this._handleDialogDefine(this);
 			else if(!index && typeof this._handleDialogCancel === "function")
-				this._handleDialogCancel(this);
+				await this._handleDialogCancel(this);
 			this.setData({
 				showDialog: false
 			});
-		},
-		onUnload: function() {}
+		}
+	},
+
+	pageLifetimes: {
+		show: function() {
+			this.setData({
+				tasks: JSON.parse(wx.getStorageSync('tasks')),
+				lists: JSON.parse(wx.getStorageSync('lists'))
+			})
+		}
 	}
 })
