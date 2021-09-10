@@ -51,7 +51,8 @@ Component({
 			// 各种清单
 			else 
 				res = data.tasks.filter(item => 
-					!item.list.title.localeCompare(data.pageName)
+					item.date.localeCompare(todayDate) >= 0
+					&& !item.list.title.localeCompare(data.pageName)
 					&& !item.delete
 				);
 			res.sort((a, b) => a.date.localeCompare(b.date) );

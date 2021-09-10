@@ -271,32 +271,6 @@ Component({
 		// 拉取并设置数据
 		onLoad: async function() {
 			let {token, owner} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
-			// console.log(token, owner);
-			// util.myRequest({
-			// 	url: app.globalData.url + 'check/check/?owner=' + JSON.stringify(owner),
-			// 	header: { Authorization: 'Token ' + token },
-			// 	method: 'POST',
-			// 	data:
-			// 		{"url":app.globalData.url + 'check/check/?owner=' + JSON.stringify(owner),
-			// 		"task_num":761,
-			// 		"repeat":0,
-			// 		"s_date":"2021-08-09",
-			// 		"c_time":"2021-08-09T02:07:20.468192Z",
-			// 		"e_time":"2021-08-09T10:05:32Z",
-			// 		"text":"UI重做",
-			// 		"priority":0,
-			// 		"finish":0,
-			// 		"fin_date":"2021-08-09T10:05:32Z",
-			// 		"star":1,
-			// 		"star_text":"default",
-			// 		"todo_delete":0,
-			// 		"todo_desc":"ui重做",
-			// 		"owner": app.globalData.url + 'login/user/' + owner + '/',
-			// 		"tag":app.globalData.url + "check/taglist/1/"
-			// 	}
-			// })
-			// .then(res => console.log(res));
-			// return;
 			// 从后端拉取数据
 			wx.showLoading({
 				title: '正在获取数据',
@@ -337,9 +311,9 @@ Component({
 				listsLocal,
 				{owner, token}
 			);
-
+			
 			// 设置 id
-			tasksLocal.forEach(item => util.setUniqueId(item.id));
+			tasksLocal.forEach(item => item.id = util.getUniqueId());
 
 			// 如果存在一个今天会发生的重复任务，则修改该任务为非重复任务，并自动产生一个日期顺延的重复任务
 			// 如果以前完成了一个重复任务，不管其设置的日期是什么时候，同上处理
@@ -405,17 +379,18 @@ Component({
 			if(signText.length) 
 				signTextLocal = signText[0].signText;
 			else {
-				signText = '好好学习 天天向上';
+				signTextLocal = '好好学习 天天向上';
 				util.myRequest({
 					url: app.globalData.url + 'check/sign/?owner=' + JSON.stringify(owner),
 					header: { Authorization: "Token " + token },
 					method: "POST",
 					data: {
-						signText: signText,
+						signText: signTextLocal,
 						owner: app.globalData.url + 'login/user/' + owner + "/"
 					}
 				});
 			}
+			wx.setStorageSync('signText', JSON.stringify(signTextLocal));
 
 			// 设置机型相关信息
 			let {navHeight, navTop, windowHeight, windowWidth} = app.globalData;
@@ -430,7 +405,7 @@ Component({
 				windowWidth
 			})
 			this._saveAllDataToLocal();
-			console.log(this.data.tasks);
+			console.log(this.data);
 
 			wx.hideLoading({
 				success: () => {

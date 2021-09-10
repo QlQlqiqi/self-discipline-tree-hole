@@ -1,4 +1,4 @@
-<view style="position: relative; height: {{ navHeight * (750 / windowWidth) }}rpx;"></view>
+<view style="position: relative; height: {{ navHeight * 2 }}rpx;"></view>
 <!-- 导航栏 -->
 <navbar page-name="添加清单">
   <image slot="backIcon" src="/src/image/back.png" catch:tap="handleBack" mode="aspectFit" style="width: 48rpx; height: 48rpx;"></image>

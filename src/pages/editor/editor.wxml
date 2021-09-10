@@ -7,7 +7,7 @@
 	listRange：可选清单的数组，默认为：["个人清单", "工作清单"]
 -->
 
-<view style="position: relative; height: {{ navHeight * (750 / windowWidth) }}rpx;"></view>
+<view style="position: relative; height: {{ navHeight * 2 }}rpx;"></view>
 <!-- 导航栏 -->
 <navbar page-name="编辑代办">
 	<image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 48rpx; height: 48rpx;"></image>

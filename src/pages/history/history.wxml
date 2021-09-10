@@ -1,14 +1,14 @@
 <!-- 
 	接收一个 tasks 数组，包含所有任务
 -->
-<view style="position: relative; height: {{ navHeight * (750 / windowWidth) }}rpx;"></view>
+<view style="position: relative; height: {{ navHeight * 2 }}rpx;"></view>
 <navbar page-name="历史">
   <image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 48rpx; height: 48rpx;"></image>
 </navbar>
 
 
 <!-- 背景遮掩 -->
-<view wx:if="{{ showFeeling }}" class="history-mask" style="height: {{ (windowHeight - navHeight) * (750 / windowWidth) }}rpx; z-index: 1;" 
+<view wx:if="{{ showFeeling }}" class="history-mask" style="height: {{ (windowHeight - navHeight) * 2 }}rpx; z-index: 1;" 
   bind:tap="handleCloseMask" catch:touchmove="catchTouchMove"
 ></view>
 

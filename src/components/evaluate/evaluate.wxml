@@ -12,7 +12,7 @@
 	<view style="height: 406rpx;">
 		<view class="evaluate-feeling-title">任务感想</view>
 		<textarea placeholder="请输入你的感想" placeholder-style="font-size: 24rpx;" 
-			maxlength="{{ 1000 }}" focus="{{ true }}" class="evaluate-feeling-desc"
+			maxlength="{{ 1000 }}" class="evaluate-feeling-desc"
 			value="{{ feeling }}" catch:input="handleInput" disabled="{{ disabled }}"
 		></textarea>
 	</view>

@@ -1,6 +1,6 @@
 App({
   globalData: {
-    url: 'http://297mo66766.imdo.co/'
+    url: 'https://witime.wizzstudio.com/'
   },
   onLaunch() {
     // 获取设备相关信息
@@ -18,6 +18,8 @@ App({
         this.globalData.windowHeight = res.windowHeight;
         // 可使用窗口宽度
         this.globalData.windowWidth = res.windowWidth;
+        // 750 / windowWidth
+        this.globalData.ratio = 750 / res.windowWidth;
       },
       fail(err) {
         console.error(err);
