@@ -1,16 +1,16 @@
-<view style="position: relative; height: {{ navHeight * 2 }}rpx;"></view>
+<view style="position: relative; height: {{ navHeight }}px;"></view>
 <!-- 导航栏 -->
 <navbar page-name="收集箱">
-  <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" mode="aspectFit" style="width: 48rpx; height: 48rpx;"></image>
+  <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" mode="aspectFit" style="width: 24px; height: 24px;"></image>
 </navbar>
 <!-- 背景遮掩 -->
-<view wx:if="{{ showMenu }}" class="menu-mask" style="height: {{ (windowHeight - navHeight) * 2 }}rpx; z-index: 1;" 
+<view wx:if="{{ showMenu }}" class="menu-mask" style="height: {{ windowHeight * rotio }}rpx; top: {{ -navHeight }}px; z-index: 1;" 
   bind:tap="handleCloseMask" catch:touchmove="catchTouchMove"
 ></view>
 <!-- 左侧菜单 -->
-<view wx:if="{{ showMenu }}" style="position: relative; height: 0; top: {{ -navHeight * 2 }}rpx;">
-  <menu style="position: relative; width: 600rpx; top: {{ menuTop }}rpx;" 
-    menuHeight="{{ windowHeight * 2 }}" menuBottomBlcakHeight="{{ 180 }}"
+<view wx:if="{{ showMenu }}" style="position: relative; height: 0; top: {{ -navHeight }}px;">
+  <menu style="position: relative; width: 600rpx;" 
+    menuHeight="{{ windowHeight * rotio }}" menuBottomBlcakHeight="{{ 180 }}"
     show="{{ showMenu }}" lists="{{ listsShow }}" todoListNum="{{ todayTasks.length }}" signText="{{ signText }}"
     catch:handleNavigateToAddList="handleNavigateToAddList"
     catch:handleNavigateToToday="handleNavigateToToday" catch:handleNavigateToFuture="handleNavigateToFuture"
@@ -20,8 +20,8 @@
   ></menu>
 </view>
 
-<view style="position: relative; height: {{ (windowHeight - navHeight) * 2 }}rpx; overflow-y: scroll;">
-  <view style="padding-bottom: 500rpx;">
+<view style="position: relative; height: {{ (windowHeight - navHeight) * rotio }}rpx; overflow-y: scroll;">
+  <view style="padding-bottom: {{250 * rotio}}rpx;">
   <!-- 今天的任务清单 -->
     <view class="collection-task-title">
       <text>今天</text>
@@ -57,10 +57,5 @@
   </view>
 </view>
 
-
 <!-- 新增任务 -->
-<image src="/src/image/add-task.png" catch:tap="addTask" mode="aspectFit" class="collection-add-icon"></image>
-<!-- <view style="height: 500rpx;"></view> -->
-
-
-<!-- <view style="height: 500rpx; width: 750rpx; position: relative; top: {{ -1320 + (todayTasks.length + futureTasks.length) * 134 }}rpx;"></view> -->
+<image src="/src/image/add-task.png" style="left: {{iconAddTaskLeft * 2}}rpx;	top: {{iconAddTaskTop * 2}}rpx;" catch:tap="handleAddTask" catch:touchmove="handleAddTaskMove" capture-catch:touchstart="" mode="aspectFit" class="collection-add-icon"></image>

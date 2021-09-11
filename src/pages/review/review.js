@@ -129,9 +129,7 @@ Component({
 		},
 		// 已完成任务的高度，单位：rpx
 		contentHeight: function(data) {
-			let ratio = 750 / data.windowWidth;
-			let contentHeight = (data.windowHeight - data.navHeight) * ratio - 166 - 12 - 142 - 14 - 164 - 16 - 60;
-			return contentHeight;
+			return (app.globalData.windowHeight - app.globalData.navHeight - 58) * data.ratio - 166 - 142 - 30 - 40 - 20 - app.globalData.bottonLineHeight * 2;
 		}
 	},
 
@@ -363,7 +361,8 @@ Component({
 				navHeight: app.globalData.navHeight,
 				navTop: app.globalData.navTop,
 				windowHeight: app.globalData.windowHeight,
-				windowWidth: app.globalData.windowWidth
+				windowWidth: app.globalData.windowWidth,
+				ratio: 750 / app.globalData.windowWidth,
 			});
 		}
 	},

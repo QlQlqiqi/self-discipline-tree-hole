@@ -41,7 +41,7 @@ Component({
         navHeight: app.globalData.navHeight,
         navTop: app.globalData.navTop,
         windowWidth: app.globalData.windowWidth,
-        ratio: app.globalData.ratio
+        ratio: 750 / app.globalData.windowWidth
       })
      }
   },

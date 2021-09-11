@@ -3,20 +3,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 96rpx;
+  height: 58px;
   background: white;
   display: flex;
   padding-bottom: env(safe-area-inset-bottom);
-}
-
-.tab-bar-border {
-  background-color: black;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 2500rpx;
-  height: 2rpx;
-  transform: scaleY(0.5);
+  padding-bottom: constant(safe-area-inset-bottom);
+  box-shadow: 0 0 10px 0 rgba(132, 132, 132, .18);
 }
 
 .tab-bar-item {
@@ -28,13 +20,13 @@
   flex-direction: column;
 }
 
-.tab-bar-item cover-image {
-  width: 54rpx;
-  height: 54rpx;
+.tab-bar-item image {
+  width: 27px;
+  height: 27px;
 }
 
-.tab-bar-item cover-view {
-  font-size: 20rpx;
+.tab-bar-item view {
+  font-size: 10px;
 }
 
 .tabbar-selected {

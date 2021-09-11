@@ -1,5 +1,0 @@
-<input style="width: {{ width }}rpx;"
-	maxlength="{{ maxLength }}" model:value="{{ value }}" placeholder="{{ placeholder }}"
-	bind:blur="blur" bind:input="input" content="{{ content }}" minLimitDialog="{{ minLimitDialog }}"
-></input>
-<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ show }}" title="{{ minLimitDialog }}" buttons="{{ [{text: '确定'}] }}" bindbuttontap="dialogClose"></mp-dialog>

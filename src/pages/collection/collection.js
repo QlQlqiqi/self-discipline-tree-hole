@@ -21,7 +21,9 @@ Component({
 		// 自定义清单
 		lists: [],
 		signText: "",
-		taskItemColor: ['#D01929', '#F0AD4D', '#CF92FF', '#BABBBA']
+		taskItemColor: ['#D01929', '#F0AD4D', '#CF92FF', '#BABBBA'],
+		iconAddTaskLeft: 300,
+		iconAddTaskTop: 500
 	},
 
 	computed: {
@@ -147,10 +149,25 @@ Component({
 			})
 		},
 		// 新增任务
-		addTask: function(e) {
+		handleAddTask: function(e) {
 			wx.navigateTo({
 				url: '/src/pages/editor/editor'
 			});
+		},
+		// 控制新增任务 icon 的移动
+		handleAddTaskMove: function(e) {
+			let {pageX: left, pageY: top} = e.touches[0];
+			// 50 为其长宽
+			this.setData({
+				iconAddTaskLeft: left,
+				iconAddTaskTop: top
+			})
+		},
+		handleAddTaskStart: function(e) {
+
+		},
+		handleAddTaskEnd: function(e) {
+			
 		},
 		// 跳转编辑任务
 		handleEditor: function(e) {
@@ -402,7 +419,8 @@ Component({
 				navHeight,
 				navTop,
 				windowHeight,
-				windowWidth
+				windowWidth,
+				rotio: 750 / windowWidth
 			})
 			this._saveAllDataToLocal();
 			console.log(this.data);
