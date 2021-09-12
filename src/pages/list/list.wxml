@@ -34,7 +34,12 @@
   </view>
 </view>
 <!-- 新增任务 -->
-<image src="/src/image/add-task.png" wx:if="{{ pageName !== '过期 / 删除任务' }}" catch:tap="addTask" mode="aspectFit" class="collection-add-icon"></image>
+<wxs module="touchmove" src="../../utils/touchmove.wxs"></wxs>
+<image id="some" data-window-width="{{windowWidth}}" data-window-height="{{windowHeight}}" data-width="{{50}}" data-height="{{50}}" 
+  src="/src/image/add-task.png" style="right: 50px; bottom: 170px;" catch:tap="handleAddTask" 
+  catch:touchmove="{{ touchmove.handleTouchMove }}" mode="aspectFit" class="collection-add-icon"
+  catch:touchend="{{ touchmove.handleTouchEnd }}"
+></image>
 
 <mp-dialog show="{{ showDialog }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" 
   buttons="{{ [{text: '取消'}, {text: '确定'}] }}" catch:buttontap="handleDialogButtonTap"

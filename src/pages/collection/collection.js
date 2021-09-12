@@ -21,9 +21,7 @@ Component({
 		// 自定义清单
 		lists: [],
 		signText: "",
-		taskItemColor: ['#D01929', '#F0AD4D', '#CF92FF', '#BABBBA'],
-		iconAddTaskRight: 50,
-		iconAddTaskBottom: 170
+		taskItemColor: ['#D01929', '#F0AD4D', '#CF92FF', '#BABBBA']
 	},
 
 	computed: {
