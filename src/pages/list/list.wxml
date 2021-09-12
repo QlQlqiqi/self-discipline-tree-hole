@@ -4,10 +4,10 @@
   isDelete：该清单是否可以删除
   disabled：是否可以编辑
 -->
-<view style="position: relative; height: {{ navHeight * 2 }}rpx;"></view>
+<view style="position: relative; height: {{ navHeight }}px;"></view>
 <!-- 导航栏 -->
 <navbar page-name="{{ pageName }}">
-  <image slot="backIcon" src="/src/image/back.png" catch:tap="handleBack" mode="aspectFit" style="width: 48rpx; height: 48rpx;"></image>
+  <image slot="backIcon" src="/src/image/back.png" catch:tap="handleBack" mode="aspectFit" style="width: 24px; height: 24px;"></image>
 </navbar>
 
 <view style="position: relative;">

@@ -1,0 +1,87 @@
+"use strict"
+
+// 控制 dom 元素的拖动
+// dataset 包含设备的宽高和控制的 dom 的宽高
+var handleTouchMove = function(e) {
+  var left = e.touches[0].pageX;
+  var top = e.touches[0].pageY;
+  var obj = e.instance.getState();
+  // 使用单例对象，减少逻辑层和视图层之间的通信
+  if(!obj.windowHeightSubHalfHeight || !obj.windowWidthSubHalfWidth) {
+    if(!obj.windowHeight || !obj.windowWidth || !obj.height || !obj.width) {
+      var dom = e.instance.getDataset();
+      obj.windowHeight = dom.windowHeight;
+      obj.windowWidth = dom.windowWidth;
+      obj.height = dom.height;
+      obj.width = dom.width;
+    }
+    obj.windowHeightSubHalfHeight = obj.windowHeight - obj.height / 2;
+    obj.windowWidthSubHalfWidth = obj.windowWidth - obj.width / 2;
+  }
+  e.instance.setStyle({
+    'right': obj.windowWidthSubHalfWidth - left + 'px',
+    'bottom': obj.windowHeightSubHalfHeight - top + 'px'
+  })
+  return false;
+}
+
+// 执行 dom 元素拖拽前做的事情
+var handleTouchStart = function(e) {
+  // 
+}
+
+// 执行 dom 元素拖拽之后的事情
+var handleTouchEnd = function(e) {
+  // dom 元素拖拽结束后，将 dom 元素在一定时间内移至最短的安全区域内
+  // 这里默认是屏幕右侧，且 top 和 bottom 不低于 100px， left 或 right 为 50px
+  var domStyle = e.instance.getBoundingClientRect(), obj = e.instance.getState();
+  var left = domStyle.left, top = domStyle.top;
+  var leftAdd, topAdd, leftRes, topRes;
+  if(left > (obj.windowWidth - obj.width) / 2) {
+    leftRes = obj.windowWidth - 50 - obj.width;
+    if(left > obj.windowWidth - obj.width - 50)
+      leftAdd = -8;
+    else leftAdd = 8;
+  }
+  else {
+    leftRes = 50;
+    if(left < 50)
+      leftAdd = 8;
+    else leftAdd = -8;
+  }
+  if(top > obj.windowHeight - obj.height - 100) {
+    topRes = obj.windowHeight - 100 - obj.height;
+    topAdd = -8;
+  }
+  else if(top < 100) {
+    topRes = 100;
+    topAdd = 8;
+  }
+  else topRes = top;
+  var flag = false;
+  var render = function() {
+    if((leftAdd > 0 && left < leftRes) || (leftAdd < 0 && left > leftRes)) {
+      left += leftAdd;
+      flag = true;
+    }
+    if((topAdd > 0 && top < topRes) || (topAdd < 0 && top > topRes)) {
+      top += topAdd;
+      flag = true;
+    }
+    if(flag) {
+      e.instance.setStyle({
+        left: left + 'px',
+        top: top + 'px'
+      })
+      flag = false;
+      e.instance.requestAnimationFrame(render);
+    }
+  }
+  e.instance.requestAnimationFrame(render);
+}
+
+module.exports = {
+  handleTouchMove: handleTouchMove,
+  handleTouchStart: handleTouchStart,
+  handleTouchEnd: handleTouchEnd
+}
