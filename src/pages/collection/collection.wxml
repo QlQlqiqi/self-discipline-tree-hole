@@ -4,13 +4,13 @@
   <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" mode="aspectFit" style="width: 24px; height: 24px;"></image>
 </navbar>
 <!-- 背景遮掩 -->
-<view wx:if="{{ showMenu }}" class="menu-mask" style="height: {{ windowHeight * rotio }}rpx; top: {{ -navHeight }}px; z-index: 1;" 
+<view wx:if="{{ showMenu }}" class="menu-mask" style="height: {{ windowHeight * ratio }}rpx; top: {{ -navHeight }}px; z-index: 1;" 
   bind:tap="handleCloseMask" catch:touchmove="catchTouchMove"
 ></view>
 <!-- 左侧菜单 -->
 <view wx:if="{{ showMenu }}" style="position: relative; height: 0; top: {{ -navHeight }}px;">
   <menu style="position: relative; width: 600rpx;" 
-    menuHeight="{{ windowHeight * rotio }}" menuBottomBlcakHeight="{{ 180 }}"
+    menuHeight="{{ windowHeight * ratio }}" menuBottomBlcakHeight="{{ 180 + bottomLineHeight * ratio }}"
     show="{{ showMenu }}" lists="{{ listsShow }}" todoListNum="{{ todayTasks.length }}" signText="{{ signText }}"
     catch:handleNavigateToAddList="handleNavigateToAddList"
     catch:handleNavigateToToday="handleNavigateToToday" catch:handleNavigateToFuture="handleNavigateToFuture"
@@ -20,8 +20,8 @@
   ></menu>
 </view>
 
-<view style="position: relative; height: {{ (windowHeight - navHeight) * rotio }}rpx; overflow-y: scroll;">
-  <view style="padding-bottom: {{250 * rotio}}rpx;">
+<view style="position: relative; height: {{ (windowHeight - navHeight) * ratio }}rpx; overflow-y: scroll;">
+  <view style="padding-bottom: {{250 * ratio}}rpx;">
   <!-- 今天的任务清单 -->
     <view class="collection-task-title">
       <text>今天</text>
@@ -58,4 +58,21 @@
 </view>
 
 <!-- 新增任务 -->
-<image src="/src/image/add-task.png" style="left: {{iconAddTaskLeft * 2}}rpx;	top: {{iconAddTaskTop * 2}}rpx;" catch:tap="handleAddTask" catch:touchmove="handleAddTaskMove" capture-catch:touchstart="" mode="aspectFit" class="collection-add-icon"></image>
+<wxs module="touchmove" src="./touchmove.wxs"></wxs>
+<image id="some" data-window-width="{{windowWidth}}" data-window-height="{{windowHeight}}" data-width="{{50}}" data-height="{{50}}" 
+  src="/src/image/add-task.png" style="right: {{ iconAddTaskRight }}px; bottom: {{ iconAddTaskBottom }}px;" catch:tap="handleAddTask" 
+  catch:touchmove="{{ touchmove.handleTouchMove }}" mode="aspectFit" class="collection-add-icon"
+   catch:touchend="{{ touchmove.handleTouchEnd }}"
+></image>
+
+
+<!-- 用于告知用户更新的内容 -->
+<mp-dialog title="更新内容" show="{{ noticeUpdateContent }}" mask="{{ true }}" mask-closable="{{ true }}" buttons="{{ [{text: '确定'}] }}" catch:buttontap="handleCloseNoticeUpdateContent">
+  <view style="text-align: left;">
+    <view style="text-align: center;">1.3.1 -> 1.4.0</view>
+    <view>-新增内容更新提示功能</view>
+    <view>-新增"收集箱"页面“创建任务”按钮拖拽的功能</view>
+    <view>-修复 tabbar 标题栏高度过高和图标不居中的问题</view>
+    <view>-修复个性签名不能同步到服务器的问题</view>
+  </view>
+</mp-dialog>

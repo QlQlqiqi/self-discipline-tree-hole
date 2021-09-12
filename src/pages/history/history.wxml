@@ -1,9 +1,9 @@
 <!-- 
 	接收一个 tasks 数组，包含所有任务
 -->
-<view style="position: relative; height: {{ navHeight * 2 }}rpx;"></view>
+<view style="position: relative; height: {{ navHeight }}px;"></view>
 <navbar page-name="历史">
-  <image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 48rpx; height: 48rpx;"></image>
+  <image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 24px; height: 24px;"></image>
 </navbar>
 
 
