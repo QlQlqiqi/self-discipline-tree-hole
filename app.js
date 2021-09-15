@@ -28,7 +28,7 @@ App({
 
     // 提示用户更新内容
     if(!wx.getStorageSync('noticeUpdateContent')) {
-      // wx.setStorageSync('noticeUpdateContent', JSON.stringify(true));
+      wx.setStorageSync('noticeUpdateContent', JSON.stringify(true));
       this.globalData.noticeUpdateContent = true;
     }
   }

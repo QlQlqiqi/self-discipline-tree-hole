@@ -1,33 +1,33 @@
 "use strict"
 
+// 执行 dom 元素拖拽前做的事情
+var handleTouchStart = function(e) {
+  var obj = e.instance.getState();
+  var domDataset = e.instance.getDataset();
+  var domBCR = e.instance.getBoundingClientRect();
+  // 设置相关信息
+  obj.windowHeight = domDataset.windowHeight;
+  obj.windowWidth = domDataset.windowWidth;
+  obj.height = domDataset.height;
+  obj.width = domDataset.width;
+  obj.domRight = obj.windowWidth - domBCR.right;
+  console.log(obj.windowWidth, domBCR.right)
+  obj.domBottom = obj.windowHeight - domBCR.bottom;
+  obj.mouseStartLeft = e.touches[0].pageX;
+  obj.mouseStartTop = e.touches[0].pageY;
+}
+
 // 控制 dom 元素的拖动
 // dataset 包含设备的宽高和控制的 dom 的宽高
 var handleTouchMove = function(e) {
-  var left = e.touches[0].pageX;
-  var top = e.touches[0].pageY;
   var obj = e.instance.getState();
-  // 使用单例对象，减少逻辑层和视图层之间的通信
-  if(!obj.windowHeightSubHalfHeight || !obj.windowWidthSubHalfWidth) {
-    if(!obj.windowHeight || !obj.windowWidth || !obj.height || !obj.width) {
-      var dom = e.instance.getDataset();
-      obj.windowHeight = dom.windowHeight;
-      obj.windowWidth = dom.windowWidth;
-      obj.height = dom.height;
-      obj.width = dom.width;
-    }
-    obj.windowHeightSubHalfHeight = obj.windowHeight - obj.height / 2;
-    obj.windowWidthSubHalfWidth = obj.windowWidth - obj.width / 2;
-  }
+  var leftAdd = e.touches[0].pageX - obj.mouseStartLeft;
+  var topAdd = e.touches[0].pageY - obj.mouseStartTop;
   e.instance.setStyle({
-    'right': obj.windowWidthSubHalfWidth - left + 'px',
-    'bottom': obj.windowHeightSubHalfHeight - top + 'px'
+    'right': obj.domRight - leftAdd + 'px',
+    'bottom': obj.domBottom - topAdd + 'px'
   })
   return false;
-}
-
-// 执行 dom 元素拖拽前做的事情
-var handleTouchStart = function(e) {
-  // 
 }
 
 // 执行 dom 元素拖拽之后的事情

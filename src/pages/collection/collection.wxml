@@ -60,9 +60,9 @@
 <!-- 新增任务 -->
 <wxs module="touchmove" src="../../utils/touchmove.wxs"></wxs>
 <image id="some" data-window-width="{{windowWidth}}" data-window-height="{{windowHeight}}" data-width="{{50}}" data-height="{{50}}" 
-  src="/src/image/add-task.png" style="right: 50px; bottom: 170px;" catch:tap="handleAddTask" 
+  src="/src/image/add-task.png" style="right: 50px; bottom: 170px;" catchtap="handleAddTask" 
   catch:touchmove="{{ touchmove.handleTouchMove }}" mode="aspectFit" class="collection-add-icon"
-  catch:touchend="{{ touchmove.handleTouchEnd }}"
+  catch:touchend="{{ touchmove.handleTouchEnd }}" catchtouchstart="{{ touchmove.handleTouchStart }}"
 ></image>
 
 

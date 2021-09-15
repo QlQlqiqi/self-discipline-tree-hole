@@ -2,8 +2,6 @@
 	"pages": [
 		"src/pages/collection/collection",
 		"src/pages/history/history",
-		"src/components/evaluate/evaluate",
-		"src/components/menu/menu",
 		"src/pages/editor/editor",
 		"src/pages/review/review",
 		"src/pages/add-self-list/add-self-list",

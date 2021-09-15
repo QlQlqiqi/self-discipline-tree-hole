@@ -80,7 +80,7 @@ Component({
 			wx.navigateBack();
 		},
 		// 新增任务
-		addTask: function(e) {
+		handleAddTask: function(e) {
 			let task = {
 				id: util.getUniqueId(),
 				priority: 0,

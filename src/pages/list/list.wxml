@@ -38,7 +38,7 @@
 <image id="some" data-window-width="{{windowWidth}}" data-window-height="{{windowHeight}}" data-width="{{50}}" data-height="{{50}}" 
   src="/src/image/add-task.png" style="right: 50px; bottom: 170px;" catch:tap="handleAddTask" 
   catch:touchmove="{{ touchmove.handleTouchMove }}" mode="aspectFit" class="collection-add-icon"
-  catch:touchend="{{ touchmove.handleTouchEnd }}"
+  catch:touchend="{{ touchmove.handleTouchEnd }}" catchtouchstart="{{ touchmove.handleTouchStart }}"
 ></image>
 
 <mp-dialog show="{{ showDialog }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" 
