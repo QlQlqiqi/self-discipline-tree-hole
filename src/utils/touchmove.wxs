@@ -11,7 +11,6 @@ var handleTouchStart = function(e) {
   obj.height = domDataset.height;
   obj.width = domDataset.width;
   obj.domRight = obj.windowWidth - domBCR.right;
-  console.log(obj.windowWidth, domBCR.right)
   obj.domBottom = obj.windowHeight - domBCR.bottom;
   obj.mouseStartLeft = e.touches[0].pageX;
   obj.mouseStartTop = e.touches[0].pageY;
@@ -34,9 +33,9 @@ var handleTouchMove = function(e) {
 var handleTouchEnd = function(e) {
   // dom 元素拖拽结束后，将 dom 元素在一定时间内移至最短的安全区域内
   // 这里默认是屏幕右侧，且 top 和 bottom 不低于 100px， left 或 right 为 50px
-  var domStyle = e.instance.getBoundingClientRect(), obj = e.instance.getState();
-  var left = domStyle.left, top = domStyle.top;
-  var leftAdd, topAdd, leftRes, topRes;
+  var domBCR = e.instance.getBoundingClientRect(), obj = e.instance.getState();
+  var left = domBCR.left, top = domBCR.top;
+  var leftAdd = 0, topAdd = 0, leftRes, topRes;
   if(left > (obj.windowWidth - obj.width) / 2) {
     leftRes = obj.windowWidth - 50 - obj.width;
     if(left > obj.windowWidth - obj.width - 50)
@@ -58,24 +57,23 @@ var handleTouchEnd = function(e) {
     topAdd = 8;
   }
   else topRes = top;
-  var flag = false;
   var render = function() {
-    if((leftAdd > 0 && left < leftRes) || (leftAdd < 0 && left > leftRes)) {
-      left += leftAdd;
-      flag = true;
-    }
-    if((topAdd > 0 && top < topRes) || (topAdd < 0 && top > topRes)) {
-      top += topAdd;
-      flag = true;
-    }
-    if(flag) {
-      e.instance.setStyle({
-        left: left + 'px',
-        top: top + 'px'
-      })
-      flag = false;
-      e.instance.requestAnimationFrame(render);
-    }
+    if(left === leftRes && top === topRes)
+      return;
+    left += leftAdd;
+    top += topAdd;
+    left = leftAdd > 0 
+      ? left > leftRes? leftRes: left
+      : left < leftRes? leftRes: left;
+    top = topAdd > 0
+      ? top > topRes? topRes: top
+      : top < topRes? topRes: top;
+    e.instance.setStyle({
+      left: left + 'px',
+      top: top + 'px'
+    })
+    flag = false;
+    e.instance.requestAnimationFrame(render);
   }
   e.instance.requestAnimationFrame(render);
 }
