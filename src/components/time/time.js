@@ -4,7 +4,12 @@ Component({
 	 */
 	properties: {
 		// 世界时间格式
-		defaultTime: String
+		defaultTime: String,
+		// 显示日期的长度
+		timeLength: {
+			type: Number,
+			value: 30
+		}
 	},
 
 	/**
@@ -125,7 +130,7 @@ Component({
 			let {multiArray, multiIndex} = this.data;
 			// 月-日
 			let defaultMD = month + '-' + day;
-			for (let i = 0, oneDay = 24 * 60 * 60 * 1000; i <= 180; i++) {
+			for (let i = 0, oneDay = 24 * 60 * 60 * 1000; i <= this.properties.timeLength; i++) {
 				let tmpMD = date.getUTCMonth() + 1 + "-" + date.getUTCDate();
 				if(defaultMD === tmpMD)
 					multiIndex[0] = i;

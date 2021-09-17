@@ -31,7 +31,7 @@
 	<view class="editor-time-wrap">
 		<image src="/src/image/editor-date.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
 		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">时间</view>
-		<time class="editor-time-text" defaultTime="{{ task.date }}" catch:handleChangeTime="handleChangeTime"></time>
+		<time class="editor-time-text" defaultTime="{{ task.date }}" timeLength="{{ 180 }}" catch:handleChangeTime="handleChangeTime"></time>
 	</view>
 
 	<view style="height: 2rpx; border-top: 2rpx rgba(255, 255, 255, 0.63) solid;"></view>

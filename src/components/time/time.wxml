@@ -1,6 +1,11 @@
+<!-- 
+	接受一个世界时格式的时间 defaultTime ，表示从此刻时间开始，可以选择后 timeLength 天日期，
+	默认 30 天，并在选择确定后触发一个 handleChangeTime 事件，data 为世界时格式的 time
+ -->
+
 <picker class='time-picker' mode="multiSelector" bindchange="bindStartMultiPickerChange" 
 	bindtap='pickerTap' bindcolumnchange="bindMultiPickerColumnChange" value="{{ multiIndex }}" 
 	range="{{ multiArray }}"
 >
-	{{startDate}}
+	{{ startDate }}
 </picker>
