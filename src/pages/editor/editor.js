@@ -19,7 +19,7 @@ Component({
 		priorityRange: ["重要且紧急", "紧急不重要", "重要不紧急", "不重要不紧急"],
 		// 展示优先级
 		showPriority: false,
-		priorityColor: ['#D01929', '#F0AD4D', '#CF92FF', '#BABBBA'],
+		priorityColor: ['#D01929', '#E79100', '#C477FF', '#969595'],
 		priorityIconSrc: ['/src/image/priority0.png', '/src/image/priority1.png',
 			'/src/image/priority2.png', '/src/image/priority3.png'],
 		// 优先级展开的 margin-left 位置(单位：px)
@@ -34,7 +34,6 @@ Component({
 
 	watch: {
 		"task.date": function(date) {
-			console.log(this.data.task, this.data)
 			if(this.data.task.date.localeCompare(this.data.startDate) < 0
 			|| this.data.task.date.localeCompare(this.data.endDate) > 0) {
 				this.data.task.date = date;

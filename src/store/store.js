@@ -41,7 +41,7 @@ const saveTasksToSql = async function(tasksLocal = [], listsLocal = [], {owner, 
 			header: { Authorization: 'Token ' + token },
 			method: 'POST',
 			data: item
-		})
+		}).then(res => console.log(res))
 	})
 	console.log(tasksLocal)
 	let tasksPutPr = tasksPut.map(item => {
@@ -51,7 +51,7 @@ const saveTasksToSql = async function(tasksLocal = [], listsLocal = [], {owner, 
 			header: { Authorization: 'Token ' + token },
 			method: 'PUT',
 			data: util.formatTasksFromLocalToSql([item], listsLocal, {owner, token})[0]
-		})
+		}).then(res => console.log(res))
 	})
 	await Promise.all(tasksPostPr, tasksPutPr);
 	// 从后端 get tasks

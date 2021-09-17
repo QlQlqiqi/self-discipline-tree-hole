@@ -1,11 +1,9 @@
-var date = new Date();
-var currentHours = date.getHours();
-var currentMinute = date.getMinutes();
 Component({
 	/**
 	 * 组件的属性列表
 	 */
 	properties: {
+		// 世界时间格式
 		defaultTime: String
 	},
 
@@ -14,8 +12,7 @@ Component({
 	 */
 	data: {
 		startDate: "请选择日期",
-
-    multiArray: [['今天', '明天', '3-2', '3-3', '3-4', '3-5'], [0, 1, 2, 3, 4, 5, 6], [0, 10, 20]],
+    multiArray: [[], [], []],
     multiIndex: [0, 0, 0],
 	},
 
@@ -24,252 +21,91 @@ Component({
 	 * 组件的方法列表
 	 */
 	methods: {
+		// 点击显示 picker
 		pickerTap:function() {
-			date = new Date();
-	
-			var monthDay = ['今天','明天'];
-			var hours = [];
-			var minute = [];
-			
-			currentHours = date.getHours();
-			currentMinute = date.getMinutes();
-	
-			// 月-日
-			for (var i = 2; i <= 28; i++) {
-				var date1 = new Date(date);
-				date1.setDate(date.getDate() + i);
-				var md = (date1.getMonth() + 1) + "-" + date1.getDate();
-				monthDay.push(md);
-			}
-	
-			var data = {
-				multiArray: this.data.multiArray,
-				multiIndex: this.data.multiIndex
-			};
-	
-			if(data.multiIndex[0] === 0) {
-				if(data.multiIndex[1] === 0) {
-					this.loadData(hours, minute);
-				} else {
-					this.loadMinute(hours, minute);
+			let {defaultHour, defaultMinute} = this.data;
+			// 根据当前 hours 和 minutes 重新绘制 multiArray
+			let hours = [], minutes = [];
+			// 如果是今天，则不绘制全天的 hours 和 minutes ，否则绘制全天
+			if(!this.data.multiIndex[0])
+				([hours, minutes] = this.reloadHoursAndMinutes(defaultHour, defaultMinute));
+			else ([hours, minutes] = this.reloadHoursAndMinutes(0, 0));
+			let {multiArray, multiIndex} = this.data;
+			multiArray[1] = hours;
+			multiArray[2] = minutes;
+			// 设置 multiIndex
+			let date = new Date(this.properties.defaultTime);
+			for(let i = 0, currentMD = date.getUTCMonth() + 1 + '-' + date.getUTCDate(); i < multiArray[0].length; i++)
+				if(multiArray[0][i] === currentMD) {
+					multiIndex[0] = i;
+					break;
 				}
-			} else {
-				this.loadHoursMinute(hours, minute);
-			}
-	
-			data.multiArray[0] = monthDay;
-			data.multiArray[1] = hours;
-			data.multiArray[2] = minute;
-			if(data.multiArray[1] < 10) {
-				data.multiArray[1] = "0" + data.multiArray[1];
-			}
-			if(data.multiArray[1] < 10) {
-				data.multiArray[2] = "0" + data.multiArray[2];
-			}
-			this.setData(data);
-		},
-	
-	
-	
-	
-		bindMultiPickerColumnChange:function(e) {
-			date = new Date();
-	
-			var that = this;
-	
-			var monthDay = ['今天', '明天'];
-			var hours = [];
-			var minute = [];
-	
-			currentHours = date.getHours();
-			currentMinute = date.getMinutes();
-	
-			var data = {
-				multiArray: this.data.multiArray,
-				multiIndex: this.data.multiIndex
-			};
-			// 把选择的对应值赋值给 multiIndex
-			data.multiIndex[e.detail.column] = e.detail.value;
-	
-			// 然后再判断当前改变的是哪一列,如果是第1列改变
-			if (e.detail.column === 0) {
-				// 如果第一列滚动到第一行
-				if (e.detail.value === 0) {
-	
-					that.loadData(hours, minute);
+			multiIndex[1] = date.getUTCHours() - hours[0];
+			multiIndex[2] = date.getUTCMinutes() - minutes[0];
 					
-				} else {
-					that.loadHoursMinute(hours, minute);
-				}
-	
-				data.multiIndex[1] = 0;
-				data.multiIndex[2] = 0;
-	
-				// 如果是第2列改变
-			} else if (e.detail.column === 1) {
-	
-				// 如果第一列为今天
-				if (data.multiIndex[0] === 0) {
-					if (e.detail.value === 0) {
-						that.loadData(hours, minute);
-					} else {
-						that.loadMinute(hours, minute);
-					}
-					// 第一列不为今天
-				} else {
-					that.loadHoursMinute(hours, minute);
-				}
-				data.multiIndex[2] = 0;
-	
-				// 如果是第3列改变
-			} else {
-				// 如果第一列为'今天'
-				if (data.multiIndex[0] === 0) {
-	
-					// 如果第一列为 '今天'并且第二列为当前时间
-					if(data.multiIndex[1] === 0) {
-						that.loadData(hours, minute);
-					} else {
-						that.loadMinute(hours, minute);
-					}
-				} else {
-					that.loadHoursMinute(hours, minute);
-				}
-			}
-			data.multiArray[1] = hours;
-			data.multiArray[2] = minute;
-			// 设置 01:05
-			if(data.multiArray[1] < 10) {
-				data.multiArray[1] = "0" + data.multiArray[1];
-			}
-			if(data.multiArray[1] < 10) {
-				data.multiArray[2] = "0" + data.multiArray[2];
-			}
-			this.setData(data);
-		},
-	
-		loadData: function (hours, minute) {
-	
-			var minuteIndex;
-			if (currentMinute > 0 && currentMinute <= 10) {
-				minuteIndex = 10;
-			} else if (currentMinute > 10 && currentMinute <= 20) {
-				minuteIndex = 20;
-			} else if (currentMinute > 20 && currentMinute <= 30) {
-				minuteIndex = 30;
-			} else if (currentMinute > 30 && currentMinute <= 40) {
-				minuteIndex = 40;
-			} else if (currentMinute > 40 && currentMinute <= 50) {
-				minuteIndex = 50;
-			} else {
-				minuteIndex = 60;
-			}
-	
-			if (minuteIndex == 60) {
-				// 时
-				for (var i = currentHours + 1; i < 24; i++) {
-					hours.push(i);
-				}
-				// 分
-				for (var i = 0; i < 60; i += 10) {
-					minute.push(i);
-				}
-			} else {
-				// 时
-				for (var i = currentHours; i < 24; i++) {
-					hours.push(i);
-				}
-				// 分
-				for (var i = minuteIndex; i < 60; i += 10) {
-					minute.push(i);
-				}
-			}
-		},
-	
-		loadHoursMinute: function (hours, minute){
-			// 时
-			for (var i = 0; i < 24; i++) {
-				hours.push(i);
-			}
-			// 分
-			for (var i = 0; i < 60; i += 10) {
-				minute.push(i);
-			}
-		},
-	
-		loadMinute: function (hours, minute) {
-			var minuteIndex;
-			if (currentMinute > 0 && currentMinute <= 10) {
-				minuteIndex = 10;
-			} else if (currentMinute > 10 && currentMinute <= 20) {
-				minuteIndex = 20;
-			} else if (currentMinute > 20 && currentMinute <= 30) {
-				minuteIndex = 30;
-			} else if (currentMinute > 30 && currentMinute <= 40) {
-				minuteIndex = 40;
-			} else if (currentMinute > 40 && currentMinute <= 50) {
-				minuteIndex = 50;
-			} else {
-				minuteIndex = 60;
-			}
-	
-			if (minuteIndex == 60) {
-				// 时
-				for (var i = currentHours + 1; i < 24; i++) {
-					hours.push(i);
-				}
-			} else {
-				// 时
-				for (var i = currentHours; i < 24; i++) {
-					hours.push(i);
-				}
-			}
-			// 分
-			for (var i = 0; i < 60; i += 10) {
-				minute.push(i);
-			}
-		},
-	
-		bindStartMultiPickerChange: function (e) {
-			var that = this;
-			var monthDay = that.data.multiArray[0][e.detail.value[0]];
-			var hours = that.data.multiArray[1][e.detail.value[1]];
-			var minute = that.data.multiArray[2][e.detail.value[2]];
-			var month, day;
-			console.log(monthDay, hours, minute)
-			if (monthDay === "今天") {
-				var month = date.getMonth()+1;
-				var day = date.getDate();
-				monthDay = month + "月" + day + "日";
-			} else if (monthDay === "明天") {
-				var date1 = new Date(date);
-				date1.setDate(date.getDate() + 1);
-				month = (date1.getMonth() + 1);
-				day = date1.getDate();
-				monthDay = (date1.getMonth() + 1) + "月" + date1.getDate() + "日";
-				console.log(monthDay)
-			} else {
-				var month = monthDay.split("-")[0]; // 返回月
-				var day = monthDay.split("-")[1]; // 返回日
-				monthDay = month + "月" + day + "日";
-			}
-			if(hours < 10)
-				hours = '0' + hours;
-			if(minute < 10)
-				minute = '0' + minute;
-			var startDate = monthDay + " " + hours + ":" + minute;
-			that.setData({
-				startDate: startDate
+			this.setData({
+				multiArray,
+				multiIndex
 			})
-			// 按照格式传时间
-			console.log(month, day)
-			var year = Number(this.properties.defaultTime.substr(0, 4));
-			var month = Number(month);
-			var day = Number(day);
-			var hour = Number(hours);
-			var minute = Number(minute);
-			var second = 0;
-			console.log(month, day)
+		},
+
+		// 根据给定的参数加载 hour 和 minute
+		// @param {Number} currentHour
+		// @param {Number} currentMinute
+		// @return {Array[][]} 
+		reloadHoursAndMinutes: function(currentHour, currentMinute) {
+			let hours = [], minutes = [];
+			for(let i = currentHour; i < 24; i++)
+				hours.push(i < 10? '0' + i: '' + i);
+			for(let i = currentMinute; i < 60; i++)
+				minutes.push(i < 10? '0' + i: '' + i);
+			return [hours, minutes];
+		},
+	
+		// 列选择时触发，重新绘制数据
+		bindMultiPickerColumnChange: function(e) {
+			let {column, value} = e.detail;
+			let multiArray = this.data.multiArray, multiIndex = this.data.multiIndex;
+			let {defaultHour, defaultMinute} = this.data;
+			// 如果改变年份那一列，则相应的重新绘制月份和日期
+			if(!column) {
+				if(!multiIndex[0])
+					([multiArray[1], multiArray[2]] = this.reloadHoursAndMinutes(0, 0));
+				if(!value)
+					([multiArray[1], multiArray[2]] = this.reloadHoursAndMinutes(defaultHour, defaultMinute));
+			}
+			// 改变 hour
+			else if(column === 1) {
+				if(!multiIndex[0]) {
+					if(!multiIndex[1])
+						([multiArray[1], multiArray[2]] = this.reloadHoursAndMinutes(0, 0));
+					if(!value)
+						([multiArray[1], multiArray[2]] = this.reloadHoursAndMinutes(defaultHour, defaultMinute));
+				}
+			}
+			multiIndex[column] = value;
+			this.setData({
+				multiArray,
+				multiIndex
+			})
+		},
+		
+		// 确定选择日期
+		bindStartMultiPickerChange: function (e) {
+			let date = new Date(this.properties.defaultTime);
+			let {multiArray, multiIndex} = this.data;
+			date.setTime(date.getTime() + multiIndex[0] * 24 * 60 * 60 * 1000);
+			date.setUTCHours(+multiArray[1][multiIndex[1]]);
+			date.setUTCMinutes(+multiArray[2][multiIndex[2]]);
+			let year = date.getUTCFullYear(),
+				month = date.getUTCMonth() + 1,
+				day = date.getUTCDate(),
+				hour = date.getUTCHours(),
+				minute = date.getUTCMinutes(),
+				second = date.getUTCSeconds();
+			this.setData({
+				startDate: `${month < 10? '0' + month: month}月${day < 10? '0' + day: day}日 ${hour < 10? '0' + hour: hour}:${minute < 10? '0' + minute: minute}`
+			})
 			let time = `${year}-${month < 10? "0" + month: month}-${day < 10? "0" + day: day}T${hour < 10? "0" + hour: hour}:${minute < 10? "0" + minute: minute}:${second < 10? "0" + second: second}Z`;
 			this.triggerEvent("handleChangeTime", {
 				time: time
@@ -279,13 +115,33 @@ Component({
 	lifetimes: {
 		ready: function() {
 			// 设置时间
-			let defaultTime = this.properties.defaultTime;
-			let month = Number(defaultTime.substr(5, 2));
-			let day = Number(defaultTime.substr(8, 2));
-			let hour = Number(defaultTime.substr(11, 2));
-			let minute = Number(defaultTime.substr(14, 2));
+			let date = new Date(this.properties.defaultTime),
+			 	year = +date.getUTCFullYear(),
+				month = +date.getUTCMonth() + 1,
+				day = +date.getUTCDate(),
+				hour = +date.getUTCHours(),
+				minute = +date.getUTCMinutes(),
+				second = +date.getUTCSeconds();
+			let {multiArray, multiIndex} = this.data;
+			// 月-日
+			let defaultMD = month + '-' + day;
+			for (let i = 0, oneDay = 24 * 60 * 60 * 1000; i <= 180; i++) {
+				let tmpMD = date.getUTCMonth() + 1 + "-" + date.getUTCDate();
+				if(defaultMD === tmpMD)
+					multiIndex[0] = i;
+				multiArray[0].push(i >= 2? tmpMD: ['今天','明天'][i]);
+				date.setTime(date.getTime() + oneDay);
+			}
 			this.setData({
-				startDate: `${month}月${day}日 ${hour}:${minute}`
+				multiArray,
+				multiIndex,
+				startDate: `${month < 10? '0' + month: month}月${day < 10? '0' + day: day}日 ${hour < 10? '0' + hour: hour}:${minute < 10? '0' + minute: minute}`,
+				defaultYear: year,
+				defaultMonth: month,
+				defaultDay: day,
+				defaultHour: hour,
+				defaultMinute: minute,
+				defaultSecond: second
 			})
 		}
 	}

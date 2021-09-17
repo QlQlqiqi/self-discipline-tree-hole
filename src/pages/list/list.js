@@ -19,7 +19,7 @@ Component({
 		tasks: [],
 		// 标题
 		pageName: "",
-		taskItemColor: ['#D01929', '#F0AD4D', '#CF92FF', '#BABBBA']
+		taskItemColor: ['#D01929', '#E79100', '#C477FF', '#969595'],
 	},
 
 	computed: {

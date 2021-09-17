@@ -15,10 +15,10 @@
 
 .task-item-finish-wrap {
 	position: absolute;
-	top: 22rpx;
-	right: 22rpx;
-	width: 36rpx;
-	height: 36rpx;
+	top: 16rpx;
+	right: 32rpx;
+	width: 56rpx;
+	height: 56rpx;
 }
 
 .task-item-content {

@@ -1,9 +1,24 @@
 <view style="position: relative; height: {{ navHeight }}px;"></view>
 <!-- 导航栏 -->
-<navbar page-name="收集箱">
+<navbar page-name="{{ pageName }}">
   <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" mode="aspectFit" style="width: 24px; height: 24px;"></image>
+  <image slot="rightIcon" class="listSelectIcon" src="/src/image/selectIcon0.png" bind:tap="handleShowSelectList" mode="aspectFit" style="width: 12px; height: 12px;"></image>
 </navbar>
-<!-- 背景遮掩 -->
+<!-- 导航栏的下拉框 -->
+<view class="listSelectWrap" style="left: {{ windowWidth / 2 - 45 }}px; height: 0;">
+  <view catchtap="handleSelectList" style="background-color: {{ pageName === '收集箱'? 'rgb(243, 246, 249)': 'white'}};">
+    <view style="height: 35px;">收集箱</view>
+    <view style="border-top: 1px solid rgba(187, 187, 187, 1);"></view>
+  </view>
+  <view wx:for="{{ lists }}" wx:key="title" data-index="{{ index }}" catch:tap="handleSelectList" style="position: relative; background-color: {{ pageName === item.title? 'rgb(243, 246, 249)': 'white'}}; ">
+    <image src="{{ item.icon }}" style="position: absolute; left: 3px; top: 9px; height: 20px; width: 20px;"></image>
+    <view style="padding-left: 20px; height: 35px; overflow-x: scroll;">{{ item.title }}</view>
+    <view style="border-top: 1px solid rgba(187, 187, 187, 1);"></view>
+  </view>
+</view>
+<!-- 弹窗背景点击遮掩 -->
+<view wx:if="{{ selectIconRotate }}" catchtap="handleShowSelectList" style="position: absolute; width: 100%; height: {{ windowHeight - 84 }}px; z-index: 1;"></view>
+<!-- 左侧栏背景遮掩 -->
 <view wx:if="{{ showMenu }}" class="menu-mask" style="height: {{ windowHeight * ratio }}rpx; top: {{ -navHeight }}px; z-index: 1;" 
   bind:tap="handleCloseMask" catch:touchmove="catchTouchMove"
 ></view>
@@ -32,9 +47,9 @@
       <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 16rpx; width: 16rpx; position: absolute; margin-left: -30rpx;"></image>
       <view class="task-left-line" style="height: {{ index + 1 < todayTasks.length? '224rpx': '177rpx' }};"></view>
       <task-item catch:tap="handleEditor" finish="{{ item.finish }}" data-id="{{ item.id }}" repeat="{{ item.repeat }}" content="{{ item.content }}" date="{{ item.date }}">
-        <view slot="finish" catch:tap="handleTaskFinish" data-id="{{ item.id }}">
-          <view slot="finish" style="display: inline-block; border: 4rpx solid {{ taskItemColor[item.priority] }}; position: absolute; width: 20rpx; height: 20rpx; top: 6rpx; left: 6rpx;"></view>
-          <image wx:if="{{ item.finish }}" slot="finish" src="/src/image/priority0.svg" style="display: inline-block; background-color: {{ taskItemColor[item.priority] }}; position: absolute; width: 26rpx; height: 26rpx; top: 6rpx; left: 6rpx;"></image>
+        <view slot="finish" catch:tap="handleTaskFinish" data-id="{{ item.id }}" style="width: 100%; height: 100%; padding: 14rpx; box-sizing: border-box;">
+          <view slot="finish" style="display: inline-block; border: 4rpx solid {{ taskItemColor[item.priority] }}; position: absolute; width: 20rpx; height: 20rpx;"></view>
+          <image wx:if="{{ item.finish }}" slot="finish" src="/src/image/priority0.svg" style="display: inline-block; background-color: {{ taskItemColor[item.priority] }}; position: absolute; width: 26rpx; height: 26rpx;"></image>
         </view>
       </task-item>
     </view>
@@ -48,9 +63,9 @@
       <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 16rpx; width: 16rpx; position: absolute; margin-left: -30rpx;"></image>
       <view class="task-left-line" style="height: {{ index + 1 < todayTasks.length? '224rpx': '177rpx' }};"></view>
       <task-item catch:tap="handleEditor" finish="{{ item.finish }}" data-id="{{ item.id }}" repeat="{{ item.repeat }}" content="{{ item.content }}" date="{{ item.date }}">
-        <view slot="finish" catch:tap="handleTaskFinish" data-id="{{ item.id }}">
-          <view slot="finish" style="display: inline-block; border: 4rpx solid {{ taskItemColor[item.priority] }}; position: absolute; width: 20rpx; height: 20rpx; top: 6rpx; left: 6rpx;"></view>
-          <image wx:if="{{ item.finish }}" slot="finish" src="/src/image/priority0.svg" style="display: inline-block; background-color: {{ taskItemColor[item.priority] }}; position: absolute; width: 26rpx; height: 26rpx; top: 6rpx; left: 6rpx;"></image>
+        <view slot="finish" catch:tap="handleTaskFinish" data-id="{{ item.id }}" style="width: 100%; height: 100%; padding: 14rpx; box-sizing: border-box;">
+          <view slot="finish" style="display: inline-block; border: 4rpx solid {{ taskItemColor[item.priority] }}; position: absolute; width: 20rpx; height: 20rpx;"></view>
+          <image wx:if="{{ item.finish }}" slot="finish" src="/src/image/priority0.svg" style="display: inline-block; background-color: {{ taskItemColor[item.priority] }}; position: absolute; width: 26rpx; height: 26rpx;"></image>
         </view>
       </task-item>
     </view>
@@ -65,6 +80,10 @@
   catch:touchend="{{ touchmove.handleTouchEnd }}" bindtouchstart="{{ touchmove.handleTouchStart }}"
 ></image>
 
+<!-- 弹窗提示用户 -->
+<mp-dialog title="{{ dialogTitle }}" show="{{ dialogShow }}" mask="{{ true }}" mask-closable="{{ true }}" buttons="{{ dialogButtons }}" catch:buttontap="handleDialogButton">
+  {{ dialogContents }}
+</mp-dialog>
 
 <!-- 用于告知用户更新的内容 -->
 <mp-dialog title="更新内容" show="{{ noticeUpdateContent }}" mask="{{ true }}" mask-closable="{{ true }}" buttons="{{ [{text: '确定'}] }}" catch:buttontap="handleCloseNoticeUpdateContent">

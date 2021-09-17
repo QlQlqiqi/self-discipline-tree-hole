@@ -305,6 +305,8 @@ const formatTasksFromLocalToSql = function(tasksLocal, listsLocal, {owner, token
     let c_time = item.date;
     // 得到 list
     let list = listUrl[listTitle.indexOf(item.list.title)];
+    if(!list)
+      console.log(listUrl, listTitle, item.list.title)
     let task = {
       priority: item.priority,
       repeat: item.repeat,
