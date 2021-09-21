@@ -1,1 +1,16 @@
-<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ showDialog }}" title="提示" buttons="{{ [{text: '确定'}] }}" bind:buttontap="dialogClose">树洞模式即将上线~</mp-dialog>
+<view style="position: relative; height: {{ 100 }}px;"></view>
+<!-- 导航栏 -->
+<!-- <navbar page-name="{{ pageName }}">
+  <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" mode="aspectFit" style="width: 24px; height: 24px;"></image>
+  <view slot="rightIcon" class="listSelectIconWrap" bind:tap="handleShowSelectList">
+    <image class="listSelectIcon" src="/src/image/selectIcon0.png" mode="aspectFit"></image>
+  </view>
+</navbar> -->
+
+<share-message head-icon="/src/image/head-icon-yellow.svg" name="小黄" date="2021-07-05T13:00:00Z" content="哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈"
+	options="{{ options }}" chats="{{ [{title: '洞主', content: '文字自评文字自评文字自评文字自评文字自评文字自评文字自评'},{title: '洞主', content: '文字自评文字自评文字自评文字自评文字自评文字自评文字自评'},{title: '洞主', content: '文字自评文字自评文字自评文字自评文字自评文字自评文字自评'},{title: '洞主', content: '文字自评文字自评文字自评文字自评文字自评文字自评文字自评'},{title: '洞主', content: '文字自评文字自评文字自评文字自评文字自评文字自评文字自评'},{title: '洞主', content: '文字自评文字自评文字自评文字自评文字自评文字自评文字自评'},{title: '洞主', content: '文字自评文字自评文字自评文字自评文字自评文字自评文字自评'},{title: '洞主', content: '文字自评文字自评文字自评文字自评文字自评文字自评文字自评'},{title: '洞主', content: '文字自评文字自评文字自评文字自评文字自评文字自评文字自评'}, {title: '洞主回复绿绿', content: '文字自评'}] }}"
+	bind:handleEnsureComment="handleEnsureComment"
+></share-message>
+<share-message head-icon="/src/image/head-icon-yellow.svg" name="小黄" date="2021-07-05T13:00:00Z" content="哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈"
+	options="{{ options }}" chats="{{ [{title: '洞主', content: '文字自评文字自评文字自评文字自评文字自评文字自评文字自评'}, {title: '洞主回复绿绿', content: '文字自评'}] }}"
+></share-message>

@@ -108,6 +108,7 @@ const _handleSaveData = function(_this, data) {
 }
 
 // 讲日期转化为用户所见的
+// @param {String} data 世界格式时间
 const dateInToOut = function(date) {
   let todayYMD = getDawn(0).substr(0, 10);
   let year = date.substr(0, 4);

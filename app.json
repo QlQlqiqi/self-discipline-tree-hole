@@ -1,13 +1,13 @@
 {
 	"pages": [
-		"src/pages/collection/collection",
+		"src/pages/share/share",
 		"src/pages/build-message/build-message",
+		"src/pages/collection/collection",
 		"src/pages/history/history",
 		"src/pages/editor/editor",
 		"src/pages/review/review",
 		"src/pages/add-self-list/add-self-list",
-		"src/pages/list/list",
-		"src/pages/share/share"
+		"src/pages/list/list"
 	],
 	"tabBar": {
 		"custom": true,

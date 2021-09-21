@@ -1,6 +1,9 @@
 {
 	"component": true,
 	"usingComponents": {
-		"mp-dialog": "weui-miniprogram/dialog/dialog"
+		"navbar": "/src/components/navbar/navbar",
+    "menu": "/src/components/menu/menu",
+		"mp-dialog": "weui-miniprogram/dialog/dialog",
+		"share-message": "/src/components/share-message/share-message"
 	}
 }
