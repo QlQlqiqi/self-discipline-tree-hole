@@ -65,6 +65,11 @@ Component({
 				feeling: '',
 				finishDate: util.formatDate(new Date())
 			}));
+			// 如果指明了 list 
+			let list = JSON.parse(options.list || JSON.stringify(''));
+			if(list)
+				task.list = list;
+			console.log(list)
 			let taskId = JSON.parse(options.taskId || JSON.stringify(false));
 			let isEditorTask = JSON.parse(options.isEditorTask || JSON.stringify(false));
 			// 如果是新建任务

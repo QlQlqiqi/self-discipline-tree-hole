@@ -3,6 +3,7 @@
 	isEditorTask: {Boolean} 是否为任务编辑页面，默认 false，当为 false 时，则忽略 taskId
 	taskId：{Number} 指定的任务 id ，存在时忽略 task
 	task：{Object} 指定的任务 task ，存在默认值
+	list: {Object} 任务的清单，当以上都没有时生效
 	remindRange：可选提醒的数组，默认为：["不提醒", "提前5分钟", "提前2小时", "提前1天", "提前1周"]
 	listRange：可选清单的数组，默认为：["个人清单", "工作清单"]
 -->

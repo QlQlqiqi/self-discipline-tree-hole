@@ -28,10 +28,12 @@
     </task-item>
   </view>
   <!-- 删除清单 -->
-  <view wx:if="{{ isDelete }}" style="position:relative; height: 64rpx;">
+  <!-- <view wx:if="{{ isDelete }}" style="position:relative; height: 64rpx;">
     <image src="/src/image/editor-warn.svg" style="height: 30rpx; width: 30rpx; position: absolute; left: 42rpx; top: 26rpx;"></image>
     <view catch:tap="handleDeleteList" style="height: 40rpx; line-height: 40rpx; width: 117rpx; color: #FF214C; font-size: 28rpx; position: absolute; top: 22rpx; left: 82rpx;">删除清单</view>
-  </view>
+  </view> -->
+  <!-- 清单名旁 -->
+  <image src="/src/image/list-edit-box-line.svg" mode="aspectFit" style="position: absolute; width: 48rpx; height: 48rpx; top: 24rpx; left: 170rpx;"></image>
 </view>
 <!-- 新增任务 -->
 <wxs module="touchmove" src="../../utils/touchmove.wxs"></wxs>

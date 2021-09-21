@@ -273,7 +273,7 @@ Component({
 		// 导航到“我的分享”页面
 		// 目前还未实现该功能
 		handleNavigateToShare: function(e) {
-			wx.navigateTo({
+			wx.switchTab({
 				url: '/src/pages/share/share',
 			});
 		},

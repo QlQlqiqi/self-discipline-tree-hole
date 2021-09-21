@@ -32,7 +32,7 @@ Component({
 	 */
 	methods: {
 		// 检查输入名是否合法，然后保存数据
-		ensure: async function() {
+		handleEnsure: async function() {
 			if(!this.data.listTitle.length) {
 				this.setData({
 					show: true
@@ -71,6 +71,11 @@ Component({
 				},
 			})
 			this.handleBack()
+		},
+		// 删除清单
+		handleDelete: function() {
+			// 直接返回上一个页面
+			this.handleBack();
 		},
 		dialogClose: function() {
 			this.setData({

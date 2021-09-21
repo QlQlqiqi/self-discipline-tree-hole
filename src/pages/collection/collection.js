@@ -184,9 +184,24 @@ Component({
 		},
 		// 新增任务
 		handleAddTask: function(e) {
-			wx.navigateTo({
-				url: '/src/pages/editor/editor'
-			});
+			// 如果当前不是“收集箱”，附带当前清单类型
+			if(this.data.pageName === '收集箱') {
+				wx.navigateTo({
+					url: '/src/pages/editor/editor'
+				});
+			}
+			else {
+				let list = {
+					title: this.data.pageName
+				};
+				for(let tmp of this.data.lists) {
+					if(tmp.title === this.data.pageName)
+						list.icon = tmp.icon;
+				}
+				wx.navigateTo({
+					url: '/src/pages/editor/editor?list=' + JSON.stringify(list)
+				});
+			}
 		},
 		// 跳转编辑任务
 		handleEditor: function(e) {
@@ -280,7 +295,7 @@ Component({
 		// 导航到“我的分享”页面
 		// 目前还未实现该功能
 		handleNavigateToShare: function(e) {
-			wx.navigateTo({
+			wx.switchTab({
 				url: '/src/pages/share/share',
 			});
 		},

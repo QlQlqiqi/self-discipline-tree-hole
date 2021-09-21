@@ -2,7 +2,9 @@
 <!-- 导航栏 -->
 <navbar page-name="{{ pageName }}">
   <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" mode="aspectFit" style="width: 24px; height: 24px;"></image>
-  <image slot="rightIcon" class="listSelectIcon" src="/src/image/selectIcon0.png" bind:tap="handleShowSelectList" mode="aspectFit" style="width: 12px; height: 12px;"></image>
+  <view slot="rightIcon" class="listSelectIconWrap" bind:tap="handleShowSelectList">
+    <image  class="listSelectIcon" src="/src/image/selectIcon0.png" mode="aspectFit"></image>
+  </view>
 </navbar>
 <!-- 导航栏的下拉框 -->
 <view class="listSelectWrap" style="left: {{ windowWidth / 2 - 45 }}px; height: 0;">

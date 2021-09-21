@@ -1,6 +1,7 @@
 {
 	"pages": [
 		"src/pages/collection/collection",
+		"src/pages/build-message/build-message",
 		"src/pages/history/history",
 		"src/pages/editor/editor",
 		"src/pages/review/review",

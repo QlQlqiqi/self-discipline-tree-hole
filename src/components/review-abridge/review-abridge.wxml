@@ -1,0 +1,25 @@
+<view class="abridge-wrap" style="{{ componentWrapStyle }}" catch:tap="handleEnlargeOrNarrow">
+	<!-- 上半部分 -->
+	<view class="abridge-stars-wrap" style="{{ abridgeStarsWrap }}">
+		<image wx:for="{{ stars }}" wx:key="index" mode="aspectFit" src="{{ item.src }}" 
+			class="abridge-stars-wrap-star" style="{{ item.style }}"
+		></image>
+	</view>
+	<!-- 中间部分 -->
+	<view class="abridge-evaluate-wrap" style="{{ abridgeEvaluateWrap }}">
+		<view wx:for="{{ abridgeEvaluate }}" wx:key="index">
+			<view class="abridge-evaluate-title" style="{{ item.title.style }}">{{ item.title.content }}</view>
+			<view class="abridge-evaluate-content" style="{{ item.content.style }}">{{ item.content.content }}</view>
+		</view>
+	</view>
+	<!-- 下面内容 -->
+	<view class="abridge-tasks-wrap" style="{{ abridgeTasksWrap }}">
+		<view class="abridge-tasks-title" style="{{ abridgeTasksTitle }}">已完成任务</view>
+		<image class="abridge-history-icon" mode="aspectFit" src="/src/image/review-history.svg" style="{{ abridgeHistoryIcon }}"></image>
+		<view class="abridge-task-wrap" style="{{ abridgeTaskWrapStyle }}" wx:for="{{ tasks }}" wx:key="index">
+			<image class="abridge-task-finish-icon" mode="aspectFit" src="/src/image/review-finished.svg" style="{{ abridgeTaskWrapIconStyle }}"></image>
+			<view style="{{ abridgeTaskWrapContentStyle }}">{{ item.content }}</view>
+			<image class="abridge-task-bottom-line" mode="aspectFit" src="/src/image/editor-line.png" style="{{ abridgeTaskWrapLineStyle }}"></image>
+		</view>
+	</view>
+</view>
