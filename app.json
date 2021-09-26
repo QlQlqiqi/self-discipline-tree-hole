@@ -1,8 +1,9 @@
 {
 	"pages": [
+		"src/pages/add-chat/add-chat",
+		"src/pages/collection/collection",
 		"src/pages/share/share",
 		"src/pages/build-message/build-message",
-		"src/pages/collection/collection",
 		"src/pages/history/history",
 		"src/pages/editor/editor",
 		"src/pages/review/review",
@@ -27,6 +28,12 @@
 				"iconPath": "src/image/tabbar-review-unselected.png",
 				"selectedIconPath": "src/image/tabbar-review.png",
 				"text": "回顾"
+			},
+			{
+				"pagePath": "src/pages/share/share",
+				"iconPath": "src/image/tabbar-share-non.png",
+				"selectedIconPath": "src/image/tabbar-share.png",
+				"text": "树洞"
 			}
 		]
 	},

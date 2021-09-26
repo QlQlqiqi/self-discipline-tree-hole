@@ -80,7 +80,7 @@ Component({
 				{rotate: !selectIconRotate? 180: 0},
 				{rotate: selectIconRotate? 180: 0}
 			], 300);
-			let height = 36 * (this.data.lists.length + 1);
+			let height = 36 * (this.data.lists.length + 1) - 2;
 			this.animate('.listSelectWrap', [
 				{height: !selectIconRotate? height + 'px': 0},
 				{height: selectIconRotate? height + 'px': 0}
@@ -107,7 +107,7 @@ Component({
 		// 选择清单
 		handleSelectList: function(e) {
 			let index = e.currentTarget.dataset.index;
-			let pageName = index === undefined? '收集箱': this.data.lists[index].title;
+			let pageName = index == undefined? '收集箱': this.data.lists[index].title;
 			this.handleShowSelectList();
 			this.setData({
 				pageName
@@ -293,7 +293,6 @@ Component({
 			})
 		},
 		// 导航到“我的分享”页面
-		// 目前还未实现该功能
 		handleNavigateToShare: function(e) {
 			wx.switchTab({
 				url: '/src/pages/share/share',

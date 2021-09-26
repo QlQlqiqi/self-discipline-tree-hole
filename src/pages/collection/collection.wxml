@@ -15,7 +15,7 @@
   <view wx:for="{{ lists }}" wx:key="title" data-index="{{ index }}" catch:tap="handleSelectList" style="position: relative; background-color: {{ pageName === item.title? 'rgb(243, 246, 249)': 'white'}}; ">
     <image src="{{ item.icon }}" style="position: absolute; left: 3px; top: 9px; height: 20px; width: 20px;"></image>
     <view style="padding-left: 20px; height: 35px; overflow-x: scroll;">{{ item.title }}</view>
-    <view style="border-top: 1px solid rgba(187, 187, 187, 1);"></view>
+    <view wx:if="{{ index + 1 < lists.length }}" style="border-top: 1px solid rgba(187, 187, 187, 1);"></view>
   </view>
 </view>
 <!-- 弹窗背景点击遮掩 -->

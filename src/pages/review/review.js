@@ -357,14 +357,16 @@ Component({
 		// 拉取并设置数据
 		onLoad: function() {
 			// 设置机型相关信息
+			let {navHeight, navTop, windowHeight, windowWidth, bottomLineHeight} = app.globalData;
+			
 			this.setData({
-				navHeight: app.globalData.navHeight,
-				navTop: app.globalData.navTop,
-				windowHeight: app.globalData.windowHeight,
-				windowWidth: app.globalData.windowWidth,
-				ratio: 750 / app.globalData.windowWidth,
-				bottomLineHeight: app.globalData.bottomLineHeight
-			});
+				navHeight,
+				navTop,
+				windowHeight,
+				windowWidth,
+				ratio: 750 / windowWidth,
+				bottomLineHeight
+			})
 		}
 	},
 
@@ -373,7 +375,6 @@ Component({
 	 */
 	pageLifetimes: {
 		show: function() {
-			// 保存数据
 			this._getAllDataFromLocal();
 			// 切换 tabbar 时候显示该页面
 			this.getTabBar().setData({

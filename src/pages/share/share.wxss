@@ -1,1 +1,66 @@
-/* src/pages/share/share.wxss */
+.listSelectIconWrap {
+  position: absolute;
+  width: 93px;
+  height: 33px;
+  top: 0;
+  left: 150px;
+}
+.listSelectIcon {
+  width: 12px;
+  height: 12px;
+  margin-left: 60px;
+}
+.listSelectWrap {
+  position: absolute;
+  width: 90px;
+  overflow: hidden;
+  line-height: 35px;
+  text-align: center;
+  font-size: 14px;
+  box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dce0e7;
+  z-index: 2;
+}
+.share-wrap {
+  position: relative;
+}
+.share-wrap .rotation-chart {
+  height: 360rpx;
+  width: 100%;
+}
+.share-wrap .rotation-chart image {
+  height: 100%;
+  width: 100%;
+}
+.share-wrap .chat-wrap {
+  position: relative;
+  padding: 28rpx 0 0 48rpx;
+  overflow: hidden;
+}
+.share-wrap .chat-wrap .left-circle-icon {
+  position: absolute;
+  height: 24rpx;
+  top: 20rpx;
+  left: 15rpx;
+  width: 24rpx;
+}
+.share-wrap .chat-wrap .task-left-line {
+  position: absolute;
+  height: 1000rpx;
+  top: 0;
+  left: 24rpx;
+  border-left: 4rpx solid rgba(103, 167, 143, 0.7);
+}
+.collection-add-icon {
+  position: fixed;
+  width: 100rpx;
+  height: 100rpx;
+}
+.menu-mask {
+  position: absolute;
+  right: 0;
+  width: 750rpx;
+  z-index: 11;
+  background-color: rgba(0, 0, 0, 0.6);
+  transition: all 0.2s ease;
+}

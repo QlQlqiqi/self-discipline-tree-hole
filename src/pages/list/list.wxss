@@ -19,8 +19,8 @@
 }
 
 .collection-task-title > text {
-	position: absolute;
-	left: 66rpx;
+	display: inline-block;
+	margin-left: 66rpx;
 	margin-top: 28rpx;
 	height: 42rpx;
 	line-height: 42rpx;

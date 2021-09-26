@@ -74,4 +74,6 @@
 </view>
 
 <!-- 提示 -->
-<mp-dialog show="{{ showErrorDialog }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" buttons="{{ [{text: '确定'}] }}" catch:buttontap="dialogClose">{{ errorDialogMsg }}</mp-dialog>
+<mp-dialog show="{{ showErrorDialog }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" 
+	buttons="{{ [{text: '确定'}] }}" catch:buttontap="dialogClose"
+>{{ errorDialogMsg }}</mp-dialog>

@@ -1,4 +1,4 @@
-<view class="abridge-wrap" style="{{ componentWrapStyle }}" catch:tap="handleEnlargeOrNarrow">
+<view class="abridge-wrap" style="{{ componentWrapStyle }}" bind:tap="handleEnlargeOrNarrow">
 	<!-- 上半部分 -->
 	<view class="abridge-stars-wrap" style="{{ abridgeStarsWrap }}">
 		<image wx:for="{{ stars }}" wx:key="index" mode="aspectFit" src="{{ item.src }}" 

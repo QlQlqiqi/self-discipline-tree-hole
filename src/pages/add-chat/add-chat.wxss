@@ -1,0 +1,99 @@
+.add-chat-wrap {
+  position: relative;
+  height: 100%;
+}
+.add-chat-wrap .add-review-wrap {
+  position: absolute;
+  height: 0;
+  z-index: 3;
+}
+.add-chat-wrap .add-review-wrap .reivew-abridge {
+  position: absolute;
+}
+.add-chat-wrap .add-review-wrap .reivew-abridge .image {
+  position: absolute;
+  z-index: 1;
+  height: 48rpx;
+  width: 48rpx;
+  top: 10rpx;
+  right: 10rpx;
+}
+.add-chat-wrap .add-review-wrap .repeat-tip {
+  position: absolute;
+  width: 360rpx;
+  height: 88rpx;
+  left: 0;
+  line-height: 88rpx;
+  border-radius: 18rpx;
+  background-color: #959595;
+  color: #ffffff;
+  font-size: 28rpx;
+  text-align: center;
+  border: 2rpx solid #bbbbbb;
+}
+.add-chat-wrap .options-wrap {
+  box-sizing: border-box;
+  height: 6%;
+  display: flex;
+  padding: 26rpx;
+  width: 100%;
+  justify-content: space-between;
+}
+.add-chat-wrap .options-wrap .cancel,
+.add-chat-wrap .options-wrap .ensure {
+  width: 128rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  font-size: 28rpx;
+  text-align: center;
+  border-radius: 10rpx;
+  margin: 0;
+}
+.add-chat-wrap .options-wrap .cancel {
+  color: black;
+  background-color: white;
+}
+.add-chat-wrap .options-wrap .ensure {
+  color: white;
+  background-color: rgba(103, 166, 60, 0.86);
+}
+.add-chat-wrap .chat-content-wrap {
+  padding: 24rpx;
+  background-color: rgba(103, 166, 60, 0.09);
+  box-sizing: border-box;
+  height: 94%;
+}
+.add-chat-wrap .chat-content-wrap .chat-content {
+  height: 80%;
+  line-height: 40rpx;
+  font-size: 28rpx;
+  width: 80%;
+  margin: 40rpx auto;
+}
+.add-chat-wrap .chat-content-wrap .textarea {
+  font-size: 24rpx;
+  color: #888;
+  height: 40rpx;
+  line-height: 40rpx;
+}
+.add-chat-wrap .bottom-options-wrap {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 76rpx;
+  line-height: 76rpx;
+}
+.add-chat-wrap .bottom-options-wrap .option {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.add-chat-wrap .bottom-options-wrap .option .icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+.add-chat-wrap .bottom-options-wrap .option .content {
+  height: 100%;
+  font-size: 28rpx;
+}

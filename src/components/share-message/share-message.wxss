@@ -1,4 +1,7 @@
 .share-message-wrap {
+  position: relative;
+  box-shadow: 0px 0px 26rpx 0px rgba(132, 132, 132, 0.18);
+  border-radius: 24rpx;
   box-sizing: border-box;
   width: 668rpx;
   background-color: white;
@@ -40,33 +43,34 @@
   height: 48rpx;
   margin-left: 52rpx;
 }
-.share-message-wrap .share-message-content-wrap .share-message-info .share-message-option-select {
+.share-message-wrap .share-message-option-select {
   position: absolute;
   width: 198rpx;
-  left: 470rpx;
+  right: 0;
   box-shadow: 0px 0px 12rpx 0px rgba(0, 0, 0, 0.18);
   border-radius: 22rpx;
   background-color: white;
+  z-index: 1;
 }
-.share-message-wrap .share-message-content-wrap .share-message-info .share-message-option-select .share-message-option {
+.share-message-wrap .share-message-option-select .share-message-option {
   position: relative;
   height: 74rpx;
   line-height: 74rpx;
 }
-.share-message-wrap .share-message-content-wrap .share-message-info .share-message-option-select .share-message-option .option-icon {
+.share-message-wrap .share-message-option-select .share-message-option .option-icon {
   position: absolute;
   width: 34rpx;
   height: 34rpx;
   left: 26rpx;
   top: 26rpx;
 }
-.share-message-wrap .share-message-content-wrap .share-message-info .share-message-option-select .share-message-option .option-content {
+.share-message-wrap .share-message-option-select .share-message-option .option-content {
   position: absolute;
   left: 84rpx;
   height: 75rpx;
   line-height: 75rpx;
 }
-.share-message-wrap .share-message-content-wrap .share-message-info .share-message-option-select .share-message-option .option-divide {
+.share-message-wrap .share-message-option-select .share-message-option .option-divide {
   border-top: 2rpx solid #bbbbbb;
 }
 .share-message-wrap .share-message-chats-wrap {
@@ -88,7 +92,7 @@
 }
 .share-message-wrap .share-message-chats-wrap .share-message-comment-wrap {
   display: flex;
-  padding-top: 16rpx;
+  padding: 16rpx;
   font-size: 24rpx;
 }
 .share-message-wrap .share-message-chats-wrap .share-message-comment-wrap .comment-place-holder {

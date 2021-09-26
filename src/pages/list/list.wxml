@@ -13,9 +13,11 @@
 <view style="position: relative;">
   <!-- 任务清单 -->
   <view class="collection-task-title">
-    <text>{{ pageName }}</text>
     <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 32rpx; width: 32rpx; position: absolute; margin-top: 42rpx; margin-left: 24rpx;"></image>
     <view class="task-left-line" style="margin-left: 38rpx; margin-top: 64rpx; height: 32rpx;"></view>
+    <text>{{ pageName }}</text>
+    <!-- 清单名旁 -->
+    <image src="/src/image/list-edit-box-line.svg" mode="aspectFit" style="position: absolute; width: 48rpx; height: 48rpx; top: 24rpx;"></image>
   </view>
   <view wx:for="{{ showTasks }}" wx:key="index" class="collection-task-item-wrap">
     <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 16rpx; width: 16rpx; position: absolute; margin-left: -30rpx;"></image>
@@ -32,8 +34,6 @@
     <image src="/src/image/editor-warn.svg" style="height: 30rpx; width: 30rpx; position: absolute; left: 42rpx; top: 26rpx;"></image>
     <view catch:tap="handleDeleteList" style="height: 40rpx; line-height: 40rpx; width: 117rpx; color: #FF214C; font-size: 28rpx; position: absolute; top: 22rpx; left: 82rpx;">删除清单</view>
   </view> -->
-  <!-- 清单名旁 -->
-  <image src="/src/image/list-edit-box-line.svg" mode="aspectFit" style="position: absolute; width: 48rpx; height: 48rpx; top: 24rpx; left: 170rpx;"></image>
 </view>
 <!-- 新增任务 -->
 <wxs module="touchmove" src="../../utils/touchmove.wxs"></wxs>

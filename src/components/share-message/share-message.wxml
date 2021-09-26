@@ -19,14 +19,14 @@
 			<image class="share-message-option-icon" src="/src/image/chat-option.svg" mode="aspectFit"
 				catch:tap="handleShowOptions"
 			></image>
-			<!-- 功能面板 -->
-			<view wx:if="{{ optionsShow }}" class="share-message-option-select">
-				<view wx:for="{{ options }}" wx:key="index" class="share-message-option">
-					<image class="option-icon" src="{{ item.icon }}" mode="aspectFit"></image>
-					<view class="option-content">{{ item.content }}</view>
-					<view wx:if="{{ index }}" class="option-divide"></view>
-				</view>
-			</view>
+		</view>
+	</view>
+	<!-- 功能面板 -->
+	<view wx:if="{{ optionsShow }}" class="share-message-option-select">
+		<view wx:for="{{ options }}" wx:key="index" class="share-message-option">
+			<image class="option-icon" src="{{ item.icon }}" mode="aspectFit"></image>
+			<view class="option-content">{{ item.content }}</view>
+			<view wx:if="{{ index }}" class="option-divide"></view>
 		</view>
 	</view>
 	<!-- 评论区 -->

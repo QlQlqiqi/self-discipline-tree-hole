@@ -2,6 +2,7 @@
 
 // 执行 dom 元素拖拽前做的事情
 var handleTouchStart = function(e) {
+  console.log('start')
   var obj = e.instance.getState();
   var domDataset = e.instance.getDataset();
   var domBCR = e.instance.getBoundingClientRect();
@@ -19,18 +20,21 @@ var handleTouchStart = function(e) {
 // 控制 dom 元素的拖动
 // dataset 包含设备的宽高和控制的 dom 的宽高
 var handleTouchMove = function(e) {
+  console.log('touchmove')
   var obj = e.instance.getState();
   var leftAdd = e.touches[0].pageX - obj.mouseStartLeft;
   var topAdd = e.touches[0].pageY - obj.mouseStartTop;
   e.instance.setStyle({
-    'right': obj.domRight - leftAdd + 'px',
-    'bottom': obj.domBottom - topAdd + 'px'
+    'left': obj.windowWidth - obj.width - obj.domRight + leftAdd + 'px',
+    'top': obj.windowHeight - obj.height - obj.domBottom + topAdd + 'px'
   })
+  console.log(obj.domRight - leftAdd, obj.domBottom - topAdd)
   return false;
 }
 
 // 执行 dom 元素拖拽之后的事情
 var handleTouchEnd = function(e) {
+  console.log('end')
   // dom 元素拖拽结束后，将 dom 元素在一定时间内移至最短的安全区域内
   // 这里默认是屏幕右侧，且 top 和 bottom 不低于 100px， left 或 right 为 50px
   var domBCR = e.instance.getBoundingClientRect(), obj = e.instance.getState();
