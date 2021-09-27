@@ -23,7 +23,7 @@
 	</view>
 	<!-- 功能面板 -->
 	<view wx:if="{{ optionsShow }}" class="share-message-option-select">
-		<view wx:for="{{ options }}" wx:key="index" class="share-message-option">
+		<view wx:for="{{ options }}" wx:key="index" data-index="{{ index }}" class="share-message-option" bindtap="handleSelectOption">
 			<image class="option-icon" src="{{ item.icon }}" mode="aspectFit"></image>
 			<view class="option-content">{{ item.content }}</view>
 			<view wx:if="{{ index }}" class="option-divide"></view>

@@ -1,12 +1,13 @@
 .add-chat-wrap {
 	position: relative;
 	height: 100%;
+	background-color: rgba(103, 166, 60, .09);
 	.add-review-wrap {
 		position: absolute;
 		height: 0;
 		z-index: 3;
 		.reivew-abridge {
-			position: absolute;
+			position: fixed;
 			.image {
 				position: absolute;
 				z-index: 1;
@@ -57,7 +58,6 @@
 	}
 	.chat-content-wrap {
 		padding: 24rpx;
-		background-color: rgba(103, 166, 60, .09);
 		box-sizing: border-box;
 		height: 94%;
 		.chat-content {
@@ -73,6 +73,19 @@
 			height: 40rpx;
 			line-height: 40rpx;
 		}
+	}
+	.char-count {
+		position: absolute;
+		left: 562rpx;
+		top: 1036rpx;
+		width: 156rpx;
+		height: 34rpx;
+		line-height: 34rpx;
+		border-radius: 8rpx;
+		color: rgba(16, 16, 16, 1);
+		font-size: 28rpx;
+		text-align: center;
+		border: 2rpx solid rgba(187, 187, 187, 1);
 	}
 	.bottom-options-wrap {
 		position: relative;

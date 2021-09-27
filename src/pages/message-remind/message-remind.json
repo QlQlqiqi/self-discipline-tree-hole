@@ -1,0 +1,7 @@
+{
+	"component": true,
+	"usingComponents": {
+		"navbar": "/src/components/navbar/navbar",
+		"share-message": "/src/components/share-message/share-message"
+	}
+}

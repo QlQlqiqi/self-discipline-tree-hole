@@ -10,12 +10,12 @@ const getDataFromSqlByUrl = async function(url, {owner, token}) {
 		throw new Error('function "getDataFromSqlByUrl" requires param url!');
 	if(!token || !owner)
 		throw new Error('function "getDataFromSqlByUrl" requires param {token, owner}');
-	let {data: lists} = await util.myRequest({
+	let {data} = await util.myRequest({
 		url: url + '?owner=' + JSON.stringify(owner),
 		header: { token: token },
 		method: "GET"
 	});
-	return lists;
+	return data;
 }
 
 // 将数据 tasks 同步到后端，如果 tasks 存在 urlSql 字段，则采用 PUT 方式

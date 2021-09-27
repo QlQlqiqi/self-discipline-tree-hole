@@ -1,6 +1,7 @@
 .add-chat-wrap {
   position: relative;
   height: 100%;
+  background-color: rgba(103, 166, 60, 0.09);
 }
 .add-chat-wrap .add-review-wrap {
   position: absolute;
@@ -8,7 +9,7 @@
   z-index: 3;
 }
 .add-chat-wrap .add-review-wrap .reivew-abridge {
-  position: absolute;
+  position: fixed;
 }
 .add-chat-wrap .add-review-wrap .reivew-abridge .image {
   position: absolute;
@@ -59,7 +60,6 @@
 }
 .add-chat-wrap .chat-content-wrap {
   padding: 24rpx;
-  background-color: rgba(103, 166, 60, 0.09);
   box-sizing: border-box;
   height: 94%;
 }
@@ -75,6 +75,19 @@
   color: #888;
   height: 40rpx;
   line-height: 40rpx;
+}
+.add-chat-wrap .char-count {
+  position: absolute;
+  left: 562rpx;
+  top: 1036rpx;
+  width: 156rpx;
+  height: 34rpx;
+  line-height: 34rpx;
+  border-radius: 8rpx;
+  color: #101010;
+  font-size: 28rpx;
+  text-align: center;
+  border: 2rpx solid #bbbbbb;
 }
 .add-chat-wrap .bottom-options-wrap {
   position: relative;

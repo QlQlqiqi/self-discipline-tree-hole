@@ -1,0 +1,29 @@
+<view style="position: relative; height: {{ navHeight }}px;"></view>
+<!-- 导航栏 -->
+<navbar page-name="消息">
+  <image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 24px; height: 24px;"></image>
+</navbar>
+
+<scroll-view class="message-remind-wrap" scroll-y="{{ true }}" style="height: {{ windowHeight - navHeight }}px; padding-top: 20rpx;">
+	<view class="message" wx:for="{{ messageRemind }}" wx:key="index">
+		<!-- 说说的缩略形式 -->
+		<view wx:if="{{ !item.open }}" class="non-open-wrap">
+			<view class="remind">
+				<text class="title">{{ item.remind.title }}：</text>
+				<text class="content">{{ item.remind.contentShow }}</text>
+			</view>
+			<view class="chat">
+				<text class="title">{{ item.chat.name }}：</text>
+				<text class="content">{{ item.chat.contentShow }}</text>
+			</view>
+		</view>
+		<!-- 说说展开 -->
+		<view wx:else>
+			<share-message head-icon="{{ item.chat.headIcon }}" name="{{ item.chat.name }}" date="{{ item.chat.date }}" content="{{ item.chat.content }}"
+        options="{{ item.chat.options }}" chats="{{ item.chat.comments }}" bind:handleEnsureComment="handleEnsureComment"
+        bindhandleSelectOption="handleSelectOption"
+      ></share-message>
+		</view>
+	</view>
+</scroll-view>
+

@@ -18,7 +18,7 @@ Component({
 	data: {
 		// 页面名称，[树洞，个人空间]
 		pageNames: [
-			{icon: '/src/image/tabbar-share.png', title: '树洞'}, 
+			{icon: '/src/image/tabbar-share.png', title: '树洞区'}, 
 			{icon: '/src/image/tabbar-self-room.svg', title: '个人空间'}
 		],
 		// 当前选中的页面
@@ -29,7 +29,11 @@ Component({
 		lists: [],
 		signText: '',
 		// 需要展示的轮播图地址
-		imageUrls: ['/src/image/option-report.svg','/src/image/option-report.svg','/src/image/option-report.svg'],
+		imageUrls: [
+			'/src/image/option-report.svg',
+			'/src/image/option-report.svg',
+			'/src/image/option-report.svg'
+		],
 		// 当前轮播图 index
 		currentGallery: 0,
 		// 说说功能选项
@@ -38,6 +42,10 @@ Component({
 			{ icon: '/src/image/option-power.svg', content: '权限' },
 			{ icon: '/src/image/option-delete.svg', content: '删除' }
 		],
+		optionShow: false,
+		optionButton: [{text: '取消'}, {text: '确认'}],
+		optionDialogContent: '',
+		shareRangeShow: false,
 		// 说说 {headIcon, name, date, content, comments{title, content}}
 		chats: [
 			{
@@ -49,18 +57,10 @@ Component({
 					{title: '洞主', content: '哈哈'},
 					{title: '洞主', content: '哈哈'}
 				]
-			},
-			{
-				headIcon: '/src/image/head-icon-yellow.svg',
-				name: '黄黄',
-				date: '2020-12-21T12:12:12Z',
-				content: '说说',
-				comments: [
-					{title: '洞主', content: '哈哈'},
-					{title: '洞主', content: '哈哈'}
-				]
 			}
-		]
+		],
+		// 下拉刷新
+		pullDownRefresh: false
 	},
 
 	computed: {
@@ -91,6 +91,20 @@ Component({
 				else res[idx++] = list;
 			}
 			return res;
+		},
+		// 页面展示的说说
+		chatsShow: function(data) {
+			return data.chats;
+		},
+		// 当前页面使用的功能
+		optionsSelect: function(data) {
+			// 树洞区为举报，个人空间为权限和删除
+			if(data.pageNameCurrent === 0) {
+				return data.options.filter(item => item.content === '举报');
+			}
+			else if(data.pageNameCurrent === 1) {
+				return data.options.filter(item => item.content === '权限' || item.content === '删除');
+			}
 		}
 	},
 
@@ -105,6 +119,9 @@ Component({
 				{height: !selectIconRotate? height + 'px': 0},
 				{height: selectIconRotate? height + 'px': 0}
 			], 300)
+		},
+		'pageNameCurrent': function(pageNameCurrent) {
+			// [树洞区，个人空间]
 		}
 	},
 
@@ -137,12 +154,130 @@ Component({
 				showMenu: true
 			});
 		},
+		// 导航去消息提醒页面
+		handleNavigateToMessageRemind(e) {
+			wx.navigateTo({
+				url: '/src/pages/message-remind/message-remind',
+			})
+		},
 		// 新建说说
 		handleAddChat(e) {
 			wx.navigateTo({
 				url: '/src/pages/add-chat/add-chat'
 			})
 		},
+		// 说说的功能区，根据当前页面决定功能
+		handleSelectOption(e) {
+			let {pageNameCurrent} = this.data;
+			let index = e.detail.index;
+			// “树洞区”则[举报]功能
+			if(!pageNameCurrent) {
+				if(!index) {
+					this._handleReport();
+				}
+			}
+			// “个人空间”则[权限，删除]功能
+			else if(pageNameCurrent === 1) {
+				if(!index) {
+					this._handleChangePower();
+				}
+				else if(index === 1) {
+					this._handleDeleteMessage();
+				}
+			}
+		},
+		// 举报说说
+		_handleReport() {
+			// 确认
+			let ensure = () => {
+				// 发送数据到后端
+				this.setData({
+					optionShow: false
+				})
+			}
+			let cancel = () => {
+				this.setData({
+					optionShow: false
+				})
+			}
+			this._optionButtons = [cancel, ensure];
+			this.setData({
+				optionShow: true,
+				optionButton: [{text: '取消'}, {text: '确认'}],
+				optionDialogContent: '你确定要举报该状态违规吗？'
+			})
+		},
+		// 改变说说分享范围
+		_handleChangePower(ensure) {
+			// 确认
+			if(!ensure) {
+				ensure = () => {
+					// 发送数据到后端
+
+					// 改变选中的
+					this.setData({
+						shareRangeShow: false,
+						// _currentShareRangeIndex
+					})
+				}
+			}
+			let cancel = () => {
+				this.setData({
+					shareRangeShow: false
+				})
+			}
+			this._optionButtons = [cancel, ensure];
+			this.setData({
+				shareRangeShow: true,
+				optionButton: [{text: '取消', type: 'default'},{text: '确定', type: 'primary'}],
+				optionDialogContent: ['大家的树洞', '仅自己可见']
+			})
+		},
+		// 删除说说
+		_handleDeleteMessage() {
+			// 确认
+			let ensure = () => {
+				// 发送数据到后端
+				this.setData({
+					optionShow: false
+				})
+			}
+			let cancel = () => {
+				this.setData({
+					optionShow: false
+				})
+			}
+			this._optionButtons = [cancel, ensure];
+			this.setData({
+				optionShow: true,
+				optionButton: [{text: '取消'}, {text: '删除'}],
+				optionDialogContent: '删除该状态？'
+			})
+		},
+		// 弹窗 buttons 功能
+		handleDialogButtons(e) {
+			let {index} = e.detail;
+			this._optionButtons[index]();
+			delete this._optionButtons;
+			delete this._currentShareRangeIndex;
+		},
+		// 记录选择的分享范围
+		handleChangeShareRange(e) {
+			this._currentShareRangeIndex = e.detail.value[0];
+		},
+		// 发送评论
+		handleEnsureComment(e) {
+			console.log(e)
+		},
+		// 下拉刷新，加载数据
+		async pullDownLoad() {
+			this.setData({
+				pullDownRefresh: true
+			});
+			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			let chats = await store.getDataFromSqlByUrl(app.globalData.url + 'community/blog/')
+		},
+
 
 		// 修改个性签名
 		handleSignTextEnsure: async function(e) {
@@ -263,13 +398,6 @@ Component({
 				url: '/src/pages/share/share',
 			});
 		},
-
-
-		// 发送评论
-		handleEnsureComment(e) {
-			console.log(e)
-		},
-
 		// 从本地获取全部数据
 		_getAllDataFromLocal: function() {
 			// 获取任务
@@ -289,7 +417,6 @@ Component({
 		onLoad() {
 			// 设置机型相关信息
 			let {navHeight, navTop, windowHeight, windowWidth, bottomLineHeight} = app.globalData;
-			
 			this.setData({
 				navHeight,
 				navTop,

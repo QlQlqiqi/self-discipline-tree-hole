@@ -1,7 +1,7 @@
 <view style="height: {{ navHeight }}px;"></view>
 <!-- 导航栏 -->
 <navbar page-name="新建说说">
-  <image slot="backIcon" src="/src/image/back.png" bind:tap="handleShowMenu" mode="aspectFit" style="width: 24px; height: 24px;"></image>
+  <image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 24px; height: 24px;"></image>
 </navbar>
 <view class="add-chat-wrap" style="height: {{ windowHeight - navHeight }}px;">
 	<!-- 今日回顾的缩略图 -->
@@ -9,8 +9,7 @@
 		<wxs module="touchmove" src="../../utils/touchmove.wxs"></wxs>
 		<view wx:if="{{ reviewShow }}" class="reivew-abridge"
 			data-window-width="{{windowWidth}}" data-window-height="{{windowHeight}}" data-width="{{100}}" data-height="{{100}}" 
-			catch:touchmove="{{ touchmove.handleTouchMove }}"
-			catch:touchend="{{ touchmove.handleTouchEnd }}" bindtouchstart="{{ touchmove.handleTouchStart }}"
+			catch:touchmove="{{ touchmove.handleTouchMove }}" bindtouchstart="{{ touchmove.handleTouchStart }}"
 		>
 			<image src="/src/image/reivew-abridge-delete.svg" catchtap="handleCloseReviewAbridge" mode="aspectFit" class="image"></image>
 			<review-abridge  componentWidthMax="{{ windowWidth }}" componentHeightMin="{{ 100 }}"
@@ -20,8 +19,8 @@
 		<view wx:if="{{ repeatTipShow }}" class="repeat-tip" style="top: {{ repeatTipTop }}px;">已添加，请勿重复操作！</view>
 	</view>
 	<view class="options-wrap">
-		<button class="cancel">取消</button>
-		<button class="ensure">确认</button>
+		<button class="cancel" bindtap="handleCancel">取消</button>
+		<button class="ensure" bindtap="handleEnsure">确认</button>
 	</view>
 	<view class="chat-content-wrap" style="height: {{ windowHeight - navHeight - 88 / ratio }}px;">
 		<textarea class="chat-content" value="{{ chatContent }}" bindinput="handleInput" maxlength="{{ maxLength }}"
@@ -29,8 +28,10 @@
 			show-confirm-bar="{{ false }}" adjust-position="{{false}}" bindblur="handleCloseKeyBoard"
 		></textarea>
 	</view>
+	<!-- 右下角字符计数 -->
+	<view class="char-count">{{ charInputLength }} / {{ maxLength }}</view>
 	<!-- 下面的功能区 -->
-	<view class="bottom-options-wrap" wx:if="{{ true }}" style="bottom: {{ 100 }}px;">
+	<view class="bottom-options-wrap" wx:if="{{ true }}" style="bottom: {{ optionsBottom }}px; background-color: {{ bottomOptionsShow? 'white': '' }}; padding: 5px;">
 	<!-- 缩略图 -->
 		<view class="option" bindtap="handleAddReviewAbridge">
 			<image src="/src/image/add-chat-option0.svg" mode="aspectFit" class="icon"></image>
@@ -67,9 +68,9 @@
 				bindclose="handleCloseShareSelect" bindbuttontap="handleShareButtonTap"
 			>
 				<view slot="desc" style="height: 200rpx;">
-					<picker-view style="width: 100%; height: 100%;" value="{{ [currentShareIndex] }}" bindchange="handleChangeShare">
+					<picker-view indicator-style="height: 40px;" style="width: 100%; height: 100%;" value="{{ [currentShareIndex] }}" bindchange="handleChangeShare">
 						<picker-view-column>
-							<view wx:for="{{ shareRange }}" wx:key="index" style="text-align: center;">
+							<view wx:for="{{ shareRange }}" wx:key="index" style="text-align: center; line-height: 40px;">
 								<text>{{ item.content }}</text>
 							</view>
 						</picker-view-column>

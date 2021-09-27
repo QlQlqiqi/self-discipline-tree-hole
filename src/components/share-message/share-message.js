@@ -60,6 +60,14 @@ Component({
 				optionsShow: !this.data.optionsShow
 			})
 		},
+		// 点击相关功能，告诉父组件
+		handleSelectOption(e) {
+			let index = e.currentTarget.dataset.index;
+			this.triggerEvent('handleSelectOption', {index});
+			this.setData({
+				optionsShow: !this.data.optionsShow
+			})
+		},
 		// 展示聊天区
 		handleShowChat(e) {
 			this.setData({
@@ -76,11 +84,6 @@ Component({
 			this.setData({
 				commentValue: ''
 			})
-			
-
-
-			
-
 		},
 		// 输入评论
 		handleInputComment(e) {

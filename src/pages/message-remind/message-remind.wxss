@@ -1,0 +1,33 @@
+.message-remind-wrap {
+  position: relative;
+}
+.message-remind-wrap .message {
+  background-color: white;
+  position: relative;
+  margin-left: 48rpx;
+  margin-top: 20rpx;
+  width: 668rpx;
+  border-radius: 24rpx;
+}
+.message-remind-wrap .message .non-open-wrap {
+  padding: 44rpx 0 0 30rpx;
+  box-sizing: border-box;
+  font-size: 36rpx;
+  width: 602rpx;
+  overflow: hidden;
+  height: 262rpx;
+}
+.message-remind-wrap .message .non-open-wrap .remind {
+  height: 54rpx;
+  line-height: 54rpx;
+}
+.message-remind-wrap .message .non-open-wrap .chat {
+  margin-top: 16rpx;
+  background-color: #F5F5F5;
+  height: 122rpx;
+  line-height: 122rpx;
+  padding-left: 14rpx;
+}
+.message-remind-wrap .message .non-open-wrap .title {
+  color: #576b95;
+}

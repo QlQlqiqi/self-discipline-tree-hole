@@ -1,5 +1,9 @@
+const computedBehavior = require("miniprogram-computed").behavior;
+const util = require("../../utils/util");
+const store = require("../../store/store");
 const app = getApp();
 Component({
+	behaviors: [computedBehavior],
 	/**
 	 * 组件的属性列表
 	 */
@@ -22,7 +26,7 @@ Component({
 		// 当弹出键盘时，显示下面的功能框
 		bottomOptionsShow: false,
 		// 功能框距离下面的距离 px
-		optionsBottom: 0,
+		optionsBottom: 100,
 		reviewShow: false,
 		// 缩略图
 		review: {
@@ -57,13 +61,23 @@ Component({
 	},
 
 	computed: {
-
+		charInputLength(data) {
+			return data.chatContent.length;
+		}
 	},
 
 	/**
 	 * 组件的方法列表
 	 */
 	methods: {
+		// 确认说说
+		handleEnsure(e) {
+
+		},
+		// 取消说说
+		handleCancel(e) {
+
+		},
 		// 绑定输入
 		handleInput(e) {
 			this.setData({
@@ -73,7 +87,8 @@ Component({
 		// 弹出键盘
 		handleShowKeyBoard(e) {
 			// 因为 handleShowKeyBoard 会触发两次，且两次只有第一次高度正常，所以需要特殊保存
-			this._keyBoardHeight = Math.max(this._keyBoardHeight || 0, e.detail.height);
+			this._keyBoardHeight = Math.max(this._keyBoardHeight || 0, e.detail.height, app.globalData.keyBoardHeight || 0);
+			app.globalData.keyBoardHeight = this._keyBoardHeight;
 			this.setData({
 				optionsBottom: this._keyBoardHeight,
 				bottomOptionsShow: true
@@ -85,7 +100,7 @@ Component({
 			setTimeout(() => {
 				this.setData({
 					bottomOptionsShow: false,
-					optionsBottom: 0
+					optionsBottom: 100
 				})
 			}, 0);
 		},
@@ -171,12 +186,25 @@ Component({
 		handleChangeShare(e) {
 			this._currentShareIndex = e.detail.value[0];
 		},
+		// 页面返回
+		handleBack(e) {
+			wx.navigateBack();
+		},
 		
+		// 从后端拉取数据
+		getDataFromSql() {
+			// 拉取说说内容
+			// chatsSql 为从后端拉取的说说数组
+			let chatsSql;
+			
+		},
+
 		// 加载数据
 		onLoad: function() {
 			// 设置机型相关信息
 			let {navHeight, navTop, windowHeight, windowWidth, bottomLineHeight} = app.globalData;
-			
+			// 从后端拉取数据
+			// this.getDataFromSql();
 			this.setData({
 				navHeight,
 				navTop,

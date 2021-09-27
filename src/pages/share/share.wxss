@@ -32,10 +32,27 @@
   height: 100%;
   width: 100%;
 }
+.share-wrap .share-message-remind {
+  position: absolute;
+  right: 12rpx;
+  top: 360rpx;
+}
+.share-wrap .share-message-remind .remind-image {
+  position: relative;
+  width: 48rpx;
+  height: 48rpx;
+}
+.share-wrap .share-message-remind .remind-red-dot {
+  position: absolute;
+  top: 4rpx;
+  border-radius: 10rpx;
+  width: 12rpx;
+  height: 12rpx;
+  background-color: red;
+}
 .share-wrap .chat-wrap {
   position: relative;
   padding: 28rpx 0 0 48rpx;
-  overflow: hidden;
 }
 .share-wrap .chat-wrap .left-circle-icon {
   position: absolute;
