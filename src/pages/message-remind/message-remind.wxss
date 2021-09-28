@@ -1,5 +1,7 @@
 .message-remind-wrap {
   position: relative;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 .message-remind-wrap .message {
   background-color: white;

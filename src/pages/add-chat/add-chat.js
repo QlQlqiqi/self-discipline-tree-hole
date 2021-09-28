@@ -7,21 +7,19 @@ Component({
 	/**
 	 * 组件的属性列表
 	 */
-	properties: {
-
-	},
+	properties: {},
 
 	/**
 	 * 组件的初始数据
 	 */
 	data: {
-		chatContent: '',
+		chatContent: "",
 		maxLength: 800,
 		// 下面的功能区
 		options: [
-			{icon: '/src/image/add-chat-option0.svg', content: '添加今日回顾单'},
-			{icon: '/src/image/add-chat-option1.svg', content: '选择匿名身份'},
-			{icon: '/src/image/add-chat-option2.svg', content: '分享范围'}
+			{ icon: "/src/image/add-chat-option0.svg", content: "添加今日回顾单" },
+			{ icon: "/src/image/add-chat-option1.svg", content: "选择匿名身份" },
+			{ icon: "/src/image/add-chat-option2.svg", content: "分享范围" },
 		],
 		// 当弹出键盘时，显示下面的功能框
 		bottomOptionsShow: false,
@@ -32,29 +30,26 @@ Component({
 		review: {
 			starsNum: 0,
 			// 每个元素为 {content: String}
-			tasks: [{content: 111}]
+			tasks: [{ content: 111 }],
 		},
 		repeatTipShow: false,
 		repeatTipTop: 0,
 		// 待选择的匿名，每个元素{icon, name}
 		anameRange: [
-			{icon: '/src/image/anameRed.svg', name: '小红'},
-			{icon: '/src/image/anameGreen.svg', name: '小绿'},
-			{icon: '/src/image/anameYellow.svg', name: '小黄'},
-			{icon: '/src/image/anameBlue.svg', name: '小蓝'}
+			{ icon: "/src/image/anameRed.svg", name: "小红" },
+			{ icon: "/src/image/anameGreen.svg", name: "小绿" },
+			{ icon: "/src/image/anameYellow.svg", name: "小黄" },
+			{ icon: "/src/image/anameBlue.svg", name: "小蓝" },
 		],
 		// 当前选择的匿名的 index
 		currentAnameIndex: 0,
 		anameShow: false,
 		buttons: [
-			{text: '取消', type: 'default'},
-			{text: '确定', type: 'primary'}
+			{ text: "取消", type: "default" },
+			{ text: "确定", type: "primary" },
 		],
 		// 分享范围，每个元素{content}
-		shareRange: [
-			{content: '大家的树洞'},
-			{content: '仅自己可见'}
-		],
+		shareRange: [{ content: "大家的树洞" }, { content: "仅自己可见" }],
 		// 当前选择的分享的 index
 		currentShareIndex: 0,
 		shareShow: false,
@@ -63,36 +58,43 @@ Component({
 	computed: {
 		charInputLength(data) {
 			return data.chatContent.length;
-		}
+		},
 	},
 
 	/**
 	 * 组件的方法列表
 	 */
 	methods: {
+		// 页面返回
+		handleBack(e) {
+			wx.navigateBack();
+		},
 		// 确认说说
 		handleEnsure(e) {
-
+			
+			wx.navigateBack();
 		},
 		// 取消说说
-		handleCancel(e) {
-
-		},
+		handleCancel(e) {},
 		// 绑定输入
 		handleInput(e) {
 			this.setData({
-				chatContent: e.detail.value
-			})
+				chatContent: e.detail.value,
+			});
 		},
 		// 弹出键盘
 		handleShowKeyBoard(e) {
 			// 因为 handleShowKeyBoard 会触发两次，且两次只有第一次高度正常，所以需要特殊保存
-			this._keyBoardHeight = Math.max(this._keyBoardHeight || 0, e.detail.height, app.globalData.keyBoardHeight || 0);
+			this._keyBoardHeight = Math.max(
+				this._keyBoardHeight || 0,
+				e.detail.height,
+				app.globalData.keyBoardHeight || 0
+			);
 			app.globalData.keyBoardHeight = this._keyBoardHeight;
 			this.setData({
 				optionsBottom: this._keyBoardHeight,
-				bottomOptionsShow: true
-			})
+				bottomOptionsShow: true,
+			});
 		},
 		// 收起键盘
 		handleCloseKeyBoard(e) {
@@ -100,58 +102,61 @@ Component({
 			setTimeout(() => {
 				this.setData({
 					bottomOptionsShow: false,
-					optionsBottom: 100
-				})
+					optionsBottom: 100,
+				});
 			}, 0);
 		},
 		// 触发“添加今日回顾清单”
 		handleAddReviewAbridge(e) {
 			// 如果已经添加了，显示不能重复添加
-			if(this.data.reviewShow) {
-				let {windowHeight, navHeight, ratio} = this.data;
+			if (this.data.reviewShow) {
+				let { windowHeight, navHeight, ratio } = this.data;
 				this.setData({
 					repeatTipShow: true,
-					repeatTipTop: windowHeight - navHeight - (this._keyBoardHeight || 0) - (76 + 88) / ratio
+					repeatTipTop:
+						windowHeight -
+						navHeight -
+						(this._keyBoardHeight || 0) -
+						(76 + 88) / ratio,
 				});
 				// 3000ms 后消失，如果期间再次点击，则重新计算时间
-				if(this._repeatTipTimeId)
-					clearTimeout(this._repeatTipTimeId);
+				if (this._repeatTipTimeId) clearTimeout(this._repeatTipTimeId);
 				this._repeatTipTimeId = setTimeout(() => {
 					this.setData({
-						repeatTipShow: false
+						repeatTipShow: false,
 					});
 					delete this._repeatTipTimeId;
 				}, 3000);
 				return;
 			}
 			this.setData({
-				reviewShow: true
-			})
+				reviewShow: true,
+			});
 		},
 		// 关闭缩略图
 		handleCloseReviewAbridge(e) {
 			this.setData({
-				reviewShow: !this.data.reviewShow
-			})
+				reviewShow: !this.data.reviewShow,
+			});
 		},
 		// 弹出“匿名选择”
 		handleShowAnameSelect(e) {
 			this.setData({
-				anameShow: true
-			})
+				anameShow: true,
+			});
 		},
 		// 关闭“匿名选择”
 		handleCloseAnameSelect() {
 			this.setData({
-				anameShow: false
-			})
+				anameShow: false,
+			});
 		},
-		// 匿名 buttontap 
+		// 匿名 buttontap
 		handleAnameButtonTap(e) {
-			if(e.detail.index) {
+			if (e.detail.index) {
 				this.setData({
-					currentAnameIndex: this._currentAnameIndex
-				})
+					currentAnameIndex: this._currentAnameIndex,
+				});
 			}
 			this.handleCloseAnameSelect();
 			delete this._currentAnameIndex;
@@ -163,21 +168,21 @@ Component({
 		//  弹出“分享范围”
 		handleShowShareSelect(e) {
 			this.setData({
-				shareShow: true
-			})
+				shareShow: true,
+			});
 		},
 		// 关闭“分享范围”
 		handleCloseShareSelect() {
 			this.setData({
-				shareShow: false
-			})
+				shareShow: false,
+			});
 		},
-		// 分享 buttontap 
+		// 分享 buttontap
 		handleShareButtonTap(e) {
-			if(e.detail.index) {
+			if (e.detail.index) {
 				this.setData({
-					currentShareIndex: this._currentShareIndex
-				})
+					currentShareIndex: this._currentShareIndex,
+				});
 			}
 			this.handleCloseShareSelect();
 			delete this._currentShareIndex;
@@ -186,23 +191,17 @@ Component({
 		handleChangeShare(e) {
 			this._currentShareIndex = e.detail.value[0];
 		},
-		// 页面返回
-		handleBack(e) {
-			wx.navigateBack();
-		},
-		
-		// 从后端拉取数据
-		getDataFromSql() {
-			// 拉取说说内容
-			// chatsSql 为从后端拉取的说说数组
-			let chatsSql;
-			
-		},
 
 		// 加载数据
-		onLoad: function() {
+		onLoad: function () {
 			// 设置机型相关信息
-			let {navHeight, navTop, windowHeight, windowWidth, bottomLineHeight} = app.globalData;
+			let {
+				navHeight,
+				navTop,
+				windowHeight,
+				windowWidth,
+				bottomLineHeight,
+			} = app.globalData;
 			// 从后端拉取数据
 			// this.getDataFromSql();
 			this.setData({
@@ -211,9 +210,8 @@ Component({
 				windowHeight,
 				windowWidth,
 				ratio: 750 / windowWidth,
-				bottomLineHeight
-			})
-
-		}
-	}
-})
+				bottomLineHeight,
+			});
+		},
+	},
+});

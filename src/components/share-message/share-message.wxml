@@ -2,15 +2,15 @@
 	<!-- 主体内容 -->
 	<view class="share-message-content-wrap">
 		<!-- 头像 -->
-		<image class="share-message-head-icon" src="{{ headIcon }}" mode="aspectFit"></image>
+		<image class="share-message-head-icon" src="{{ chat.pic.headIcon }}" mode="aspectFit"></image>
 		<!-- 名字 -->
-		<view class="share-message-name">{{ name }}</view>
+		<view class="share-message-name">{{ chat.pic.name }}</view>
 		<!-- 说说内容 -->
-		<view class="share-message-content">{{ content }}</view>
+		<view class="share-message-content">{{ chat.pic.content }}</view>
 		<!-- 说说相关信息 -->
 		<view class="share-message-info">
 		<!-- 左下角的时间 -->
-			<view class="share-message-time">{{ time }}</view>
+			<view class="share-message-time">{{ chat.pic.date }}</view>
 			<!-- 消息 icon -->
 			<image class="share-message-chat-icon" src="{{ chatShow? '/src/image/chat-icon-show.svg': '/src/image/chat-icon-non-show.svg' }}" 
 				mode="aspectFit" catch:tap="handleShowChat"
@@ -32,7 +32,7 @@
 	<!-- 评论区 -->
 	<view wx:if="{{ chatShow }}" class="share-message-chats-wrap">
 		<view class="chats-content-wrap">
-			<view wx:for="{{ chats }}" wx:key="index" class="share-message-chat">
+			<view wx:for="{{ chat.comments }}" wx:key="index" class="share-message-chat">
 				<text class="chat-title">{{ item.title +'：' }}</text>
 				<text class="chat-content">{{ item.content }}</text>
 			</view>

@@ -6,18 +6,10 @@ Component({
 	 * 组件的属性列表
 	 */
 	properties: {
-		// 头像的 url
-		headIcon: String,
-		// 用户名称
-		name: String,
-		// 说说内容
-		content: String,
-		// 世界时格式的时间
-		date: String,
+		// 该说说
+		chat: Object,
 		// 功能的选项，每个包含 {icon, content}
 		options: Array,
-		// 评论内容，每个包含 {title, content}
-		chats: Array,
 		// 评论输入框的占位字符
 		commnetPlaceHolder: {
 			type: String,
@@ -37,7 +29,7 @@ Component({
 
 	computed: {
 		time(data) {
-			return util.dateInToOut(data.date);
+			return util.dateInToOut(data.chat.pic.date);
 		}
 	},
 

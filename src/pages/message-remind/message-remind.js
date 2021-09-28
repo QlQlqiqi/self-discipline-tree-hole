@@ -34,21 +34,30 @@ Component({
 				content: '哈哈哈哈哈哈哈哈哈啊实打实的',
 				contentShow: '哈哈哈哈哈哈哈...'
 			},
-			open: true,
+			content: {
+				title: '洞主回复你',
+				content: '啊实打实大苏打实打实打算',
+				contentShow: '啊实打实大...'
+			},
+			open: false,
 			chat: {
+				id: 1,
+				owner: 1,
+				pic: {
+					headIcon: "/src/image/head-icon-yellow.svg",
+					name: "黄黄",
+					date: "2020-12-21T12:12:12Z",
+					content: "说说",
+				},
+				reviewAbridge: {},
 				options: [
 					{ icon: '/src/image/option-power.svg', content: '权限' },
 					{ icon: '/src/image/option-delete.svg', content: '删除' }
 				],
-				headIcon: '/src/image/head-icon-yellow.svg',
-				name: '黄黄',
-				date: '2020-12-21T12:12:12Z',
-				content: '说说说说说说说说说说说说说说说说说说',
-				contentShow: '说说说说说说说说...',
 				comments: [
-					{title: '洞主', content: '哈哈'},
-					{title: '洞主', content: '哈哈'}
-				]
+					{ id: 1, title: "洞主", content: "哈哈" },
+					{ id: 2, title: "洞主", content: "哈哈" },
+				],
 			}
 		}]
 	},
@@ -57,6 +66,44 @@ Component({
 	 * 组件的方法列表
 	 */
 	methods: {
+		// 返回上一个页面
+		handleBack() {
+			wx.navigateBack();
+		},
+		// 点击缩略图后，打开说说具体内容
+		handleSwitchChat(e) {
+			let {index} = e.currentTarget.dataset;
+			let key = `messageRemind[${index}].open`;
+			this.setData({
+				[key]: true
+			})
+		},
+		// 发送评论
+		handleEnsureComment(e) {
+			console.log(e)
+		},
+		// 说说的功能区
+		handleSelectOption(e) {
+			return;
+			let {pageNameCurrent} = this.data;
+			let index = e.detail.index;
+			// “树洞区”则[举报]功能
+			if(!pageNameCurrent) {
+				if(!index) {
+					this._handleReport();
+				}
+			}
+			// “个人空间”则[权限，删除]功能
+			else if(pageNameCurrent === 1) {
+				if(!index) {
+					this._handleChangePower();
+				}
+				else if(index === 1) {
+					this._handleDeleteMessage();
+				}
+			}
+		},
+		
 
 		// 加载数据
 		onLoad: function() {
