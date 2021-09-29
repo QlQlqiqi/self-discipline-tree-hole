@@ -46,8 +46,14 @@
 </scroll-view>
 
 <!-- 功能弹窗 -->
-<mp-dialog show="{{ optionShow }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" buttons="{{ optionButton }}" bindbuttontap="handleDialogButtons">{{ optionDialogContent }}</mp-dialog>
-<mp-half-screen-dialog show="{{ shareRangeShow }}" title="选择分享范围" buttons="{{ optionButton }}" bindbuttontap="handleDialogButtons" style="position: fixed; z-index: 11111;">
+<mp-dialog show="{{ optionShow }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" 
+  buttons="{{ optionButton }}" bindbuttontap="handleDialogButtons"
+>
+  {{ optionDialogContent }}
+</mp-dialog>
+<mp-half-screen-dialog show="{{ shareRangeShow }}" title="选择分享范围" buttons="{{ optionButton }}" 
+  bindbuttontap="handleDialogButtons" style="position: fixed; z-index: 11111;"
+>
   <view slot="desc" style="height: 200rpx;">
     <picker-view indicator-style="height: 40px;" style="width: 100%; height: 100%;" bindchange="handleChangeShareRange">
       <picker-view-column>
@@ -61,4 +67,8 @@
 
 <!-- 新增说说 -->
 <wxs module="touchmove" src="../../utils/touchmove.wxs"></wxs>
-<image id="some" data-window-width="{{windowWidth}}" data-window-height="{{windowHeight}}" src="/src/image/add-task.png" style="right: 50px; bottom: 170px;" catchtap="handleAddChat" catch:touchmove="{{ touchmove.handleTouchMove }}" mode="aspectFit" class="collection-add-icon" catch:touchend="{{ touchmove.handleTouchEnd }}" bindtouchstart="{{ touchmove.handleTouchStart }}"></image>
+<image id="some" data-window-width="{{windowWidth}}" data-window-height="{{windowHeight}}" 
+  src="/src/image/add-task.png" style="right: 50px; bottom: 170px;" catchtap="handleAddChat" 
+  catch:touchmove="{{ touchmove.handleTouchMove }}" mode="aspectFit" class="collection-add-icon" 
+  catch:touchend="{{ touchmove.handleTouchEnd }}" bindtouchstart="{{ touchmove.handleTouchStart }}"
+></image>

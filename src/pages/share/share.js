@@ -45,24 +45,8 @@ Component({
 		optionButton: [{ text: "取消" }, { text: "确认" }],
 		optionDialogContent: "",
 		shareRangeShow: false,
-		// 说说 {id, owner, pic{headIcon, name, date, content}, comments{title, content}}
-		chats: [
-			{
-				id: 1,
-				owner: 1,
-				pic: {
-					headIcon: "/src/image/head-icon-yellow.svg",
-					name: "黄黄",
-					date: "2020-12-21T12:12:12Z",
-					content: "说说",
-				},
-				reviewAbridge: {},
-				comments: [
-					{ id: 1, title: "洞主", content: "哈哈" },
-					{ id: 2, title: "洞主", content: "哈哈" },
-				],
-			},
-		],
+		// 说说 {id, owner, data{reviewAbridge, pic{{headIcon, name, date, content, shareRange}}}, comments{id, title, content}}
+		chats: [],
 		// 下拉刷新
 		pullDownRefresh: false,
 	},
@@ -155,24 +139,24 @@ Component({
 		// 说说的功能区，根据当前页面决定功能
 		handleSelectOption(e) {
 			let { pageNameCurrent } = this.data;
-			let index = e.detail.index;
+			let {index, chatId} = e.detail;
 			// “树洞区”则[举报]功能
 			if (!pageNameCurrent) {
 				if (!index) {
-					this._handleReport();
+					this._handleReport(chatId);
 				}
 			}
 			// “个人空间”则[权限，删除]功能
 			else if (pageNameCurrent === 1) {
 				if (!index) {
-					this._handleChangePower();
+					this._handleChangePower(chatId);
 				} else if (index === 1) {
-					this._handleDeleteMessage();
+					this._handleDeleteMessage(chatId);
 				}
 			}
 		},
 		// 举报说说（un-interactive）
-		_handleReport() {
+		_handleReport(chatId) {
 			// 确认
 			let ensure = () => {
 				// 发送数据到后端
@@ -193,19 +177,29 @@ Component({
 			});
 		},
 		// 改变说说分享范围（un-interactive）
-		_handleChangePower(ensure) {
+		_handleChangePower(chatId) {
 			// 确认
-			if (!ensure) {
-				ensure = () => {
-					// 发送数据到后端
+			let ensure = async () => {
+				// 先改变本地数据，再发送数据到后端
+				let chats = this.data.chats;
+				for(let i = 0, chat; i < chats.length; i++) {
+					chat = chats[i];
+					if(chat.id === chatId) {
+						let key = `chats[${i}][pic][shareRange]`;
+						this.setData({
+							key: this._currentShareRangeIndex
+						})
+					}
+				}
+				// put / post
+				
 
-					// 改变选中的
-					this.setData({
-						shareRangeShow: false,
-						// _currentShareRangeIndex
-					});
-				};
-			}
+				// 改变选中的
+				this.setData({
+					shareRangeShow: false,
+					// _currentShareRangeIndex
+				});
+			};
 			let cancel = () => {
 				this.setData({
 					shareRangeShow: false,
@@ -222,7 +216,7 @@ Component({
 			});
 		},
 		// 删除说说（un-interactive）
-		_handleDeleteMessage() {
+		_handleDeleteMessage(chatId) {
 			// 确认
 			let ensure = () => {
 				// 发送数据到后端
@@ -253,10 +247,36 @@ Component({
 		handleChangeShareRange(e) {
 			this._currentShareRangeIndex = e.detail.value[0];
 		},
-		// 发送评论（un-interactive）
-		handleEnsureComment(e) {
-			let {content} = e.detail;
-			
+		// 发送评论
+		async handleEnsureComment(e) {
+			// 本应该后续检查是否 post 成功，这里预留一个
+			// 先改变本地，然后异步同步到后端
+			// 这里同步不会 get ，只是 post
+			let { comment: commentLocal, chatId } = e.detail;
+			let chats = this.data.chats;
+			for(let i = 0, chat; i < chats.length; i++) {
+				chat = chats[i];
+				if(chat.id === chatId) {
+					chat.comments.push(commentLocal);
+					let key = `chats[${i}][comments]`;
+					this.setData({
+						key: chat.comments
+					})
+				}
+			}
+			// 下面是 post
+			let commentSql = {
+				content: commentLocal.content,
+				from_user: commentLocal.fromUser,
+				to_user: commentLocal.toUser
+			};
+			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			await util.myRequest({
+				url: app.globalData.url + 'community/comment/',
+				header: {Authorization: "Token " + token},
+				method: 'POST',
+				data: commentSql
+			});
 		},
 		// 下拉刷新，加载数据，这里暂时为全部时间段的（un-interactive）
 		async pullDownLoad() {
@@ -266,29 +286,26 @@ Component({
 			// let { owner, token } = await util.getTokenAndOwner(
 			// 	app.globalData.url + "login/login/"
 			// );
-			let chats= [
+			let chats = [
 				{
 					picid: 1,
 					owner: app.globalData.owner,
-					data: {
+					data: JSON.stringify({
 						reviewAbridge: {
 							safeAreaBottom: this.data.safeAreaBottom,
 							componentHeightMin: 100,
 							componentWidthMax: this.data.windowWidth,
 							starsNum: 4,
-							tasks: [
-								{
-									content: "哈",
-								},
-							],
+							tasks: [{content: "哈"},],
 						},
 						pic: {
 							headIcon: "/src/image/head-icon-yellow.svg",
 							name: "黄黄",
 							date: "2020-12-21T12:12:12Z",
 							content: "说说",
+							shareRange: 0
 						},
-					},
+					}),
 					time: "2020-12-21T12:12:12.111222Z",
 					article: [
 						{
@@ -297,7 +314,7 @@ Component({
 							time: "2020-12-21T12:12:12.111222Z",
 							pic: "url/1/",
 							from_user: "url/" + app.globalData.owner + '/',
-							to_user: "url/1/",
+							to_user: "url/" + app.globalData.owner + '/',
 						},
 					],
 				},
@@ -310,9 +327,15 @@ Component({
 				await new Promise(function (resolve) {
 					setTimeout(() => {
 						resolve(JSON.parse(JSON.stringify(chats)));
-					}, 1000);
+					}, 200);
 				})
 			);
+			chats.forEach(item => {
+				util.setUniqueId(item.id);
+				item.comments.forEach(item => {
+					util.setUniqueId(item.id);
+				})
+			});
 			console.log(chats)
 			this.setData({
 				chats,

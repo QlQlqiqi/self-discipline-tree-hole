@@ -1,5 +1,7 @@
 const computedBehavior = require("miniprogram-computed").behavior;
 const util = require("../../utils/util");
+const store = require("../../store/store");
+const app = getApp();
 Component({
 	behaviors: [computedBehavior],
 	/**
@@ -10,11 +12,6 @@ Component({
 		chat: Object,
 		// 功能的选项，每个包含 {icon, content}
 		options: Array,
-		// 评论输入框的占位字符
-		commnetPlaceHolder: {
-			type: String,
-			value: '请输入...'
-		},
 		// 是否禁用评论输入功能
 		disabled: {
 			type: Boolean,
@@ -28,8 +25,16 @@ Component({
 	},
 
 	computed: {
-		time(data) {
+		date(data) {
 			return util.dateInToOut(data.chat.pic.date);
+		},
+		// 评论输入框的占位字符
+		commnetPlaceHolder(data) {
+			return data.replyIndex === -1
+				? '请输入...'
+				: ' 回复 ' + (data.chat.owner === app.globalData.owner)
+					? '洞主'
+					: app.globalData.anames[data.chat.comments[data.replyIndex].fromUser % app.globalData.anames.length];
 		}
 	},
 
@@ -39,7 +44,10 @@ Component({
 	data: {
 		chatShow: false,
 		optionsShow: false,
-		commentValue: ''
+		commentValue: '',
+		// -1 代表洞主
+		replyIndex: -1,
+		commentFocus: false,
 	},
 
 	/**
@@ -55,26 +63,65 @@ Component({
 		// 点击相关功能，告诉父组件
 		handleSelectOption(e) {
 			let index = e.currentTarget.dataset.index;
-			this.triggerEvent('handleSelectOption', {index});
+			this.triggerEvent('handleSelectOption', {
+				index,
+				chatId: this.data.chat.id
+			});
 			this.setData({
 				optionsShow: !this.data.optionsShow
 			})
 		},
 		// 展示聊天区
 		handleShowChat(e) {
+			// 如果输入内容为空，则清除选中回复的人
+			let replyIndex = this.data.commentValue? this.data.replyIndex: -1;
 			this.setData({
-				chatShow: !this.data.chatShow
+				chatShow: !this.data.chatShow,
+				replyIndex,
+			})
+		},
+		// 收起键盘
+		handleInputBlur(e) {
+			this.setData({
+				commentFocus: false
+			})
+		},
+		// 点击回复，显示回复谁，并拉起键盘
+		handleReplyWho(e) {
+			let {index} = e.currentTarget.dataset;
+			this.setData({
+				replyIndex: index,
+				commentFocus: true,
 			})
 		},
 		// 发送评论
 		handleEnsureComment(e) {
+			let {chat, replyIndex, commentValue} = this.data;
+			let {anames, owner} = app.globalData;
+			let title = chat.owner === owner
+				? '洞主'
+				: anames[chat.owner % anames.length];
+			title += replyIndex !== -1 && chat.comments[replyIndex].fromUser !== owner
+				? title += ' 回复 ' + anames[chat.owner % anames.length]
+				: '';
+			let comment = {
+				id: util.getUniqueId(),
+				title,
+				content: commentValue,
+				chatId: chat.id,
+				fromUser: chat.owner,
+				toUser: replyIndex === -1
+					?	app.globalData.owner
+					: chat.comments[replyIndex].fromUser
+			}
 			this.triggerEvent('handleEnsureComment', {
-				content: this.data.commentValue
+				comment,
+				chatId: chat.id
 			})
-			
-			// 这里发送给后台，并清空输入框
+			// 清空输入框
 			this.setData({
-				commentValue: ''
+				commentValue: '',
+				replyIndex: -1
 			})
 		},
 		// 输入评论

@@ -350,29 +350,27 @@ const formatChatsFromSqlToLocal = function (chats) {
 	return chats.map(item => {
 		let chat = {};
 		chat.id = item.picid;
-    chat.owner = item.owner;
-    ({reviewAbridge: chat.reviewAbridge, pic: chat.pic} = item.data);
-		chat.pic.date = item.time.substr(0, 19) + "Z";
+		chat.owner = item.owner;
+		chat.urlSql = app.globalData.url + 'cummunity/blog/' + item.picid + '/';
+    ({reviewAbridge: chat.reviewAbridge, pic: chat.pic} = JSON.parse(item.data));
 		chat.comments = item.article.map(item => {
 			let comment = {};
 			let tmp = item.url.split("/");
       comment.id = +tmp[tmp.length - 2];
       comment.content = item.content;
-			comment.urlSql = item.url;
-			comment.date = item.time.substr(0, 19) + "Z";
+			// comment.date = item.time.substr(0, 19) + "Z";
 			tmp = item.pic.split("/");
 			comment.chatId = +tmp[tmp.length - 2];
 			tmp = item.from_user.split("/");
 			comment.fromUser = +tmp[tmp.length - 2];
 			tmp = item.to_user.split("/");
 			comment.toUser = +tmp[tmp.length - 2];
-      let title = '';
-      title += chat.owner === comment.fromUser
-        ? '洞主'
-        : ['小红', '绿绿', '小黄', '小蓝'][comment.fromUser % 4];
+			let title = chat.owner === comment.fromUser
+				? '洞主'
+				: app.globalData.anames[comment.fromUser % app.globalData.anames.length];
       title += comment.toUser === chat.owner
         ? ''
-        : '回复' + ['小红', '绿绿', '小黄', '小蓝'][comment.toUser % 4];
+        : ' 回复 ' + app.globalData.anames[comment.toUser % app.globalData.anames.length];
       comment.title = title;
       return comment;
     });

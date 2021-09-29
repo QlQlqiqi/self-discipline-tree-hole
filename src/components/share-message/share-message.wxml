@@ -10,7 +10,7 @@
 		<!-- 说说相关信息 -->
 		<view class="share-message-info">
 		<!-- 左下角的时间 -->
-			<view class="share-message-time">{{ chat.pic.date }}</view>
+			<view class="share-message-time">{{ date }}</view>
 			<!-- 消息 icon -->
 			<image class="share-message-chat-icon" src="{{ chatShow? '/src/image/chat-icon-show.svg': '/src/image/chat-icon-non-show.svg' }}" 
 				mode="aspectFit" catch:tap="handleShowChat"
@@ -32,15 +32,15 @@
 	<!-- 评论区 -->
 	<view wx:if="{{ chatShow }}" class="share-message-chats-wrap">
 		<view class="chats-content-wrap">
-			<view wx:for="{{ chat.comments }}" wx:key="index" class="share-message-chat">
+			<view wx:for="{{ chat.comments }}" wx:key="index" data-index="{{ index }}" class="share-message-chat" bindtap="handleReplyWho">
 				<text class="chat-title">{{ item.title +'：' }}</text>
 				<text class="chat-content">{{ item.content }}</text>
 			</view>
 		</view>
 		<view class="share-message-comment-wrap">
-			<input class="input" value="{{ commentValue }}" placeholder="{{ commnetPlaceHolder }}"
+			<input class="input" value="{{ commentValue }}" placeholder="{{ commnetPlaceHolder }}" focus="{{ commentFocus }}"
 				placeholder-class="comment-place-holder" disabled="{{ disabled }}" maxlength="{{ maxlength }}"
-				bindinput="handleInputComment"
+				bindinput="handleInputComment" bindblur="handleInputBlur"
 			/>
 			<button class="ensure" catch:tap="handleEnsureComment" style="background-color: {{ commentValue.length? '#66BA69': '#E6E6E6' }}">发送</button>
 		</view>

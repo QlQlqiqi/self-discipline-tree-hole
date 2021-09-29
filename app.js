@@ -1,6 +1,7 @@
 App({
   globalData: {
-    url: 'https://witime.wizzstudio.com/'
+    url: 'https://witime.wizzstudio.com/',
+    anames: ['小红', '绿绿', '小黄', '小蓝']
   },
   onLaunch() {
     // 获取设备相关信息
