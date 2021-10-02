@@ -68,10 +68,10 @@ const saveTasksToSql = async function (
 			})
 			.then(res => console.log(res));
 	});
-	await Promise.all(tasksPostPr, tasksPutPr);
+	await Promise.all([...tasksPostPr, ...tasksPutPr]);
 	// 从后端 get tasks
 	let tasksSql = await getDataFromSqlByUrl(
-		app.globalData.url + "check/check/",
+		app.globalData.url + "check/check/?owner=" + JSON.stringify(owner),
 		{ owner, token }
 	);
 	tasksSql.forEach(taskSql => {
@@ -84,9 +84,58 @@ const saveTasksToSql = async function (
 	});
 };
 
-
+// 将数据 chats 同步到后端，如果 chats 存在 urlSql 字段，则采用 PUT 方式
+// 如果不存在，则采用 POST 方式，并从后端拉取 chats ，得到相应的 url，并直接在源数据上增加 urlSql 属性
+// @param {Array} chatsLocal chat 数组
+// @param {Object} {owner, token}
+// return {void}
+const saveChatsToSql = async function(chatsLocal, {owner, token}) {
+	if (!token || !owner)
+		throw new Error('function "saveChatsToSql" requires param {token, owner}');
+	let chatsPost = [], chatsPut = [];
+	chatsLocal.forEach(item => {
+		item.hasOwnProperty("urlSql") ? chatsPut.push(item) : chatsPost.push(item);
+	});
+	// 并行 post 和 put 数据
+	let chatsPostPr = util.formatChatsFromLocalToSql(chatsPost).map(item => {
+			console.log("post", item);
+			return util
+				.myRequest({
+					url: app.globalData.url + "community/blog/?owner=" + JSON.stringify(owner),
+					header: { Authorization: "Token " + token },
+					method: "POST",
+					data: item
+				})
+				.then(res => console.log(res));
+		});
+	let chatsPutPr = chatsPut.map(item => {
+		return util
+			.myRequest({
+				url: item.urlSql,
+				header: { Authorization: "Token " + token },
+				method: "PUT",
+				data: util.formatChatsFromLocalToSql([item])[0]
+			})
+			.then(res => console.log(res));
+	});
+	await Promise.all([...chatsPutPr, ...chatsPostPr]);
+	// 从后端 get chats
+	let chatsSql = await getDataFromSqlByUrl(
+		app.globalData.url + "community/blog/",
+		{ owner, token }
+	);
+	chatsSql.forEach(chatSql => {
+		for (let tmpChat of chatsPost) {
+			if (tmpChat.owner === chatSql.owner && tmpChat.id === chatSql.data.pic.picId) {
+				tmpChat.urlSql = app.globalData.url + 'community/blog/' + chatSql.picid + '/';
+				break;
+			}
+		}
+	});
+}
 
 module.exports = {
 	getDataFromSqlByUrl,
 	saveTasksToSql,
+	saveChatsToSql,
 };

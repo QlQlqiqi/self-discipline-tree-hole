@@ -39,7 +39,7 @@ Component({
 					{ rotate: !selectIconRotate ? 180 : 0 },
 					{ rotate: selectIconRotate ? 180 : 0 },
 				],
-				300
+				200
 			);
 			let height = 36 * (this.data.lists.length + 1) - 2;
 			this.animate(
@@ -48,7 +48,7 @@ Component({
 					{ height: !selectIconRotate ? height + "px" : 0 },
 					{ height: selectIconRotate ? height + "px" : 0 },
 				],
-				300
+				200
 			);
 		},
 	},
@@ -166,6 +166,7 @@ Component({
 		_saveAllDataToLocal: function () {
 			wx.setStorageSync("tasks", JSON.stringify(this.data.tasks));
 			wx.setStorageSync("lists", JSON.stringify(this.data.lists));
+			wx.setStorageSync('chats', (wx.getStorageSync('chats') || JSON.stringify([])));
 		},
 		// 拉取并设置数据
 		onLoad: async function () {
@@ -181,10 +182,7 @@ Component({
 			let listsLocal = [];
 			let lists = util.formatListsFromSqlToLocal(
 				await store.getDataFromSqlByUrl(
-					app.globalData.url + "check/taglist/?owner=" + JSON.stringify(owner),
-					{
-						token,
-					}
+					app.globalData.url + "check/taglist/?owner=" + JSON.stringify(owner), {token}
 				)
 			);
 			// 如果没有清单，则自动为其补充两个
@@ -195,11 +193,11 @@ Component({
 				];
 				await Promise.all(
 					util.formatListsFromLocalToSql(lists, { owner }).map(item => {
+						// console.log(item)
 						return util.myRequest({
 							url:
 								app.globalData.url +
-								"check/taglist/?owner=" +
-								JSON.stringify(owner),
+								"check/taglist/?owner=" + JSON.stringify(owner),
 							header: { Authorization: "Token " + token },
 							method: "POST",
 							data: item,

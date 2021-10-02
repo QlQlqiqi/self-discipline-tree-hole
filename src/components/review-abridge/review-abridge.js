@@ -206,6 +206,7 @@ Component({
 	methods: {
 		// 点击缩略图后，放大或缩小
 		handleEnlargeOrNarrow: function(e) {
+			console.log(this.data.componentWidthMax)
 			let ratioEnlarge = this.data.ratioEnlarge;
 			let ratioMax = this.data.componentWidthMax / this.data.componentWidthMin;
 			// 如果正在缩放，则忽略此次缩放

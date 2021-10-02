@@ -3,6 +3,7 @@
 	"usingComponents": {
 		"navbar": "/src/components/navbar/navbar",
 		"review-abridge": "/src/components/review-abridge/review-abridge",
-		"mp-half-screen-dialog": "weui-miniprogram/half-screen-dialog/half-screen-dialog"
+		"mp-half-screen-dialog": "weui-miniprogram/half-screen-dialog/half-screen-dialog",
+		"mp-dialog": "weui-miniprogram/dialog/dialog"
 	}
 }

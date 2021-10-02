@@ -21,7 +21,9 @@ Component({
 		maxlength: {
 			type: Number,
 			value: 100
-		}
+		},
+		// 最大列宽
+		componentWidthMax: Number
 	},
 
 	computed: {
@@ -34,7 +36,18 @@ Component({
 				? '请输入...'
 				: ' 回复 ' + (data.chat.owner === app.globalData.owner)
 					? '洞主'
-					: app.globalData.anames[data.chat.comments[data.replyIndex].fromUser % app.globalData.anames.length];
+					: app.globalData.anames[data.chat.comments[data.replyIndex].fromUser % app.globalData.anames.length].name;
+		}
+	},
+
+	watch: {
+		'chat': function(chat) {
+			chat.comments.forEach(item => {
+				item.title = util.getCommentTitle(chat.owner, item.fromUser, item.toUser, app.globalData.owner);
+			})
+			this.setData({
+				chat,
+			})
 		}
 	},
 
@@ -98,12 +111,9 @@ Component({
 		handleEnsureComment(e) {
 			let {chat, replyIndex, commentValue} = this.data;
 			let {anames, owner} = app.globalData;
-			let title = chat.owner === owner
-				? '洞主'
-				: anames[chat.owner % anames.length];
-			title += replyIndex !== -1 && chat.comments[replyIndex].fromUser !== owner
-				? title += ' 回复 ' + anames[chat.owner % anames.length]
-				: '';
+			let title = replyIndex === -1
+				? util.getCommentTitle(chat.owner, owner, owner, owner)
+				: util.getCommentTitle(chat.owner, chat.comments[replyIndex].fromUser, chat.comments[replyIndex].toUser, owner);
 			let comment = {
 				id: util.getUniqueId(),
 				title,
@@ -129,6 +139,24 @@ Component({
 			this.setData({
 				commentValue: e.detail.value
 			})
+		},
+	},
+	pageLifetimes: {
+		// 加载数据
+		show: function() {
+			// 设置机型相关信息
+			let {navHeight, navTop, windowHeight, windowWidth, bottomLineHeight} = app.globalData;
+			// 从后端拉取数据
+			// this.getDataFromSql();
+			this.setData({
+				navHeight,
+				navTop,
+				windowHeight,
+				windowWidth,
+				ratio: 750 / windowWidth,
+				bottomLineHeight,
+			})
 		}
+
 	}
 })

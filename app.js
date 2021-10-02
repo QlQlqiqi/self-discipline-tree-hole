@@ -1,7 +1,12 @@
 App({
   globalData: {
-    url: 'https://witime.wizzstudio.com/',
-    anames: ['小红', '绿绿', '小黄', '小蓝']
+    url: 'http://297mo66766.imdo.co/',
+    anames: [
+			{ icon: "/src/image/anameRed.svg", name: "小红" },
+			{ icon: "/src/image/anameGreen.svg", name: "小绿" },
+			{ icon: "/src/image/anameYellow.svg", name: "小黄" },
+			{ icon: "/src/image/anameBlue.svg", name: "小蓝" },
+		]
   },
   onLaunch() {
     // 获取设备相关信息

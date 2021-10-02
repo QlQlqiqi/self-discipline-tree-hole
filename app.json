@@ -2,6 +2,7 @@
 	"pages": [
 		"src/pages/collection/collection",
 		"src/pages/message-remind/message-remind",
+		"src/pages/web-view/web-view",
 		"src/pages/share/share",
 		"src/pages/add-chat/add-chat",
 		"src/pages/history/history",

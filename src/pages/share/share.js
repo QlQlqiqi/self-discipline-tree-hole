@@ -1,11 +1,12 @@
 const computedBehavior = require("miniprogram-computed").behavior;
+const menuBehavior = require("../../behavior/menu-behavior");
+const shareChatBehavior = require("../../behavior/share-chat-behavior");
 const util = require("../../utils/util");
 const store = require("../../store/store");
 const app = getApp();
-const menuBehavior = require("../../behavior/menu-behavior");
 
 Component({
-	behaviors: [computedBehavior, menuBehavior],
+	behaviors: [computedBehavior, menuBehavior, shareChatBehavior],
 	/**
 	 * 组件的属性列表
 	 */
@@ -28,10 +29,10 @@ Component({
 		lists: [],
 		signText: "",
 		// 需要展示的轮播图地址
-		imageUrls: [
-			"/src/image/option-report.svg",
-			"/src/image/option-report.svg",
-			"/src/image/option-report.svg",
+		gallerys: [
+			{ icon: "/src/image/option-report.svg", url: 'https://mp.weixin.qq.com/s/reKAhE4Fw0x7BhPTYjDHYg', title: '阿斯顿' },
+			{ icon: "/src/image/option-report.svg", url: 'https://mp.weixin.qq.com/s/reKAhE4Fw0x7BhPTYjDHYg', title: '阿斯顿' },
+			{ icon: "/src/image/option-report.svg", url: 'https://mp.weixin.qq.com/s/reKAhE4Fw0x7BhPTYjDHYg', title: '阿斯顿' },
 		],
 		// 当前轮播图 index
 		currentGallery: 0,
@@ -45,17 +46,20 @@ Component({
 		optionButton: [{ text: "取消" }, { text: "确认" }],
 		optionDialogContent: "",
 		shareRangeShow: false,
-		// 说说 {id, owner, data{reviewAbridge, pic{{headIcon, name, date, content, shareRange}}}, comments{id, title, content}}
+		// 说说 {id, owner, reviewAbridge{}, pic{headIcon, name, date, content, shareRange}}, comments{id, title, content}}
 		chats: [],
 		// 下拉刷新
 		pullDownRefresh: false,
+		scrollTop: 0,
 	},
 
 	computed: {
 		// 页面展示的说说
 		chatsShow: function (data) {
-			let owner = app.globalData.owner;
-			return data.chats.filter(item => item.owner === owner);
+			return data.chats.filter(item => {
+				return (item.owner === app.globalData.owner)
+					|| (!data.pageNameCurrent && !item.pic.shareRange);
+			})
 		},
 		// 当前页面使用的功能
 		optionsSelect: function (data) {
@@ -78,7 +82,7 @@ Component({
 					{ rotate: !selectIconRotate ? 180 : 0 },
 					{ rotate: selectIconRotate ? 180 : 0 },
 				],
-				300
+				200
 			);
 			let height = 36 * this.data.pageNames.length - 2;
 			this.animate(
@@ -87,7 +91,7 @@ Component({
 					{ height: !selectIconRotate ? height + "px" : 0 },
 					{ height: selectIconRotate ? height + "px" : 0 },
 				],
-				300
+				200
 			);
 		},
 		pageNameCurrent: function (pageNameCurrent) {
@@ -136,161 +140,61 @@ Component({
 				url: "/src/pages/add-chat/add-chat",
 			});
 		},
-		// 说说的功能区，根据当前页面决定功能
-		handleSelectOption(e) {
-			let { pageNameCurrent } = this.data;
-			let {index, chatId} = e.detail;
-			// “树洞区”则[举报]功能
-			if (!pageNameCurrent) {
-				if (!index) {
-					this._handleReport(chatId);
-				}
-			}
-			// “个人空间”则[权限，删除]功能
-			else if (pageNameCurrent === 1) {
-				if (!index) {
-					this._handleChangePower(chatId);
-				} else if (index === 1) {
-					this._handleDeleteMessage(chatId);
-				}
-			}
-		},
-		// 举报说说（un-interactive）
-		_handleReport(chatId) {
-			// 确认
-			let ensure = () => {
-				// 发送数据到后端
-				this.setData({
-					optionShow: false,
-				});
-			};
-			let cancel = () => {
-				this.setData({
-					optionShow: false,
-				});
-			};
-			this._optionButtons = [cancel, ensure];
+		// 当前轮播图 index 改变
+		handleChangeCurrentGallery(e) {
 			this.setData({
-				optionShow: true,
-				optionButton: [{ text: "取消" }, { text: "确认" }],
-				optionDialogContent: "你确定要举报该状态违规吗？",
-			});
+				currentGallery: e.detail.current
+			})
 		},
-		// 改变说说分享范围（un-interactive）
-		_handleChangePower(chatId) {
-			// 确认
-			let ensure = async () => {
-				// 先改变本地数据，再发送数据到后端
-				let chats = this.data.chats;
-				for(let i = 0, chat; i < chats.length; i++) {
-					chat = chats[i];
-					if(chat.id === chatId) {
-						let key = `chats[${i}][pic][shareRange]`;
-						this.setData({
-							key: this._currentShareRangeIndex
-						})
-					}
-				}
-				// put / post
-				
-
-				// 改变选中的
-				this.setData({
-					shareRangeShow: false,
-					// _currentShareRangeIndex
-				});
-			};
-			let cancel = () => {
-				this.setData({
-					shareRangeShow: false,
-				});
-			};
-			this._optionButtons = [cancel, ensure];
-			this.setData({
-				shareRangeShow: true,
-				optionButton: [
-					{ text: "取消", type: "default" },
-					{ text: "确定", type: "primary" },
-				],
-				optionDialogContent: ["大家的树洞", "仅自己可见"],
-			});
+		// 跳转 web-view
+		handleOpenOfficialAccount(e) {
+			let gallery = this.data.gallerys[this.data.currentGallery];
+			wx.navigateTo({
+				url: '/src/pages/web-view/web-view?src=' + JSON.stringify(gallery.url)
+					+ '&title=' + JSON.stringify(gallery.title),
+			})
 		},
-		// 删除说说（un-interactive）
-		_handleDeleteMessage(chatId) {
-			// 确认
-			let ensure = () => {
-				// 发送数据到后端
-				this.setData({
-					optionShow: false,
-				});
-			};
-			let cancel = () => {
-				this.setData({
-					optionShow: false,
-				});
-			};
-			this._optionButtons = [cancel, ensure];
-			this.setData({
-				optionShow: true,
-				optionButton: [{ text: "取消" }, { text: "删除" }],
-				optionDialogContent: "删除该状态？",
-			});
-		},
-		// 弹窗 buttons 功能
-		handleDialogButtons(e) {
-			let { index } = e.detail;
-			this._optionButtons[index]();
-			delete this._optionButtons;
-			delete this._currentShareRangeIndex;
-		},
-		// 记录选择的分享范围
-		handleChangeShareRange(e) {
-			this._currentShareRangeIndex = e.detail.value[0];
-		},
-		// 发送评论
-		async handleEnsureComment(e) {
-			// 本应该后续检查是否 post 成功，这里预留一个
-			// 先改变本地，然后异步同步到后端
-			// 这里同步不会 get ，只是 post
-			let { comment: commentLocal, chatId } = e.detail;
-			let chats = this.data.chats;
-			for(let i = 0, chat; i < chats.length; i++) {
-				chat = chats[i];
-				if(chat.id === chatId) {
-					chat.comments.push(commentLocal);
-					let key = `chats[${i}][comments]`;
-					this.setData({
-						key: chat.comments
-					})
-				}
-			}
-			// 下面是 post
-			let commentSql = {
-				content: commentLocal.content,
-				from_user: commentLocal.fromUser,
-				to_user: commentLocal.toUser
-			};
-			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
-			await util.myRequest({
-				url: app.globalData.url + 'community/comment/',
-				header: {Authorization: "Token " + token},
-				method: 'POST',
-				data: commentSql
-			});
-		},
-		// 下拉刷新，加载数据，这里暂时为全部时间段的（un-interactive）
+		// 下拉刷新，加载数据，这里暂时为全部时间段的
 		async pullDownLoad() {
 			this.setData({
 				pullDownRefresh: true,
 			});
-			// let { owner, token } = await util.getTokenAndOwner(
-			// 	app.globalData.url + "login/login/"
-			// );
-			let chats = [
+			let { owner, token } = await util.getTokenAndOwner(app.globalData.url + "login/login/");
+			let chats = await util.formatChatsFromSqlToLocal(await store.getDataFromSqlByUrl(app.globalData.url + 'community/blog/', {owner, token}));
+			// let asd = {
+			// 	owner: app.globalData.owner,
+			// 	data: {
+			// 		reviewAbridge: {
+			// 			safeAreaBottom: this.data.safeAreaBottom,
+			// 			componentHeightMin: 100,
+			// 			componentWidthMax: this.data.windowWidth,
+			// 			starsNum: 4,
+			// 			tasks: [{content: "哈"},],
+			// 		},
+			// 		pic: {
+			// 			picId: 1,
+			// 			headIcon: "/src/image/head-icon-yellow.svg",
+			// 			name: "黄黄",
+			// 			date: "2020-12-21T12:12:12Z",
+			// 			content: "说说",
+			// 			shareRange: 0
+			// 		},
+			// 	},
+			// 	wilist: {
+			// 		0: 'askdhas'
+			// 	}
+			// }
+			// util.myRequest({
+			// 	url: 'http://297mo66766.imdo.co/community/blog/',
+			// 	header: { Authorization: 'Token ' + token },
+			// 	method: 'POST',
+			// 	data: asd
+			// }).then(res => console.log(res))
+			let chsats = [
 				{
 					picid: 1,
 					owner: app.globalData.owner,
-					data: JSON.stringify({
+					data: {
 						reviewAbridge: {
 							safeAreaBottom: this.data.safeAreaBottom,
 							componentHeightMin: 100,
@@ -299,16 +203,18 @@ Component({
 							tasks: [{content: "哈"},],
 						},
 						pic: {
+							picId: 1,
 							headIcon: "/src/image/head-icon-yellow.svg",
 							name: "黄黄",
 							date: "2020-12-21T12:12:12Z",
 							content: "说说",
 							shareRange: 0
 						},
-					}),
+					},
 					time: "2020-12-21T12:12:12.111222Z",
 					article: [
 						{
+							pic_id: 1,
 							url: "url/1/",
 							content: "some",
 							time: "2020-12-21T12:12:12.111222Z",
@@ -319,17 +225,13 @@ Component({
 					],
 				},
 			];
-			// let chats = util.formatChatsFromSqlToLocal(await store.getDataFromSqlByUrl(
-			// 	app.globalData.url + "community/blog/",
-			// 	{token}
-			// ));
-			chats = util.formatChatsFromSqlToLocal(
-				await new Promise(function (resolve) {
-					setTimeout(() => {
-						resolve(JSON.parse(JSON.stringify(chats)));
-					}, 200);
-				})
-			);
+			// chats = util.formatChatsFromSqlToLocal(
+			// 	await new Promise(function (resolve) {
+			// 		setTimeout(() => {
+			// 			resolve(JSON.parse(JSON.stringify(chats)));
+			// 		}, 200);
+			// 	})
+			// );
 			chats.forEach(item => {
 				util.setUniqueId(item.id);
 				item.comments.forEach(item => {
@@ -341,9 +243,12 @@ Component({
 				chats,
 				pullDownRefresh: false,
 			});
-			wx.setStorage({
-				key: 'chats',
-				data: JSON.stringify(chats)
+			wx.setStorageSync('chats', JSON.stringify(chats));
+		},
+		// 点击回到顶部
+		handleReturnTop() {
+			this.setData({
+				scrollTop: 0
 			})
 		},
 		// 从本地获取全部数据
@@ -354,10 +259,12 @@ Component({
 			let lists = JSON.parse(wx.getStorageSync("lists"));
 			// 用户昵称
 			let signText = JSON.parse(wx.getStorageSync("signText"));
+			let chats = JSON.parse(wx.getStorageSync('chats'));
 			this.setData({
 				tasks,
 				lists,
 				signText,
+				chats,
 			});
 		},
 

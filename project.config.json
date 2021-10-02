@@ -42,7 +42,7 @@
     "useCompilerPlugins": false
   },
   "compileType": "miniprogram",
-  "libVersion": "2.19.5",
+  "libVersion": "2.19.6",
   "appid": "wx5bbb7bc983c50b3d",
   "projectname": "Self%20Discipline%20Tree%20Hole",
   "debugOptions": {

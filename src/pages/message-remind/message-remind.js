@@ -1,9 +1,10 @@
 const computedBehavior = require("miniprogram-computed").behavior;
+const shareChatBehavior = require("../../behavior/share-chat-behavior");
 const util = require("../../utils/util");
 const store = require("../../store/store");
 const app = getApp();
 Component({
-	behaviors: [computedBehavior],
+	behaviors: [computedBehavior, shareChatBehavior],
 	/**
 	 * 组件的属性列表
 	 */
@@ -28,7 +29,7 @@ Component({
 		// 	// 展开说说所需的字段
 		// 	chat: Object
 		// }
-		messageRemind: [{
+		chats: [{
 			remind: {
 				title: '小红评论你',
 				content: '哈哈哈哈哈哈哈哈哈啊实打实的',
@@ -59,7 +60,24 @@ Component({
 					{ id: 2, title: "洞主", content: "哈哈" },
 				],
 			}
-		}]
+		}],
+		// 便于 share-chat-behavior 的使用
+		pageNameCurrent: 0,
+	},
+
+	computed: {
+		// chats(data) {
+		// 	let {owner} = app.globalData;
+		// 	return data.chats.map(chat => {
+		// 		let obj = {};
+		// 		// 自己的说说
+		// 		if(chat.owner === owner) {
+		// 			obj.remind = {
+		// 				title = util.getCommentTitle(chat.owner, chat)
+		// 			}
+		// 		}
+		// 	})
+		// }
 	},
 
 	/**
@@ -72,41 +90,27 @@ Component({
 		},
 		// 点击缩略图后，打开说说具体内容
 		handleSwitchChat(e) {
+			if(typeof this._handleCloseSwitchChat === 'function')
+				this._handleCloseSwitchChat();
 			let {index} = e.currentTarget.dataset;
-			let key = `messageRemind[${index}].open`;
+			let key = `chats[${index}].open`;
 			this.setData({
-				[key]: true
+				[key]: true,
+				pageNameCurrent: +(this.data.chats[index].chat.owner === app.globalData.owner),
 			})
-		},
-		// 发送评论
-		handleEnsureComment(e) {
-			console.log(e)
-		},
-		// 说说的功能区
-		handleSelectOption(e) {
-			return;
-			let {pageNameCurrent} = this.data;
-			let index = e.detail.index;
-			// “树洞区”则[举报]功能
-			if(!pageNameCurrent) {
-				if(!index) {
-					this._handleReport();
-				}
-			}
-			// “个人空间”则[权限，删除]功能
-			else if(pageNameCurrent === 1) {
-				if(!index) {
-					this._handleChangePower();
-				}
-				else if(index === 1) {
-					this._handleDeleteMessage();
-				}
+			this._handleCloseSwitchChat = () => {
+				this.setData({
+					[key]: false
+				})
+				delete this._handleCloseSwitchChat;
 			}
 		},
 		
 
 		// 加载数据
 		onLoad: function() {
+			// 需要显示的 chats 
+			let chats = JSON.parse(wx.getStorageSync('chats'));
 			// 设置机型相关信息
 			let {navHeight, navTop, windowHeight, windowWidth, bottomLineHeight} = app.globalData;
 			// 从后端拉取数据
@@ -117,7 +121,8 @@ Component({
 				windowHeight,
 				windowWidth,
 				ratio: 750 / windowWidth,
-				bottomLineHeight
+				bottomLineHeight,
+				chats,
 			})
 		}
 	}

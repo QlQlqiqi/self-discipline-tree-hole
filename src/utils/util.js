@@ -347,34 +347,30 @@ const formatTasksFromLocalToSql = function (
 // @param {Array} chats 后台的说说数据格式
 // @return {Array} 说说的本地格式
 const formatChatsFromSqlToLocal = function (chats) {
+	console.log(chats)
 	return chats.map(item => {
-		let chat = {};
-		chat.id = item.picid;
-		chat.owner = item.owner;
-		chat.urlSql = app.globalData.url + 'cummunity/blog/' + item.picid + '/';
-    ({reviewAbridge: chat.reviewAbridge, pic: chat.pic} = JSON.parse(item.data));
-		chat.comments = item.article.map(item => {
-			let comment = {};
-			let tmp = item.url.split("/");
-      comment.id = +tmp[tmp.length - 2];
-      comment.content = item.content;
-			// comment.date = item.time.substr(0, 19) + "Z";
-			tmp = item.pic.split("/");
-			comment.chatId = +tmp[tmp.length - 2];
-			tmp = item.from_user.split("/");
-			comment.fromUser = +tmp[tmp.length - 2];
-			tmp = item.to_user.split("/");
-			comment.toUser = +tmp[tmp.length - 2];
-			let title = chat.owner === comment.fromUser
-				? '洞主'
-				: app.globalData.anames[comment.fromUser % app.globalData.anames.length];
-      title += comment.toUser === chat.owner
-        ? ''
-        : ' 回复 ' + app.globalData.anames[comment.toUser % app.globalData.anames.length];
-      comment.title = title;
-      return comment;
-    });
-    return chat;
+		let chat = {
+			id: item.picid,
+			owner: item.owner,
+			urlSql: app.globalData.url + 'community/blog/' + item.picid + '/',
+			reviewAbridge: item.data.reviewAbridge,
+			pic: item.data.pic,
+			comments: item.article.map(item => {
+				let comment = {};
+				comment.urlSql = item.url;
+				comment.id = item.comment_id;
+				comment.content = item.content;
+				// comment.date = item.time.substr(0, 19) + "Z";
+				let tmp = item.pic.split("/");
+				comment.chatId = +tmp[tmp.length - 2];
+				tmp = item.from_user.split("/");
+				comment.fromUser = +tmp[tmp.length - 2];
+				tmp = item.to_user.split("/");
+				comment.toUser = +tmp[tmp.length - 2];
+				return comment;
+			})
+		};
+		return chat;
 	});
 };
 
@@ -382,15 +378,37 @@ const formatChatsFromSqlToLocal = function (chats) {
 // @param {Array} chats 后端的说说数据格式
 // @return {Array} 说说的后端格式
 const formatChatsFromLocalToSql = function(chats) {
+	console.log(chats)
   return chats.map(item => {
-    let chat = {};
-    chat.owner = item.owner;
-    chat.data = JSON.stringify({
-      reviewAbridge: item.reviewAbridge,
-      pic: item.pic
-    })
+    let chat = {
+			owner: item.owner,
+			data: {
+				reviewAbridge: item.reviewAbridge,
+				pic: item.pic
+			},
+			wilist: item.comments.map(item => item.content),
+		};
     return chat;
 	});
+}
+
+// 给定说说的创建者、评论的发送方、接收方和评论者，返回评论的 title
+// @param {Number} picOner 说说的创建者
+// @param {Number} fromOwner 评论的发送方
+// @param {Number} toOwner 评论的接收方
+// @param {Number} toOwner 评论者
+// @return {String} 评论的 title
+const getCommentTitle = function(picOwner, fromOwner, toOwner, owner) {
+	let {anames} = app.globalData;
+	let title = picOwner === owner
+		? '洞主'
+		: anames[picOwner % anames.length].name;
+	title += fromOwner !== toOwner && fromOwner !== owner
+		? title += ' 回复 ' + toOwner === owner
+			? '洞主'
+			: anames[fromOwner + (fromOwner % anames.length === picOwner % anames.length) % anames.length].name
+		: '';
+	return title;
 }
 
 module.exports = {
@@ -411,5 +429,6 @@ module.exports = {
 	formatTasksFromSqlToLocal,
 	formatTasksFromLocalToSql,
   formatChatsFromSqlToLocal,
-  formatChatsFromLocalToSql,
+	formatChatsFromLocalToSql,
+	getCommentTitle,
 };

@@ -6,7 +6,14 @@
 		<!-- 名字 -->
 		<view class="share-message-name">{{ chat.pic.name }}</view>
 		<!-- 说说内容 -->
-		<view class="share-message-content">{{ chat.pic.content }}</view>
+		<view class="share-message-content">
+			<view>{{ chat.pic.content }}</view>
+			<view wx:if="{{ chat.reviewAbridge.show }}" class="reivew-abridge">
+				<review-abridge wx:if="{{ chat.reviewAbridge.show }}" componentWidthMax="{{ componentWidthMax || windowWidth }}" componentHeightMin="{{ 100 }}"
+					starsNum="{{ chat.reviewAbridge.starsNum }}" tasks="{{ chat.reviewAbridge.tasks }}" safeAreaBottom="{{ bottomLineHeight }}"
+				></review-abridge>
+			</view>
+		</view>
 		<!-- 说说相关信息 -->
 		<view class="share-message-info">
 		<!-- 左下角的时间 -->
