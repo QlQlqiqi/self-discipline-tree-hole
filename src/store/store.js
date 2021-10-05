@@ -43,20 +43,21 @@ const saveTasksToSql = async function (
 		.formatTasksFromLocalToSql(tasksPost, listsLocal, { owner, token })
 		.map(item => {
 			console.log("post", item);
-			return util
+			let pr = util
 				.myRequest({
 					url:
 						app.globalData.url + "check/check/?owner=" + JSON.stringify(owner),
 					header: { Authorization: "Token " + token },
 					method: "POST",
 					data: item,
-				})
-				.then(res => console.log(res));
+				});
+				pr.then(res => console.log(res));
+				return pr;
 		});
 	console.log(tasksLocal);
 	let tasksPutPr = tasksPut.map(item => {
 		console.log("put", item);
-		return util
+		let pr = util
 			.myRequest({
 				url: item.urlSql,
 				header: { Authorization: "Token " + token },
@@ -65,8 +66,9 @@ const saveTasksToSql = async function (
 					owner,
 					token,
 				})[0],
-			})
-			.then(res => console.log(res));
+			});
+			pr.then(res => console.log(res));
+			return pr;
 	});
 	await Promise.all([...tasksPostPr, ...tasksPutPr]);
 	// 从后端 get tasks
@@ -98,27 +100,29 @@ const saveChatsToSql = async function(chatsLocal, {owner, token}) {
 	});
 	// 并行 post 和 put 数据
 	let chatsPostPr = util.formatChatsFromLocalToSql(chatsPost).map(item => {
-			console.log("post", item);
-			return util
-				.myRequest({
-					url: app.globalData.url + "community/blog/?owner=" + JSON.stringify(owner),
-					header: { Authorization: "Token " + token },
-					method: "POST",
-					data: item
-				})
-				.then(res => console.log(res));
-		});
+		console.log("post", item);
+		let pr = util
+			.myRequest({
+				url: app.globalData.url + "community/blog/?owner=" + JSON.stringify(owner),
+				header: { Authorization: "Token " + token },
+				method: "POST",
+				data: item
+			})
+		pr.then(res => console.log(res));
+		return pr;
+	});
 	let chatsPutPr = chatsPut.map(item => {
-		return util
+		let pr = util
 			.myRequest({
 				url: item.urlSql,
 				header: { Authorization: "Token " + token },
 				method: "PUT",
 				data: util.formatChatsFromLocalToSql([item])[0]
-			})
-			.then(res => console.log(res));
+			});
+			pr.then(res => console.log(res));
+			return pr;
 	});
-	await Promise.all([...chatsPutPr, ...chatsPostPr]);
+	await Promise.all([...chatsPutPr, ...chatsPostPr])
 	// 从后端 get chats
 	let chatsSql = await getDataFromSqlByUrl(
 		app.globalData.url + "community/blog/",

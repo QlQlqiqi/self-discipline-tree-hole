@@ -29,11 +29,7 @@ Component({
 		lists: [],
 		signText: "",
 		// 需要展示的轮播图地址
-		gallerys: [
-			{ icon: "/src/image/option-report.svg", url: 'https://mp.weixin.qq.com/s/reKAhE4Fw0x7BhPTYjDHYg', title: '阿斯顿' },
-			{ icon: "/src/image/option-report.svg", url: 'https://mp.weixin.qq.com/s/reKAhE4Fw0x7BhPTYjDHYg', title: '阿斯顿' },
-			{ icon: "/src/image/option-report.svg", url: 'https://mp.weixin.qq.com/s/reKAhE4Fw0x7BhPTYjDHYg', title: '阿斯顿' },
-		],
+		gallerys: [],
 		// 当前轮播图 index
 		currentGallery: 0,
 		// 说说功能选项
@@ -51,16 +47,10 @@ Component({
 		// 下拉刷新
 		pullDownRefresh: false,
 		scrollTop: 0,
+		chatsRemindShow: false,
 	},
 
 	computed: {
-		// 页面展示的说说
-		chatsShow: function (data) {
-			return data.chats.filter(item => {
-				return (item.owner === app.globalData.owner)
-					|| (!data.pageNameCurrent && !item.pic.shareRange);
-			})
-		},
 		// 当前页面使用的功能
 		optionsSelect: function (data) {
 			// 树洞区为举报，个人空间为权限和删除
@@ -103,6 +93,10 @@ Component({
 	 * 组件的方法列表
 	 */
 	methods: {
+		// 包裹说说的滚轮滑动
+		handleScroll(e) {
+			
+		},
 		// 关闭左侧栏背景遮掩
 		handleCloseMask: function (e) {
 			this.setData({
@@ -156,94 +150,93 @@ Component({
 		},
 		// 下拉刷新，加载数据，这里暂时为全部时间段的
 		async pullDownLoad() {
+			// let chsats = [
+			// 	{
+			// 		picid: 1,
+			// 		owner: app.globalData.owner,
+			// 		data: {
+			// 			reviewAbridge: {
+			// 				safeAreaBottom: this.data.safeAreaBottom,
+			// 				componentHeightMin: 100,
+			// 				componentWidthMax: this.data.windowWidth,
+			// 				starsNum: 4,
+			// 				tasks: [{content: "哈"},],
+			// 			},
+			// 			pic: {
+			// 				picId: 1,
+			// 				headIcon: "/src/image/head-icon-yellow.svg",
+			// 				name: "黄黄",
+			// 				date: "2020-12-21T12:12:12Z",
+			// 				content: "说说",
+			// 				shareRange: 0
+			// 			},
+			// 		},
+			// 		time: "2020-12-21T12:12:12.111222Z",
+			// 		article: [
+			// 			{
+			// 				pic_id: 1,
+			// 				url: "url/1/",
+			// 				content: "some",
+			// 				time: "2020-12-21T12:12:12.111222Z",
+			// 				pic: "url/1/",
+			// 				from_user: "url/" + app.globalData.owner + '/',
+			// 				to_user: "url/" + app.globalData.owner + '/',
+			// 			},
+			// 		],
+			// 	},
+			// ];
 			this.setData({
 				pullDownRefresh: true,
 			});
 			let { owner, token } = await util.getTokenAndOwner(app.globalData.url + "login/login/");
-			let chats = await util.formatChatsFromSqlToLocal(await store.getDataFromSqlByUrl(app.globalData.url + 'community/blog/', {owner, token}));
-			// let asd = {
-			// 	owner: app.globalData.owner,
-			// 	data: {
-			// 		reviewAbridge: {
-			// 			safeAreaBottom: this.data.safeAreaBottom,
-			// 			componentHeightMin: 100,
-			// 			componentWidthMax: this.data.windowWidth,
-			// 			starsNum: 4,
-			// 			tasks: [{content: "哈"},],
-			// 		},
-			// 		pic: {
-			// 			picId: 1,
-			// 			headIcon: "/src/image/head-icon-yellow.svg",
-			// 			name: "黄黄",
-			// 			date: "2020-12-21T12:12:12Z",
-			// 			content: "说说",
-			// 			shareRange: 0
-			// 		},
-			// 	},
-			// 	wilist: {
-			// 		0: 'askdhas'
-			// 	}
-			// }
-			// util.myRequest({
-			// 	url: 'http://297mo66766.imdo.co/community/blog/',
-			// 	header: { Authorization: 'Token ' + token },
-			// 	method: 'POST',
-			// 	data: asd
-			// }).then(res => console.log(res))
-			let chsats = [
-				{
-					picid: 1,
-					owner: app.globalData.owner,
-					data: {
-						reviewAbridge: {
-							safeAreaBottom: this.data.safeAreaBottom,
-							componentHeightMin: 100,
-							componentWidthMax: this.data.windowWidth,
-							starsNum: 4,
-							tasks: [{content: "哈"},],
-						},
-						pic: {
-							picId: 1,
-							headIcon: "/src/image/head-icon-yellow.svg",
-							name: "黄黄",
-							date: "2020-12-21T12:12:12Z",
-							content: "说说",
-							shareRange: 0
-						},
-					},
-					time: "2020-12-21T12:12:12.111222Z",
-					article: [
-						{
-							pic_id: 1,
-							url: "url/1/",
-							content: "some",
-							time: "2020-12-21T12:12:12.111222Z",
-							pic: "url/1/",
-							from_user: "url/" + app.globalData.owner + '/',
-							to_user: "url/" + app.globalData.owner + '/',
-						},
-					],
-				},
-			];
-			// chats = util.formatChatsFromSqlToLocal(
-			// 	await new Promise(function (resolve) {
-			// 		setTimeout(() => {
-			// 			resolve(JSON.parse(JSON.stringify(chats)));
-			// 		}, 200);
-			// 	})
-			// );
+			// 说说
+			let chatsSqlPr = store.getDataFromSqlByUrl(app.globalData.url + 'community/blog/', {owner, token});
+			// 轮播图
+			let gallerysSqlPr = store.getDataFromSqlByUrl(app.globalData.url + 'oppicture/op/', {owner, token});
+			// 消息提示
+			let chatsRemindSqlPr = store.getDataFromSqlByUrl(app.globalData.url + 'notice/notice/', {owner, token});
+			let dataSql = await Promise.all([chatsSqlPr, gallerysSqlPr, chatsRemindSqlPr])
+			let chats = util.formatChatsFromSqlToLocal(dataSql[0]);
 			chats.forEach(item => {
-				util.setUniqueId(item.id);
-				item.comments.forEach(item => {
-					util.setUniqueId(item.id);
-				})
+				item.id = util.getUniqueId();
 			});
+			console.log(chats.length && chats[chats.length - 1].id)
+			chats = chats.filter(item => {
+				return (item.owner === app.globalData.owner)
+					|| (!this.data.pageNameCurrent && !item.pic.shareRange);
+			})
 			console.log(chats)
+			let gallerys = dataSql[1].map(item => {
+				return {
+					icon: item.op_picture,
+					url: item.art_url,
+					title: item.op_title
+				}
+			});
+			let chatsRemind = dataSql[2].map(item => {
+				let chat;
+				chats.forEach(item => {
+					if(item.pic.picId === item.pic.picId)
+						chat = item;
+				})
+				return {
+					fromUser: item.report_from_user,
+					toUser: item.report_to_user,
+					chat: chat,
+					content: item.report_json.content,
+					url: item.url,
+				}
+			});
+			console.log(chatsRemind)
 			this.setData({
 				chats,
+				gallerys,
 				pullDownRefresh: false,
+				chatsRemindShow: Boolean(chatsRemind.length)
 			});
 			wx.setStorageSync('chats', JSON.stringify(chats));
+			wx.setStorageSync('gallerys', JSON.stringify(gallerys));
+			wx.setStorageSync('chatsRemind', JSON.stringify(chatsRemind));
 		},
 		// 点击回到顶部
 		handleReturnTop() {
@@ -259,15 +252,19 @@ Component({
 			let lists = JSON.parse(wx.getStorageSync("lists"));
 			// 用户昵称
 			let signText = JSON.parse(wx.getStorageSync("signText"));
-			let chats = JSON.parse(wx.getStorageSync('chats'));
+			let chats = JSON.parse(wx.getStorageSync('chats') || JSON.stringify([]));
+			let gallerys = JSON.parse(wx.getStorageSync('gallerys') || JSON.stringify([]));
+			let chatsRemind = JSON.parse(wx.getStorageSync('chatsRemind') || JSON.stringify([]));
 			this.setData({
 				tasks,
 				lists,
 				signText,
 				chats,
+				gallerys,
+				chatsRemind,
+				chatsRemindShow: Boolean(chatsRemind.length),
 			});
 		},
-
 		// 加载一些数据
 		onLoad() {
 			// 设置机型相关信息
@@ -285,11 +282,8 @@ Component({
 				windowWidth,
 				ratio: 750 / windowWidth,
 				bottomLineHeight,
+				pullDownRefresh: true,
 			});
-			// this.pullDownLoad();
-			this.setData({
-				pullDownRefresh: true
-			})
 		},
 	},
 

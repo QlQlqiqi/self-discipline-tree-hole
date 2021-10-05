@@ -82,3 +82,15 @@
 </view>
 
 <!-- 提示是否保留编辑 -->
+<mp-dialog show="{{ dialogShow }}" mask="{{ true }}" mask-closable="{{ false }}" title="提示" 
+	bindbuttontap="handleSaveDialog" buttons="{{ [{text: '不保留'}, {text: '保留'}] }}"
+>
+	是否将此次编辑保留？
+</mp-dialog>
+
+<!-- 内容不得为空 -->
+<mp-dialog show="{{ ContentEmptyShow }}" mask="{{ true }}" mask-closable="{{ false }}" title="提示" 
+	buttons="{{ [{text: '确定'}] }}" bindbuttontap="handleContentEmpty"
+>
+	内容不得为空
+</mp-dialog>

@@ -5,7 +5,7 @@
 </navbar>
 
 <scroll-view class="message-remind-wrap" scroll-y="{{ true }}" style="height: {{ windowHeight - navHeight }}px; padding-top: 20rpx;">
-	<view class="message" wx:for="{{ chats }}" wx:key="index">
+	<view class="message" wx:for="{{ chatsRemind }}" wx:key="index">
 		<!-- 说说的缩略形式 -->
 		<view wx:if="{{ !item.open }}" class="non-open-wrap" data-index="{{ index }}" bindtap="handleSwitchChat">
 			<view class="remind">

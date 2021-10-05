@@ -8,15 +8,19 @@
 </navbar>
 <!-- 导航栏的下拉框 -->
 <view class="listSelectWrap" style="left: {{ windowWidth / 2 - 45 }}px; height: 0;">
-  <view catchtap="handleSelectList" style="background-color: {{ pageName === '收集箱'? 'rgb(243, 246, 249)': 'white'}};">
-    <view style="height: 35px;">收集箱</view>
-    <view style="border-top: 1px solid rgba(187, 187, 187, 1);"></view>
-  </view>
-  <view wx:for="{{ lists }}" wx:key="title" data-index="{{ index }}" catch:tap="handleSelectList" style="position: relative; background-color: {{ pageName === item.title? 'rgb(243, 246, 249)': 'white'}}; ">
-    <image src="{{ item.icon }}" style="position: absolute; left: 3px; top: 9px; height: 20px; width: 20px;"></image>
-    <view style="padding-left: 20px; height: 35px; overflow-x: scroll;">{{ item.title }}</view>
-    <view wx:if="{{ index + 1 < lists.length }}" style="border-top: 1px solid rgba(187, 187, 187, 1);"></view>
-  </view>
+  <scroll-view scroll-y="{{ true }}" style="max-height: {{ 36 * 8 }}px;">
+    <view catchtap="handleSelectList" style="background-color: {{ pageName === '收集箱'? 'rgb(243, 246, 249)': 'white'}};">
+      <view style="height: 35px;">收集箱</view>
+      <view style="border-top: 1px solid rgba(187, 187, 187, 1);"></view>
+    </view>
+    <view wx:for="{{ lists }}" wx:key="title" data-index="{{ index }}" catch:tap="handleSelectList" 
+      style="position: relative; background-color: {{ pageName === item.title? 'rgb(243, 246, 249)': 'white'}};"
+    >
+      <image src="{{ item.icon }}" style="position: absolute; left: 3px; top: 9px; height: 20px; width: 20px;"></image>
+      <view style="padding-left: 20px; height: 35px; overflow-x: scroll;">{{ item.title }}</view>
+      <view wx:if="{{ index + 1 < lists.length }}" style="border-top: 1px solid rgba(187, 187, 187, 1);"></view>
+    </view>
+  </scroll-view>
 </view>
 <!-- 弹窗背景点击遮掩 -->
 <view wx:if="{{ selectIconRotate }}" catchtap="handleShowSelectList" style="position: absolute; width: 100%; height: {{ windowHeight - 84 }}px; z-index: 1;"></view>

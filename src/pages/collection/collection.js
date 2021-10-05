@@ -41,7 +41,7 @@ Component({
 				],
 				200
 			);
-			let height = 36 * (this.data.lists.length + 1) - 2;
+			let height = Math.min(8 * 36, 36 * (this.data.lists.length + 1) - 2);
 			this.animate(
 				".listSelectWrap",
 				[
@@ -166,7 +166,6 @@ Component({
 		_saveAllDataToLocal: function () {
 			wx.setStorageSync("tasks", JSON.stringify(this.data.tasks));
 			wx.setStorageSync("lists", JSON.stringify(this.data.lists));
-			wx.setStorageSync('chats', (wx.getStorageSync('chats') || JSON.stringify([])));
 		},
 		// 拉取并设置数据
 		onLoad: async function () {

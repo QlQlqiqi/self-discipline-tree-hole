@@ -34,22 +34,27 @@
 
 <scroll-view class="share-wrap" refresher-enabled="{{ true }}" refresher-triggered="{{ pullDownRefresh }}" 
   style="height: {{ (windowHeight - navHeight) * ratio }}rpx;" scroll-y="{{ true }}" 
-  bindrefresherrefresh="pullDownLoad" scroll-top="{{ scrollTop }}px;"
+  bindrefresherrefresh="pullDownLoad" scroll-top="{{ scrollTop }}px;" bindscroll="handleScroll"
 >
   <!-- 轮播图 -->
-  <swiper class="rotation-chart" indicator-dots="{{ true }}" autoplay="{{ true }}" interval="{{ 3000 }}" bindchange="handleChangeCurrentGallery">
+  <swiper wx:if="{{ !pageNameCurrent }}" class="rotation-chart" indicator-dots="{{ true }}" autoplay="{{ true }}" interval="{{ 3000 }}" bindchange="handleChangeCurrentGallery">
     <swiper-item wx:for="{{ gallerys }}" wx:key="index" bindtap="handleOpenOfficialAccount">
       <image src="{{ item.icon }}" mode="aspectFit"></image>
     </swiper-item>
   </swiper>
+  <!-- 头像背景 -->
+  <view wx:else class="head-icon-background">
+    <open-data type="userAvatarUrl" class="vir-image"></open-data>
+    <open-data type="userAvatarUrl" class="rea-image"></open-data>
+  </view>
   <!-- 消息提醒 -->
   <view class="share-message-remind" bindtap="handleNavigateToMessageRemind">
     <image src="/src/image/share-message-remind.svg" mode="aspectFit" class="remind-image"></image>
-    <view wx:if="{{ true }}" class="remind-red-dot"></view>
+    <view wx:if="{{ chatsRemindShow }}" class="remind-red-dot"></view>
   </view>
   <!-- 说说 -->
   <view style="padding-top: 30rpx; margin-bottom: 300rpx;">
-    <view class="chat-wrap" wx:for="{{ chatsShow }}" wx:key="index">
+    <view class="chat-wrap" wx:for="{{ chats }}" wx:key="index">
       <share-message chat="{{ item }}" options="{{ optionsSelect }}" componentWidthMax="{{ 616 / ratio }}" 
         bind:handleEnsureComment="handleEnsureComment" bindhandleSelectOption="handleSelectOption"
       ></share-message>

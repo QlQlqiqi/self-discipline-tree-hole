@@ -39,6 +39,12 @@ Component({
 				});
 				return;
 			}
+			// 如果名称重复，返回
+			for(let list of JSON.parse(wx.getStorageSync('lists')))
+				if(list.title === this.data.listTitle) {
+					this.handleBack();
+					return;
+				}
 			wx.showLoading({
 				title: "正在保存数据...",
 				mask: true,

@@ -347,7 +347,6 @@ const formatTasksFromLocalToSql = function (
 // @param {Array} chats 后台的说说数据格式
 // @return {Array} 说说的本地格式
 const formatChatsFromSqlToLocal = function (chats) {
-	console.log(chats)
 	return chats.map(item => {
 		let chat = {
 			id: item.picid,
@@ -388,6 +387,7 @@ const formatChatsFromLocalToSql = function(chats) {
 			},
 			wilist: item.comments.map(item => item.content),
 		};
+		chat.data.pic.picId = item.id;
     return chat;
 	});
 }
@@ -403,10 +403,10 @@ const getCommentTitle = function(picOwner, fromOwner, toOwner, owner) {
 	let title = picOwner === owner
 		? '洞主'
 		: anames[picOwner % anames.length].name;
-	title += fromOwner !== toOwner && fromOwner !== owner
-		? title += ' 回复 ' + toOwner === owner
+	title += (fromOwner !== toOwner && fromOwner !== owner)
+		? ' 回复 ' + ((toOwner === owner)
 			? '洞主'
-			: anames[fromOwner + (fromOwner % anames.length === picOwner % anames.length) % anames.length].name
+			: anames[(fromOwner + (fromOwner % anames.length === picOwner % anames.length)) % anames.length].name)
 		: '';
 	return title;
 }

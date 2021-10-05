@@ -37,17 +37,23 @@ Component({
 				: ' 回复 ' + (data.chat.owner === app.globalData.owner)
 					? '洞主'
 					: app.globalData.anames[data.chat.comments[data.replyIndex].fromUser % app.globalData.anames.length].name;
-		}
-	},
-
-	watch: {
-		'chat': function(chat) {
+		},
+		chatFilter(data) {
+			console.log(data.chat)
+			let owner = app.globalData.owner;
+			let chat = JSON.parse(JSON.stringify(data.chat));
+			let idx = 0;
 			chat.comments.forEach(item => {
-				item.title = util.getCommentTitle(chat.owner, item.fromUser, item.toUser, app.globalData.owner);
+				item.title = util.getCommentTitle(chat.owner, item.fromUser, item.toUser, owner);
+				item.oldIndex = idx++;
+			});
+			chat.comments = chat.comments.filter(item => {
+				return chat.owner === owner 
+					|| item.fromUser === owner
+					|| item.toUser === owner
+					|| (item.fromUser === item.toUser && item.fromUser === chat.owner);
 			})
-			this.setData({
-				chat,
-			})
+			return chat;
 		}
 	},
 
@@ -76,6 +82,7 @@ Component({
 		// 点击相关功能，告诉父组件
 		handleSelectOption(e) {
 			let index = e.currentTarget.dataset.index;
+			console.log(this.data.chat)
 			this.triggerEvent('handleSelectOption', {
 				index,
 				chatId: this.data.chat.id

@@ -46,6 +46,8 @@ Component({
 		// 当前选择的分享的 index
 		currentShareIndex: 0,
 		shareShow: false,
+		// 是否保留的弹窗
+		dialogShow: false,
 	},
 
 	computed: {
@@ -126,12 +128,43 @@ Component({
 	 * 组件的方法列表
 	 */
 	methods: {
-		// 页面返回
+		// 返回上一个页面
 		handleBack(e) {
 			wx.navigateBack();
 		},
+		// 控制弹窗 buttons
+		handleSaveDialog(e) {
+			let index = e.detail.index;
+			if(index) {
+				let {reviewShow, currentAnameIndex, currentShareIndex, chatContent} = this.data;
+				let last = {
+					reviewShow,
+					currentAnameIndex,
+					currentShareIndex,
+					chatContent,
+				}
+				wx.setStorageSync('add-chat-last-data', JSON.stringify(last));
+			}
+			this.setData({
+				dialogShow: false
+			})
+			this.handleBack();
+		},
+		// 内容不得为空
+		handleContentEmpty(e) {
+			this.setData({
+				ContentEmptyShow: false
+			})
+		},
 		// 确认说说
 		async handleEnsure(e) {
+			// 内容为空不得发布
+			if(!this.data.chatContent) {
+				this.setData({
+					ContentEmptyShow: true
+				})
+				return;
+			}
 			wx.showLoading({
 				title: '正在发布...',
 				mask: true
@@ -155,15 +188,15 @@ Component({
 				comments: []
 			}
 			chat.reviewAbridge.show = Boolean(this.data.reviewShow);
-			chat.pic.picId = chat.id;
-			console.log(chat)
-			await store.saveChatsToSql([chat], {owner, token});
+			// chat.pic.picId = chat.id;
 			chats.push(chat);
+			await store.saveChatsToSql([chat], {owner, token});
 			// 改变选中的
 			this.setData({
 				shareRangeShow: false,
 				chats,
 			});
+			console.log(chat)
 			wx.setStorageSync('chats', JSON.stringify(chats));
 			wx.hideLoading({
 				success: () => {
@@ -173,11 +206,13 @@ Component({
 					});
 				},
 			});
-			wx.navigateBack();
+			this.handleBack();
 		},
 		// 取消说说
 		handleCancel(e) {
-			this.handleBack();
+			this.setData({
+				dialogShow: true
+			})
 		},
 		// 绑定输入
 		handleInput(e) {
@@ -215,8 +250,8 @@ Component({
 					repeatTipTop:
 						windowHeight -
 						navHeight -
-						(app.globalData.keyBoardHeight || 0) -
-						(76 + 88) / ratio,
+						this.data.optionsBottom -
+						(76 + 88 + 200) / ratio,
 				});
 				// 3000ms 后消失，如果期间再次点击，则重新计算时间
 				if (this._repeatTipTimeId) clearTimeout(this._repeatTipTimeId);
@@ -311,9 +346,7 @@ Component({
 				windowWidth,
 				ratio: 750 / windowWidth,
 				bottomLineHeight,
-				tasks
-			});
-			this.setData({
+				tasks,
 				review: {
 					starsNum: this.data.starsNumber,
 					tasks: this.data.finishedTasks.map(item => {
@@ -322,16 +355,17 @@ Component({
 						}
 					})
 				}
-			})
+			});
 			// 保留上一次的数据
 			let last = wx.getStorageSync('add-chat-last-data');
 			if(last) {
 				last = JSON.parse(last);
-				let {reviewShow, currentAnameIndex, currentShareIndex} = last;
+				let {reviewShow, currentAnameIndex, currentShareIndex, chatContent} = last;
 				this.setData({
 					reviewShow,
 					currentAnameIndex,
 					currentShareIndex,
+					chatContent,
 				})
 				wx.removeStorageSync('add-chat-last-data');
 			}

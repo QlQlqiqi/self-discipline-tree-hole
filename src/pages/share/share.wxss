@@ -32,11 +32,28 @@
   height: 100%;
   width: 100%;
 }
+.share-wrap .head-icon-background {
+  position: relative;
+}
+.share-wrap .head-icon-background .vir-image {
+  position: absolute;
+  height: 360rpx;
+  width: 360rpx;
+  opacity: 0.3;
+}
+.share-wrap .head-icon-background .rea-image {
+  position: absolute;
+  top: 140rpx;
+  right: 0;
+  height: 220rpx;
+  width: 220rpx;
+}
 .share-wrap .share-message-remind {
   position: absolute;
   right: 24rpx;
   top: 350rpx;
   padding: 20rpx;
+  z-index: 1;
 }
 .share-wrap .share-message-remind .remind-image {
   position: relative;

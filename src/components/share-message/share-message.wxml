@@ -39,7 +39,7 @@
 	<!-- 评论区 -->
 	<view wx:if="{{ chatShow }}" class="share-message-chats-wrap">
 		<view class="chats-content-wrap">
-			<view wx:for="{{ chat.comments }}" wx:key="index" data-index="{{ index }}" class="share-message-chat" bindtap="handleReplyWho">
+			<view wx:for="{{ chatFilter.comments }}" wx:key="index" data-index="{{ index }}" class="share-message-chat" bindtap="handleReplyWho">
 				<text class="chat-title">{{ item.title +'：' }}</text>
 				<text class="chat-content">{{ item.content }}</text>
 			</view>

@@ -1,6 +1,7 @@
 App({
   globalData: {
     url: 'http://297mo66766.imdo.co/',
+    owner: 1,
     anames: [
 			{ icon: "/src/image/anameRed.svg", name: "小红" },
 			{ icon: "/src/image/anameGreen.svg", name: "小绿" },

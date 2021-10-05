@@ -28,11 +28,35 @@ module.exports = Behavior({
 				}
 			}
 		},
-		// 举报说说（un-interactive）
+		// 举报说说
 		_handleReport(chatId) {
 			// 确认
 			let ensure = async () => {
 				// 发送数据到后端
+				let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+				let chats = this.data.chats, idx;
+				for(let i = 0; i < chats.length; i++) {
+					if(chats[i].id === chatId) {
+						idx = i;
+						break;
+					}
+				}
+				// 这块是为了 message-remind 页面
+				if(typeof this._changeChatsRemind === 'function')
+					this._changeChatsRemind(chats[idx]);
+
+				util.myRequest({
+					url: app.globalData.url + 'notice/report/',
+					header: {Authorization: 'Token ' + token},
+					method: 'POST',
+					data: {
+						report_from_user: owner,
+						report_to_user: chats[idx].owner,
+						report_pic_url: chats[idx].urlSql,
+						reoprt_text: chats[idx].pic.content,
+					}
+				})
+				.then(res => console.log(res))
 				this.setData({
 					optionShow: false,
 				});
@@ -68,10 +92,13 @@ module.exports = Behavior({
 						break;
 					}
 				}
+				// 这块是为了 message-remind 页面
+				if(typeof this._changeChatsRemind === 'function')
+					this._changeChatsRemind(chats[idx]);
+
 				// put / post
 				let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
 				await store.saveChatsToSql([chats[idx]], {owner, token});
-				console.log(this.data.chats)
 				// 改变选中的
 				this.setData({
 					shareRangeShow: false,
@@ -111,14 +138,20 @@ module.exports = Behavior({
 					mask: true
 				})
 				let chats = this.data.chats, idx;
+				console.log(chats, chatId)
 				for(let i = 0; i < chats.length; i++) {
 					if(chats[i].id === chatId) {
 						idx = i;
 						break;
 					}
 				}
+				// 这块是为了 message-remind 页面
+				if(typeof this._removeChatsRemind === 'function')
+					this._removeChatsRemind(chats[idx]);
+				
 				// put / post
 				let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+				console.log(chats[idx])
 				await util.myRequest({
 					url: chats[idx].urlSql,
 					header: {Authorization: 'Token ' + token},
@@ -174,9 +207,9 @@ module.exports = Behavior({
 				chat = chats[i];
 				if(chat.id === chatId) {
 					chat.comments.push(commentLocal);
-					let key = `chats[${i}][comments]`;
+					let key = `chats[${i}].comments`;
 					this.setData({
-						key: chat.comments
+						[key]: chat.comments
 					})
 				}
 			}
@@ -188,15 +221,31 @@ module.exports = Behavior({
 				from_user: app.globalData.url + 'login/user/' + commentLocal.fromUser + '/',
 				to_user: app.globalData.url + 'login/user/' + commentLocal.toUser + '/'
 			};
-			console.log(JSON.stringify(commentSql))
 			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
-			await util.myRequest({
+			util.myRequest({
 				url: app.globalData.url + 'community/comment/',
 				header: {Authorization: "Token " + token},
 				method: 'POST',
 				data: commentSql
 			})
 			.then(res => console.log(res))
+			// 消息提醒
+			// 不是每一条消息都会提示别人
+			if(commentLocal.fromUser !== commentLocal.toUser || commentLocal.fromUser !== chat.owner) {
+				util.myRequest({
+					url: app.globalData.url + 'notice/notice/',
+					header: {Authorization: 'Token ' + token},
+					method: 'POST',
+					data: {
+						report_from_user: commentLocal.fromUser,
+						report_to_user: commentLocal.toUser,
+						report_json: {
+							content: commentLocal.content,
+							chat: chat
+						}
+					}
+				})
+			}
 		},
 	}
 })
