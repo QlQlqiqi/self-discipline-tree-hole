@@ -30,21 +30,13 @@ Component({
 		date(data) {
 			return util.dateInToOut(data.chat.pic.date);
 		},
-		// 评论输入框的占位字符
-		commnetPlaceHolder(data) {
-			return data.replyIndex === -1
-				? '请输入...'
-				: ' 回复 ' + (data.chat.owner === app.globalData.owner)
-					? '洞主'
-					: app.globalData.anames[data.chat.comments[data.replyIndex].fromUser % app.globalData.anames.length].name;
-		},
 		chatFilter(data) {
 			console.log(data.chat)
 			let owner = app.globalData.owner;
 			let chat = JSON.parse(JSON.stringify(data.chat));
 			let idx = 0;
 			chat.comments.forEach(item => {
-				item.title = util.getCommentTitle(chat.owner, item.fromUser, item.toUser, owner);
+				item.title = util.getCommentTitle(chat.owner, item.fromUser, item.toUser, owner, chat.pic.name);
 				item.oldIndex = idx++;
 			});
 			chat.comments = chat.comments.filter(item => {
@@ -54,7 +46,26 @@ Component({
 					|| (item.fromUser === item.toUser && item.fromUser === chat.owner);
 			})
 			return chat;
-		}
+		},
+		// 评论输入框的占位字符
+		commnetPlaceHolder(data) {
+			if(data.replyIndex === -1)
+				return '请输入...';
+			let {fromUser, toUser} = data.chatFilter.comments[data.replyIndex];
+			return fromUser === app.globalData.owner
+				? '请输入...'
+				: ' 回复 ' + 
+				((data.chat.owner === fromUser)
+					? '洞主'
+					: util.getCommentTitle(
+							data.chat.owner, 
+							fromUser, 
+							toUser,
+							app.globalData.owner, 
+							data.chat.pic.name,
+						).split(' 回复 ')[0]);
+				
+		},
 	},
 
 	/**
@@ -82,10 +93,9 @@ Component({
 		// 点击相关功能，告诉父组件
 		handleSelectOption(e) {
 			let index = e.currentTarget.dataset.index;
-			console.log(this.data.chat)
 			this.triggerEvent('handleSelectOption', {
 				index,
-				chatId: this.data.chat.id
+				chatId: this.data.chatFilter.id
 			});
 			this.setData({
 				optionsShow: !this.data.optionsShow
@@ -109,31 +119,38 @@ Component({
 		// 点击回复，显示回复谁，并拉起键盘
 		handleReplyWho(e) {
 			let {index} = e.currentTarget.dataset;
+			console.log(index)
 			this.setData({
 				replyIndex: index,
 				commentFocus: true,
-			})
+			});
 		},
 		// 发送评论
 		handleEnsureComment(e) {
-			let {chat, replyIndex, commentValue} = this.data;
+			let {chatFilter, replyIndex, commentValue} = this.data;
 			let {anames, owner} = app.globalData;
 			let title = replyIndex === -1
-				? util.getCommentTitle(chat.owner, owner, owner, owner)
-				: util.getCommentTitle(chat.owner, chat.comments[replyIndex].fromUser, chat.comments[replyIndex].toUser, owner);
+				? util.getCommentTitle(chatFilter.owner, owner, owner, owner, chatFilter.pic.name)
+				: util.getCommentTitle(
+					chatFilter.owner, 
+					chatFilter.comments[replyIndex].fromUser, 
+					chatFilter.comments[replyIndex].toUser, 
+					owner,
+					chatFilter.pic.name,
+				);
 			let comment = {
 				id: util.getUniqueId(),
 				title,
 				content: commentValue,
-				chatId: chat.id,
-				fromUser: chat.owner,
+				chatId: chatFilter.id,
+				fromUser: app.globalData.owner,
 				toUser: replyIndex === -1
 					?	app.globalData.owner
-					: chat.comments[replyIndex].fromUser
+					: chatFilter.comments[replyIndex].fromUser
 			}
 			this.triggerEvent('handleEnsureComment', {
 				comment,
-				chatId: chat.id
+				chatId: chatFilter.id
 			})
 			// 清空输入框
 			this.setData({

@@ -122,6 +122,17 @@ Component({
 			if (!data.finishedTasks.length) starsNum = 0;
 			return starsNum;
 		},
+		// 缩略图
+		review(data) {
+			return {
+				starsNum: data.starsNumber,
+				tasks: data.finishedTasks.map(item => {
+					return {
+						content: item.content
+					}
+				})
+			};
+		}
 	},
 
 	/**
@@ -347,15 +358,8 @@ Component({
 				ratio: 750 / windowWidth,
 				bottomLineHeight,
 				tasks,
-				review: {
-					starsNum: this.data.starsNumber,
-					tasks: this.data.finishedTasks.map(item => {
-						return {
-							content: item.content
-						}
-					})
-				}
 			});
+			console.log(this.data)
 			// 保留上一次的数据
 			let last = wx.getStorageSync('add-chat-last-data');
 			if(last) {

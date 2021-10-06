@@ -86,6 +86,19 @@ Component({
 		},
 		pageNameCurrent: function (pageNameCurrent) {
 			// [树洞区，个人空间]
+			let chats = this.data.chats;
+			chats.forEach(item => {
+				if((pageNameCurrent && item.owner === app.globalData.owner)
+					|| (!pageNameCurrent && !item.pic.shareRange)
+				) {
+					item.show = true;
+				}
+				else item.show = false;
+			})
+			this.setData({
+				chats,
+			})
+			wx.setStorageSync('chats', JSON.stringify(chats));
 		},
 	},
 
@@ -200,10 +213,13 @@ Component({
 			chats.forEach(item => {
 				item.id = util.getUniqueId();
 			});
-			console.log(chats.length && chats[chats.length - 1].id)
-			chats = chats.filter(item => {
-				return (item.owner === app.globalData.owner)
-					|| (!this.data.pageNameCurrent && !item.pic.shareRange);
+			chats.forEach(item => {
+				if((this.data.pageNameCurrent && item.owner === app.globalData.owner)
+					|| (!this.data.pageNameCurrent && !item.pic.shareRange)
+				) {
+					item.show = true;
+				}
+				else item.show = false;
 			})
 			console.log(chats)
 			let gallerys = dataSql[1].map(item => {
@@ -247,11 +263,11 @@ Component({
 		// 从本地获取全部数据
 		_getAllDataFromLocal: function () {
 			// 获取任务
-			let tasks = JSON.parse(wx.getStorageSync("tasks"));
+			let tasks = JSON.parse(wx.getStorageSync("tasks") || JSON.stringify([]));
 			// 获取清单
-			let lists = JSON.parse(wx.getStorageSync("lists"));
+			let lists = JSON.parse(wx.getStorageSync("lists") || JSON.stringify([]));
 			// 用户昵称
-			let signText = JSON.parse(wx.getStorageSync("signText"));
+			let signText = JSON.parse(wx.getStorageSync("signText") || JSON.stringify(''));
 			let chats = JSON.parse(wx.getStorageSync('chats') || JSON.stringify([]));
 			let gallerys = JSON.parse(wx.getStorageSync('gallerys') || JSON.stringify([]));
 			let chatsRemind = JSON.parse(wx.getStorageSync('chatsRemind') || JSON.stringify([]));

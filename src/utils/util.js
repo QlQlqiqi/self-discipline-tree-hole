@@ -340,6 +340,7 @@ const formatTasksFromLocalToSql = function (
 		};
 		res.push(task);
 	});
+	console.log(res)
 	return res;
 };
 
@@ -357,7 +358,7 @@ const formatChatsFromSqlToLocal = function (chats) {
 			comments: item.article.map(item => {
 				let comment = {};
 				comment.urlSql = item.url;
-				comment.id = item.comment_id;
+				comment.id = item.comment_uid;
 				comment.content = item.content;
 				// comment.date = item.time.substr(0, 19) + "Z";
 				let tmp = item.pic.split("/");
@@ -385,7 +386,12 @@ const formatChatsFromLocalToSql = function(chats) {
 				reviewAbridge: item.reviewAbridge,
 				pic: item.pic
 			},
-			wilist: item.comments.map(item => item.content),
+			wilist: item.reviewAbridge.show
+			? [
+				...item.comments.map(item => item.content), 
+				...item.reviewAbridge.tasks.map(item => item.content)
+			] 
+			: []
 		};
 		chat.data.pic.picId = item.id;
     return chat;
@@ -397,16 +403,21 @@ const formatChatsFromLocalToSql = function(chats) {
 // @param {Number} fromOwner 评论的发送方
 // @param {Number} toOwner 评论的接收方
 // @param {Number} toOwner 评论者
+// @param {String} picName 说说创建者的昵称
 // @return {String} 评论的 title
-const getCommentTitle = function(picOwner, fromOwner, toOwner, owner) {
+const getCommentTitle = function(picOwner, fromOwner, toOwner, owner, name) {
 	let {anames} = app.globalData;
-	let title = picOwner === owner
+	let title = picOwner === fromOwner
 		? '洞主'
-		: anames[picOwner % anames.length].name;
+		: anames[fromOwner % anames.length].name === name
+			? anames[(fromOwner + 1) % anames.length].name
+			: anames[fromOwner % anames.length].name;
 	title += (fromOwner !== toOwner && fromOwner !== owner)
-		? ' 回复 ' + ((toOwner === owner)
+		? ' 回复 ' + ((toOwner === picOwner)
 			? '洞主'
-			: anames[(fromOwner + (fromOwner % anames.length === picOwner % anames.length)) % anames.length].name)
+			: (anames[fromOwner % anames.length].name === name
+				? anames[(fromOwner + 1) % anames.length].name
+				: anames[fromOwner % anames.length].name))
 		: '';
 	return title;
 }

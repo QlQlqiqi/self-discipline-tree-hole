@@ -33,6 +33,7 @@
   width: 100%;
 }
 .share-wrap .head-icon-background {
+  height: 360rpx;
   position: relative;
 }
 .share-wrap .head-icon-background .vir-image {

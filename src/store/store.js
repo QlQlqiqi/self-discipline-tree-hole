@@ -42,7 +42,7 @@ const saveTasksToSql = async function (
 	let tasksPostPr = util
 		.formatTasksFromLocalToSql(tasksPost, listsLocal, { owner, token })
 		.map(item => {
-			console.log("post", item);
+			console.log("post", item, JSON.stringify(item));
 			let pr = util
 				.myRequest({
 					url:
@@ -78,6 +78,7 @@ const saveTasksToSql = async function (
 	);
 	tasksSql.forEach(taskSql => {
 		for (let tmpTask of tasksPost) {
+			console.log(tmpTask, taskSql)
 			if (tmpTask.id === taskSql.task_num) {
 				tmpTask.urlSql = taskSql.url;
 				break;

@@ -13,7 +13,7 @@
 		>
 			<image src="/src/image/reivew-abridge-delete.svg" catchtap="handleCloseReviewAbridge" mode="aspectFit" class="image"></image>
 			<review-abridge  componentWidthMax="{{ windowWidth }}" componentHeightMin="{{ 100 }}"
-				starsNum="{{ review.starsNum }}" tasks="{{ review.tasks }}" safeAreaBottom="{{ bottomLineHeight }}"
+				starsNum="{{ starsNumber }}" tasks="{{ review.tasks }}" safeAreaBottom="{{ bottomLineHeight }}"
 			></review-abridge>
 		</view>
 		<view wx:if="{{ repeatTipShow }}" class="repeat-tip" style="top: {{ repeatTipTop }}px;">已添加，请勿重复操作！</view>

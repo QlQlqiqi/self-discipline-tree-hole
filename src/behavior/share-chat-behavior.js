@@ -203,6 +203,7 @@ module.exports = Behavior({
 			// 这里同步不会 get ，只是 post
 			let { comment: commentLocal, chatId } = e.detail;
 			let chats = this.data.chats, chat;
+			console.log(commentLocal, chatId)
 			for(let i = 0; i < chats.length; i++) {
 				chat = chats[i];
 				if(chat.id === chatId) {
@@ -211,6 +212,7 @@ module.exports = Behavior({
 					this.setData({
 						[key]: chat.comments
 					})
+					break;
 				}
 			}
 			// 下面是 post

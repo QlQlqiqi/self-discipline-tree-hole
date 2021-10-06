@@ -12,25 +12,6 @@ Component({
 
 	},
 
-	computed: {
-		// chatFilter(data) {
-		// 	let owner = app.globalData.owner;
-		// 	let chat = JSON.parse(JSON.stringify(data.chat));
-		// 	let idx = 0;
-		// 	chat.comments.forEach(item => {
-		// 		item.title = util.getCommentTitle(chat.owner, item.fromUser, item.toUser, owner);
-		// 		item.oldIndex = idx++;
-		// 	});
-		// 	chat.comments = chat.comments.filter(item => {
-		// 		return chat.owner === owner 
-		// 			|| item.fromUser === owner
-		// 			|| item.toUser === owner
-		// 			|| (item.fromUser === item.toUser && item.fromUser === chat.owner);
-		// 	})
-		// 	return chat;
-		// }
-	},
-
 	/**
 	 * 组件的初始数据
 	 */
@@ -177,7 +158,7 @@ Component({
 				res.open = false;
 				let idx = 0;
 				chat.comments.forEach(item => {
-					item.title = util.getCommentTitle(chat.owner, item.fromUser, item.toUser, owner);
+					item.title = util.getCommentTitle(chat.owner, item.fromUser, item.toUser, owner, item.pic.name);
 					item.oldIndex = idx++;
 				});
 				chat.comments = chat.comments.filter(item => {

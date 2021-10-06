@@ -180,6 +180,7 @@ Component({
 			tasks = util.mergeById(tasks, [task]);
 			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
 			await store.saveTasksToSql([task], this.data.lists, {owner, token});
+			console.log(task)
 			wx.setStorageSync('tasks', JSON.stringify(tasks));
 			wx.hideLoading({
 				success: () => {

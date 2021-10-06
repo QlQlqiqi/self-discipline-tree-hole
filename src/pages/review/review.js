@@ -191,11 +191,11 @@ Component({
 		// 从本地获取全部数据
 		_getAllDataFromLocal: function () {
 			// 获取任务
-			let tasks = JSON.parse(wx.getStorageSync("tasks"));
+			let tasks = JSON.parse(wx.getStorageSync("tasks") || JSON.stringify([]));
 			// 获取清单
-			let lists = JSON.parse(wx.getStorageSync("lists"));
+			let lists = JSON.parse(wx.getStorageSync("lists") || JSON.stringify([]));
 			// 用户昵称
-			let signText = JSON.parse(wx.getStorageSync("signText"));
+			let signText = JSON.parse(wx.getStorageSync("signText") || JSON.stringify(''));
 			this.setData({
 				tasks: tasks,
 				lists: lists,
