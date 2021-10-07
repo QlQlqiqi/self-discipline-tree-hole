@@ -37,7 +37,8 @@
     catch:handleNavigateToToday="handleNavigateToToday" catch:handleNavigateToFuture="handleNavigateToFuture"
     catch:handleNavigateToList="handleNavigateToList" catch:handleNavigateToFinished="handleNavigateToFinished"
     catch:handleNavigateToBeforeAndDelete="handleNavigateToBeforeAndDelete" catch:handleNavigateToShare="handleNavigateToShare"
-    catch:handleSignTextEnsure="handleSignTextEnsure" catch:handleDeleteList="handleDeleteList"
+    catch:handleSignTextEnsure="handleSignTextEnsure" catch:handleDeleteList="handleDeleteList" 
+    catch:handleNavigateToMessageRemind="handleNavigateToMessageRemind"
   ></menu>
 </view>
 

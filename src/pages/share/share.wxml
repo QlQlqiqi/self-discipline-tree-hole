@@ -29,6 +29,7 @@
     catch:handleNavigateToFuture="handleNavigateToFuture" catch:handleNavigateToList="handleNavigateToList" 
     catch:handleNavigateToFinished="handleNavigateToFinished" catch:handleNavigateToBeforeAndDelete="handleNavigateToBeforeAndDelete" 
     catch:handleNavigateToShare="handleNavigateToShare" catch:handleSignTextEnsure="handleSignTextEnsure" catch:handleDeleteList="handleDeleteList"
+    catch:handleNavigateToMessageRemind="handleNavigateToMessageRemind"
   ></menu>
 </view>
 
@@ -54,14 +55,12 @@
   </view>
   <!-- 说说 -->
   <view style="padding-top: 30rpx; margin-bottom: 300rpx;">
-    <view class="chat-wrap" wx:for="{{ chats }}" wx:key="index">
-      <view wx:if="{{ item.show }}">
-        <share-message chat="{{ item }}" options="{{ optionsSelect }}" componentWidthMax="{{ 616 / ratio }}" 
-          bind:handleEnsureComment="handleEnsureComment" bindhandleSelectOption="handleSelectOption"
-        ></share-message>
-        <image src="/src/image/task-circle.png" mode="aspectFit" class="left-circle-icon"></image>
-        <view class="task-left-line"></view>
-      </view>
+    <view class="chat-wrap" wx:for="{{ chatsShow }}" wx:key="index">
+      <share-message chat="{{ item }}" options="{{ optionsSelect }}" componentWidthMax="{{ 616 / ratio }}" 
+        bind:handleEnsureComment="handleEnsureComment" bindhandleSelectOption="handleSelectOption"
+      ></share-message>
+      <image src="/src/image/task-circle.png" mode="aspectFit" class="left-circle-icon"></image>
+      <view class="task-left-line"></view>
     </view>
   </view>
 </scroll-view>

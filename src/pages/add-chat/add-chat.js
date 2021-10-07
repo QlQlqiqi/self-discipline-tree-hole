@@ -338,8 +338,9 @@ Component({
 		},
 
 		// 加载数据
-		onLoad: function () {
+		onLoad: function (options) {
 			let tasks = JSON.parse(wx.getStorageSync('tasks'));
+			let reviewShow = JSON.parse(options.reviewShow || JSON.stringify(false));
 			// 设置机型相关信息
 			let {
 				navHeight,
@@ -358,11 +359,12 @@ Component({
 				ratio: 750 / windowWidth,
 				bottomLineHeight,
 				tasks,
+				reviewShow,
 			});
 			console.log(this.data)
 			// 保留上一次的数据
 			let last = wx.getStorageSync('add-chat-last-data');
-			if(last) {
+			if(last && !reviewShow) {
 				last = JSON.parse(last);
 				let {reviewShow, currentAnameIndex, currentShareIndex, chatContent} = last;
 				this.setData({

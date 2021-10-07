@@ -193,5 +193,11 @@ module.exports = Behavior({
 				url: "/src/pages/share/share",
 			});
 		},
+		// 导航到“消息通知”页面
+		handleNavigateToMessageRemind: function (e) {
+			wx.navigateTo({
+				url: "/src/pages/message-remind/message-remind?refresh=" + JSON.stringify(true),
+			});
+		},
 	}
 })

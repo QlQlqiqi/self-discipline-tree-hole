@@ -212,6 +212,9 @@ module.exports = Behavior({
 					this.setData({
 						[key]: chat.comments
 					})
+					// 这块是为了 message-remind 页面
+					if(typeof this._changeChatsRemind === 'function')
+						this._changeChatsRemind(chat);
 					break;
 				}
 			}

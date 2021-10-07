@@ -17,6 +17,7 @@
     catch:handleNavigateToList="handleNavigateToList" catch:handleNavigateToFinished="handleNavigateToFinished"
     catch:handleNavigateToBeforeAndDelete="handleNavigateToBeforeAndDelete" catch:handleNavigateToShare="handleNavigateToShare"
     catch:handleSignTextEnsure="handleSignTextEnsure" catch:handleDeleteList="handleDeleteList"
+		catch:handleNavigateToMessageRemind="handleNavigateToMessageRemind"
   ></menu>
 </view>
 
@@ -39,7 +40,7 @@
 <view style="position: relative; width: 666rpx; height: {{ contentHeight }}rpx; margin-top: 16rpx; margin-left: 42rpx; background-color: white; border-radius: 14rpx; color: rgba(21, 74, 25, 1); padding-bottom: 40rpx; overflow-y: scroll;">
 	<text style="display: inline-block; margin: 26rpx 0 0 38rpx; font-size: 40rpx;">已完成任务</text>
 	<image src="/src/image/review-history.svg" bind:tap="handleNavigateToHistory" style="position: absolute; width: 48rpx; height: 48rpx; top: 40rpx; left: 250rpx;"></image>
-	<image src="/src/image/review-share.svg" bind:tap="" style="position: absolute; width: 40rpx; height: 40rpx; top: 40rpx; right: 32rpx;"></image>
+	<image src="/src/image/review-share.svg" bind:tap="handleNavigateToAddChatAndShowReview" style="position: absolute; width: 40rpx; height: 40rpx; top: 40rpx; right: 32rpx;"></image>
 	<view wx:for="{{ finishedTasks }}" wx:key="index" data-index="{{ index }}" catch:tap="handleSelectTask" style="position: relative; width: 626rpx; min-height: 56rpx; margin: 40rpx 0 0 40rpx;">
 		<image src="/src/image/review-finished.svg" mode="aspectFill" style="position: absolute; width: 48rpx; height: 48rpx;"></image>
 		<view style="font-size: 32rpx; line-height: 38rpx; margin-left: 74rpx; width: 500rpx;">{{ item.content }}</view>

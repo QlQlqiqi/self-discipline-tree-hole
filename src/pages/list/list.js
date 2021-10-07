@@ -206,14 +206,30 @@ Component({
 			this.setData({
 				showDialog: false
 			});
-		}
+		},
+		// 改变该清单
+		handleChangeList(e) {
+			wx.redirectTo({
+				url: '/src/pages/add-self-list/add-self-list?edit=' + JSON.stringify(true)
+					+ '&title=' + JSON.stringify(this.data.pageName),
+			});
+		},
 	},
 
 	pageLifetimes: {
 		show: function() {
+			// 是否显示清单旁可编辑 icon
+			let listEditIconShow = false, lists = JSON.parse(wx.getStorageSync('lists'));
+			for(let i = 2, pageName = this.data.pageName; i < lists.length; i++) {
+				if(pageName === lists[i].title) {
+					listEditIconShow = true;
+					break;
+				}
+			}
 			this.setData({
 				tasks: JSON.parse(wx.getStorageSync('tasks')),
-				lists: JSON.parse(wx.getStorageSync('lists'))
+				lists,
+				listEditIconShow,
 			})
 		}
 	}

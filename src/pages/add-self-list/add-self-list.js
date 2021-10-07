@@ -39,12 +39,25 @@ Component({
 				});
 				return;
 			}
+			// 如果是覆盖清单，则执行其他方法
+			if(this.data.edit) {
+				await this._changeCurrentList();
+				return;
+			}
 			// 如果名称重复，返回
-			for(let list of JSON.parse(wx.getStorageSync('lists')))
+			for(let list of this.data.lists) {
 				if(list.title === this.data.listTitle) {
-					this.handleBack();
+					wx.showToast({
+						title: '该清单已存在，请勿重复添加',
+						duration: 400,
+						mask: true
+					})
+					setTimeout(() => {
+						this.handleBack();
+					}, 400);
 					return;
 				}
+			}
 			wx.showLoading({
 				title: "正在保存数据...",
 				mask: true,
@@ -57,8 +70,7 @@ Component({
 				icon: this.properties.listIcon[this.data.selectedIcon],
 			};
 			await util.myRequest({
-				url:
-					app.globalData.url + "check/taglist/?owner=" + JSON.stringify(owner),
+				url: app.globalData.url + "check/taglist/?owner=" + JSON.stringify(owner),
 				header: { Authorization: "Token " + token },
 				method: "POST",
 				data: util.formatListsFromLocalToSql([list], { owner })[0],
@@ -71,7 +83,7 @@ Component({
 			).forEach(listSql => {
 				if (listSql.tag === list.title) list.urlSql = listSql.url;
 			});
-			let lists = JSON.parse(wx.getStorageSync("lists"));
+			let lists = this.data.lists;
 			lists.push(list);
 			wx.setStorageSync("lists", JSON.stringify(lists));
 			wx.hideLoading({
@@ -106,7 +118,68 @@ Component({
 		handleBack: function () {
 			wx.navigateBack();
 		},
-		onLoad: function () {
+		// 更改当前的 list
+		async _changeCurrentList() {
+			let lists = this.data.lists;
+			// 如果名称重复，返回
+			for(let list of lists) {
+				if(list.title === this.data.listTitle && this.data.listTitle !== this.data.readyTitle) {
+					wx.showToast({
+						title: '该清单已存在，请勿重复添加',
+						duration: 400,
+						mask: true
+					})
+					setTimeout(() => {
+						this.handleBack();
+					}, 400);
+					return;
+				}
+			}
+			wx.showLoading({
+				title: "正在保存数据...",
+				mask: true,
+			});
+			let { owner, token } = await util.getTokenAndOwner(app.globalData.url + "login/login/");
+			let urlSql;
+			for(let list of lists) {
+				if(list.title === this.data.readyTitle) {
+					list.title = this.data.listTitle;
+					list.icon = this.properties.listIcon[this.data.selectedIcon];
+					urlSql = list.urlSql;
+					break;
+				}
+			}
+			await util.myRequest({
+				url: urlSql,
+				header: {Authorization: 'Token ' + token},
+				method: 'PUT',
+				data: {
+					tag: this.data.listTitle,
+					icon: this.properties.listIcon[this.data.selectedIcon],
+					owner: app.globalData.url + 'login/user/' + app.globalData.owner + '/',
+				}
+			})
+			.then(res => console.log(res));
+			wx.setStorageSync('lists', JSON.stringify(lists));
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: "已完成",
+						duration: 800,
+					});
+				},
+			});
+			this.handleBack();
+		},
+		onLoad: function (options) {
+			// 如果 edit 为 true，则将结果修改至对应 title 的 list
+			let edit = JSON.parse(options.edit || JSON.stringify(false));
+			if(edit) {
+				this.setData({
+					readyTitle: JSON.parse(options.title),
+					edit,
+				})
+			}
 			// 设置机型相关信息
 			let app = getApp();
 			this.setData({
@@ -114,6 +187,7 @@ Component({
 				navTop: app.globalData.navTop,
 				windowHeight: app.globalData.windowHeight,
 				windowWidth: app.globalData.windowWidth,
+				lists: JSON.parse(wx.getStorageSync('lists')),
 			});
 		},
 	},

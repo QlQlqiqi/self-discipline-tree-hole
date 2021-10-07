@@ -62,6 +62,16 @@ Component({
 				);
 			}
 		},
+		// 当前页面展示的说说
+		chatsShow(data) {
+			let pageNameCurrent = data.pageNameCurrent;
+			let chats = data.chats.filter(item => {
+				return (pageNameCurrent && item.owner === app.globalData.owner)
+				|| (!pageNameCurrent && !item.pic.shareRange);
+			})
+			chats.sort((a, b) => b.pic.date.localeCompare(a.pic.date));
+			return chats;
+		},
 	},
 
 	watch: {
@@ -86,19 +96,6 @@ Component({
 		},
 		pageNameCurrent: function (pageNameCurrent) {
 			// [树洞区，个人空间]
-			let chats = this.data.chats;
-			chats.forEach(item => {
-				if((pageNameCurrent && item.owner === app.globalData.owner)
-					|| (!pageNameCurrent && !item.pic.shareRange)
-				) {
-					item.show = true;
-				}
-				else item.show = false;
-			})
-			this.setData({
-				chats,
-			})
-			wx.setStorageSync('chats', JSON.stringify(chats));
 		},
 	},
 
@@ -213,14 +210,6 @@ Component({
 			chats.forEach(item => {
 				item.id = util.getUniqueId();
 			});
-			chats.forEach(item => {
-				if((this.data.pageNameCurrent && item.owner === app.globalData.owner)
-					|| (!this.data.pageNameCurrent && !item.pic.shareRange)
-				) {
-					item.show = true;
-				}
-				else item.show = false;
-			})
 			console.log(chats)
 			let gallerys = dataSql[1].map(item => {
 				return {

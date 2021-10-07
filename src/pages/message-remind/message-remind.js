@@ -82,6 +82,7 @@ Component({
 			let chatsRemind = this.data.chatsRemind;
 			for(let i = 0, chatRemind; i < chatsRemind.length; i++) {
 				chatRemind = chatsRemind[i];
+				console.log(chatRemind, chat)
 				if(chatRemind.chat.id === chat.id) {
 					let key = `chatsRemind[${i}].chat`;
 					this.setData({
@@ -90,6 +91,7 @@ Component({
 					// break;
 				}
 			}
+
 		},
 		// 配合 share-chat-behavior 使用
 		_removeChatsRemind(chat) {
@@ -125,15 +127,42 @@ Component({
 				delete this._handleCloseSwitchChat;
 			}
 		},
-		
-		// 加载数据
-		onLoad: async function() {
+		// 获取数据
+		async _getChatsAndChatsRemindFromSql() {
 			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
-			let chatsRemind = [];
 			let anames = app.globalData.anames;
-			console.log(JSON.parse(wx.getStorageSync('chatsRemind') || JSON.stringify([])))
-			// 主动 delete 跟自己有关的消息
-			JSON.parse(wx.getStorageSync('chatsRemind') || JSON.stringify([])).forEach(item => {
+			// 说说
+			let chatsSql = await store.getDataFromSqlByUrl(app.globalData.url + 'community/blog/', {owner, token});
+			let chats = util.formatChatsFromSqlToLocal(chatsSql);
+			chats.forEach(item => {
+				item.id = util.getUniqueId();
+			});
+			// 消息提示
+			let chatsRemindSql = await store.getDataFromSqlByUrl(app.globalData.url + 'notice/notice/', {owner, token});
+			let chatsRemind = chatsRemindSql.map(item => {
+				let chat;
+				chats.forEach(item => {
+					if(item.pic.picId === item.pic.picId)
+						chat = item;
+				})
+				return {
+					fromUser: item.report_from_user,
+					toUser: item.report_to_user,
+					chat: chat,
+					content: item.report_json.content,
+					url: item.url,
+				}
+			});
+			wx.setStorageSync('chatsRemind', JSON.stringify(chatsRemind));
+			wx.setStorageSync('chats', JSON.stringify(chats));
+		},
+		// 处理并删除消息提示
+		async _formatAndDeleteChatsRemind() {
+			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			let chatsRemind = JSON.parse(wx.getStorageSync('chatsRemind'));
+			let anames = app.globalData.anames;
+			// 主动 delete 跟自己有关的消息，并转化为本地格式
+			chatsRemind.forEach(item => {
 				let chat = item.chat;
 				console.log(item)
 				if(chat.pic.owner !== owner && item.toUser !== owner)
@@ -144,21 +173,20 @@ Component({
 					method: 'DELETE'
 				})
 				.then(res => console.log(res));
-				let res = {};
-				res.remind = {
+				item.remind = {
 					title: anames[item.fromUser % anames.length].name + ['评论', '回复'][+(item.toUser === owner)] + '你',
 					content: item.content,
 					contentShow: item.content.length < 10? item.content: item.content.substr(0, 10) + '...',
 				}
-				res.content = {
+				item.content = {
 					title: '洞主',
 					content: chat.pic.content,
 					contentShow: chat.pic.content.length < 10? chat.pic.content: chat.pic.content.substr(0, 10) + '...',
 				}
-				res.open = false;
+				item.open = false;
 				let idx = 0;
 				chat.comments.forEach(item => {
-					item.title = util.getCommentTitle(chat.owner, item.fromUser, item.toUser, owner, item.pic.name);
+					item.title = util.getCommentTitle(chat.owner, item.fromUser, item.toUser, owner, chat.pic.name);
 					item.oldIndex = idx++;
 				});
 				chat.comments = chat.comments.filter(item => {
@@ -175,12 +203,33 @@ Component({
 					: [
 						{ icon: "/src/image/option-report.svg", content: "举报" },
 					];
-				res.chat = chat;
-				console.log(res)
-				chatsRemind.push(res);
+					item.chat = chat;
+				console.log(item)
 			});
-			wx.setStorageSync('chatsRemind', JSON.stringify([]));
-			console.log(chatsRemind)
+			wx.setStorageSync('chatsRemind', JSON.stringify(chatsRemind));
+		},
+		
+		// 加载数据
+		onLoad: async function(options) {
+			let refresh = JSON.parse(options.refresh || JSON.stringify(false));
+			// 强制重新获取 chats 和 chatsRemind
+			if(refresh) {
+				wx.showLoading({
+					title: '正在读取数据...',
+					mask: true,
+				})
+				await this._getChatsAndChatsRemindFromSql();
+				wx.hideLoading({
+					success: () => {
+						wx.showToast({
+							title: "已完成",
+							duration: 800,
+						});
+					},
+				});
+			}
+			// 格式化 chatsRemind
+			await this._formatAndDeleteChatsRemind();
 
 			// 设置机型相关信息
 			let {navHeight, navTop, windowHeight, windowWidth, bottomLineHeight} = app.globalData;
@@ -193,9 +242,10 @@ Component({
 				windowWidth,
 				ratio: 750 / windowWidth,
 				bottomLineHeight,
-				chatsRemind,
-				chats: JSON.parse(wx.getStorageSync('chats'))
+				chatsRemind: JSON.parse(wx.getStorageSync('chatsRemind')),
+				chats: JSON.parse(wx.getStorageSync('chats')),
 			})
+			wx.setStorageSync('chatsRemind', JSON.stringify([]));
 		}
 	}
 })

@@ -194,6 +194,10 @@ Component({
 		handleNavigateToShare: function(e) {
 			this.triggerEvent("handleNavigateToShare");
 		},
+		// 触发“消息通知”事件
+		handleNavigateToMessageRemind(e) {
+			this.triggerEvent("handleNavigateToMessageRemind");
+		},
 		// 触发“问题反馈”事件
 		handleFeedBack: function(e) {
 			this.setData({

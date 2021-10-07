@@ -188,6 +188,13 @@ Component({
 				},
 			});
 		},
+		// 导航到 add-chat 页面，并展示缩略图
+		handleNavigateToAddChatAndShowReview(e) {
+			wx.setStorageSync('chats', wx.getStorageSync('chats') || JSON.stringify([]));
+			wx.navigateTo({
+				url: '/src/pages/add-chat/add-chat?reviewShow=' + JSON.stringify(true),
+			})
+		},
 		// 从本地获取全部数据
 		_getAllDataFromLocal: function () {
 			// 获取任务
