@@ -218,20 +218,19 @@ Component({
 					title: item.op_title
 				}
 			});
-			let chatsRemind = dataSql[2].map(item => {
-				let chat;
-				chats.forEach(item => {
-					if(item.pic.picId === item.pic.picId)
-						chat = item;
-				})
+			let chatsRemind = dataSql[2].filter(item => {
+				console.log(item)
+				return item.report_json.receiver === owner;
+			}).map(item => {
+				console.log(item)
 				return {
 					fromUser: item.report_from_user,
 					toUser: item.report_to_user,
-					chat: chat,
+					chat: item.report_json.chat,
 					content: item.report_json.content,
 					url: item.url,
 				}
-			});
+			})
 			console.log(chatsRemind)
 			this.setData({
 				chats,

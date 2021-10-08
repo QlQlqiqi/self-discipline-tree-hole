@@ -29,38 +29,39 @@ Component({
 		// 	// 展开说说所需的字段
 		// 	chat: Object
 		// }
-		chatsRemind: [{
-			remind: {
-				title: '小红评论你',
-				content: '哈哈哈哈哈哈哈哈哈啊实打实的',
-				contentShow: '哈哈哈哈哈哈哈...'
-			},
-			content: {
-				title: '洞主回复你',
-				content: '啊实打实大苏打实打实打算',
-				contentShow: '啊实打实大...'
-			},
-			open: false,
-			chat: {
-				id: 11,
-				owner: 1,
-				pic: {
-					headIcon: "/src/image/head-icon-yellow.svg",
-					name: "黄黄",
-					date: "2020-12-21T12:12:12Z",
-					content: "说说",
-				},
-				reviewAbridge: {},
-				options: [
-					{ icon: '/src/image/option-power.svg', content: '权限' },
-					{ icon: '/src/image/option-delete.svg', content: '删除' }
-				],
-				comments: [
-					{ id: 1, title: "洞主", content: "哈哈" },
-					{ id: 2, title: "洞主", content: "哈哈" },
-				],
-			}
-		}],
+		chatsRemind: [],
+		// chatsRemind: [{
+		// 	remind: {
+		// 		title: '小红评论你',
+		// 		content: '哈哈哈哈哈哈哈哈哈啊实打实的',
+		// 		contentShow: '哈哈哈哈哈哈哈...'
+		// 	},
+		// 	content: {
+		// 		title: '洞主回复你',
+		// 		content: '啊实打实大苏打实打实打算',
+		// 		contentShow: '啊实打实大...'
+		// 	},
+		// 	open: false,
+		// 	chat: {
+		// 		id: 11,
+		// 		owner: 1,
+		// 		pic: {
+		// 			headIcon: "/src/image/head-icon-yellow.svg",
+		// 			name: "黄黄",
+		// 			date: "2020-12-21T12:12:12Z",
+		// 			content: "说说",
+		// 		},
+		// 		reviewAbridge: {},
+		// 		options: [
+		// 			{ icon: '/src/image/option-power.svg', content: '权限' },
+		// 			{ icon: '/src/image/option-delete.svg', content: '删除' }
+		// 		],
+		// 		comments: [
+		// 			{ id: 1, title: "洞主", content: "哈哈" },
+		// 			{ id: 2, title: "洞主", content: "哈哈" },
+		// 		],
+		// 	}
+		// }],
 		// 便于 share-chat-behavior 的使用
 		pageNameCurrent: 0,
 	},
@@ -139,20 +140,17 @@ Component({
 			});
 			// 消息提示
 			let chatsRemindSql = await store.getDataFromSqlByUrl(app.globalData.url + 'notice/notice/', {owner, token});
-			let chatsRemind = chatsRemindSql.map(item => {
-				let chat;
-				chats.forEach(item => {
-					if(item.pic.picId === item.pic.picId)
-						chat = item;
-				})
+			let chatsRemind = chatsRemindSql.filter(item => {
+				return item.report_json.receiver === owner;
+			}).map(item => {
 				return {
 					fromUser: item.report_from_user,
 					toUser: item.report_to_user,
-					chat: chat,
+					chat: item.report_json.chat,
 					content: item.report_json.content,
 					url: item.url,
 				}
-			});
+			})
 			wx.setStorageSync('chatsRemind', JSON.stringify(chatsRemind));
 			wx.setStorageSync('chats', JSON.stringify(chats));
 		},
@@ -160,13 +158,11 @@ Component({
 		async _formatAndDeleteChatsRemind() {
 			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
 			let chatsRemind = JSON.parse(wx.getStorageSync('chatsRemind'));
+			console.log(chatsRemind)
 			let anames = app.globalData.anames;
 			// 主动 delete 跟自己有关的消息，并转化为本地格式
 			chatsRemind.forEach(item => {
 				let chat = item.chat;
-				console.log(item)
-				if(chat.pic.owner !== owner && item.toUser !== owner)
-					return;
 				util.myRequest({
 					url: item.url,
 					header: {Authorization: 'Token ' + token},
@@ -207,6 +203,7 @@ Component({
 				console.log(item)
 			});
 			wx.setStorageSync('chatsRemind', JSON.stringify(chatsRemind));
+			console.log(chatsRemind)
 		},
 		
 		// 加载数据

@@ -3,7 +3,9 @@
 <navbar page-name="{{ pageNames[pageNameCurrent].title }}">
   <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" mode="aspectFit" style="width: 24px; height: 24px;"></image>
   <view slot="rightIcon" class="listSelectIconWrap" bind:tap="handleShowSelectList">
-    <image class="listSelectIcon" src="/src/image/selectIcon0.png" mode="aspectFit"></image>
+    <image class="listSelectIcon" src="/src/image/selectIcon0.png" mode="aspectFit" 
+      style="margin-left: {{ pageNames[pageNameCurrent].title.length * 30 }}rpx;"
+    ></image>
   </view>
 </navbar>
 <!-- 导航栏的下拉框 -->

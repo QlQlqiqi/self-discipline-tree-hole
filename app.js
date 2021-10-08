@@ -1,7 +1,7 @@
 App({
   globalData: {
-    url: 'http://297mo66766.imdo.co/',
-    // url: 'https://witime.wizzstudio.com/',
+    // url: 'http://297mo66766.imdo.co/',
+    url: 'https://witime.wizzstudio.com/',
     owner: 1,
     anames: [
 			{ icon: "/src/image/anameRed.svg", name: "小红" },

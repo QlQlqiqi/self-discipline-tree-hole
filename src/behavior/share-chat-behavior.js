@@ -235,8 +235,8 @@ module.exports = Behavior({
 			})
 			.then(res => console.log(res))
 			// 消息提醒
-			// 不是每一条消息都会提示别人
-			if(commentLocal.fromUser !== commentLocal.toUser || commentLocal.fromUser !== chat.owner) {
+			// 回复别人，接收者为他
+			if(commentLocal.fromUser !== commentLocal.toUser) {
 				util.myRequest({
 					url: app.globalData.url + 'notice/notice/',
 					header: {Authorization: 'Token ' + token},
@@ -245,6 +245,24 @@ module.exports = Behavior({
 						report_from_user: commentLocal.fromUser,
 						report_to_user: commentLocal.toUser,
 						report_json: {
+							receiver: commentLocal.toUser,
+							content: commentLocal.content,
+							chat: chat
+						}
+					}
+				})
+			}
+			// 评论说说
+			else if(commentLocal.fromUser !== chat.owner) {
+				util.myRequest({
+					url: app.globalData.url + 'notice/notice/',
+					header: {Authorization: 'Token ' + token},
+					method: 'POST',
+					data: {
+						report_from_user: commentLocal.fromUser,
+						report_to_user: commentLocal.toUser,
+						report_json: {
+							receiver: chat.owner,
 							content: commentLocal.content,
 							chat: chat
 						}

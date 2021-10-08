@@ -222,14 +222,9 @@ Component({
 
 			// 请求 tasks
 			let tasksLocal = util.formatTasksFromSqlToLocal(
-				await store.getDataFromSqlByUrl(
-					app.globalData.url + "check/check/?owner=" + JSON.stringify(owner),
-					{
-						token,
-					}
-				),
-				listsLocal,
-				{ owner, token }
+				await store.getDataFromSqlByUrl( app.globalData.url + "check/check/?owner="	+ JSON.stringify(owner), 
+				{token} ),
+				listsLocal, { owner, token }
 			);
 			// 设置 id
 			tasksLocal.forEach(item => (item.id = util.getUniqueId()));
@@ -246,9 +241,7 @@ Component({
 				}
 				// 每天重复
 				// 此处 UTC+0 -> UTC+8，将世界时间转化为本地时间
-				let oldDate = new Date(
-					new Date(task.date).getTime() - 8 * 60 * 60 * 1000
-				);
+				let oldDate = new Date(new Date(task.date).getTime() - 8 * 60 * 60 * 1000);
 				let addTime = [0, 1, 7, 30, 365][task.repeat] * 24 * 60 * 60 * 1000;
 				let oldDateYMD = util.formatDate(oldDate).substr(0, 10);
 				let todayYMD = util.getDawn(0).substr(0, 10);
@@ -258,6 +251,8 @@ Component({
 					let newTime = oldDate.getTime() + addTime;
 					let tomorrowTime = new Date(util.getDawn(1)).getTime();
 					do {
+						while(newTime + addTime < tomorrowTime)
+							newTime += addTime;
 						let tmpTask = JSON.parse(JSON.stringify(task));
 						tmpTask.id = util.getUniqueId();
 						tmpTask.date = util.formatDate(new Date(newTime));
@@ -266,16 +261,15 @@ Component({
 						tmpTask.rating = 1;
 						tmpTask.feeling = "";
 						tmpTask.repeat = 0;
-						tmpTask._asd = 1;
 						// 根据用户选择是否延续任务
-						tmpTask._overTime = true;
+						tmpTask._newTask = true;
+						tmpTask.repeat = task.repeat;
 						delete tmpTask.urlSql;
 						res.push(tmpTask);
 						tasksPost.push(tmpTask);
 						newTime += addTime;
 					} while (newTime < tomorrowTime);
-					res[res.length - 1].repeat = task.repeat;
-					task.repeat = 0;
+					task._oldTask = true;
 					task._self = true;
 					tasksPost.push(task);
 				}
@@ -316,11 +310,10 @@ Component({
 
 			// 延时所有过期任务
 			this._handleDialogDefine = async () => {
-				let todayYMD = util.getDawn(0).substr(0, 10);
 				tasksLocal = tasksLocal.filter(item => {
-					// 删除以前自动创建的任务
-					if (item._overTime) {
-						delete item._overTime;
+					// 删除原始任务
+					if (item._oldTask) {
+						delete item._oldTask;
 						util.myRequest({
 							url: item.urlSql,
 							header: { Authorization: "Token " + token },
@@ -328,31 +321,11 @@ Component({
 						});
 						return false;
 					}
-					// 修改本体任务时间
-					item.date = todayYMD + item.date.substr(10);
-					util
-						.myRequest({
-							url: item.urlSql,
-							header: { Authorization: "Token " + token },
-							method: "PUT",
-							data: util.formatTasksFromLocalToSql([item], listsLocal, {
-								owner,
-								token,
-							})[0],
-						})
-						.then(res =>
-							console.log(
-								res,
-								util.formatTasksFromLocalToSql([item], listsLocal, {
-									owner,
-									token,
-								})
-							)
-						);
-
+					// 新增任务
+					else if(item._newTask)
+						delete item._newTask;
 					return true;
 				});
-				console.log(tasksLocal);
 				this.setData({
 					tasks: tasksLocal,
 					dialogShow: false,
@@ -360,9 +333,35 @@ Component({
 				wx.setStorageSync("tasks", JSON.stringify(tasksLocal));
 			};
 			this._handleDialogCancel = () => {
+				tasksLocal = tasksLocal.filter(item => {
+					// 删除新增任务
+					if (item._newTask) {
+						delete item._newTask;
+						util.myRequest({
+							url: item.urlSql,
+							header: { Authorization: "Token " + token },
+							method: "DELETE",
+						});
+						return false;
+					}
+					// 设置原始任务为“删除”
+					else if(item._oldTask) {
+						delete item._oldTask;
+						item.delete = true;
+						util.myRequest({
+							url: item.urlSql,
+							header: { Authorization: "Token " + token },
+							method: "PUT",
+							data: util.formatTasksFromLocalToSql([item], listsLocal, { owner, token, })[0],
+						})
+					}
+					return true;
+				});
 				this.setData({
+					tasks: tasksLocal,
 					dialogShow: false,
 				});
+				wx.setStorageSync("tasks", JSON.stringify(tasksLocal));
 			};
 
 			// 请求 signText

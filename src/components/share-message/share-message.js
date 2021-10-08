@@ -31,7 +31,6 @@ Component({
 			return util.dateInToOut(data.chat.pic.date);
 		},
 		chatFilter(data) {
-			console.log(data.chat)
 			let owner = app.globalData.owner;
 			let chat = JSON.parse(JSON.stringify(data.chat));
 			let idx = 0;
@@ -64,7 +63,6 @@ Component({
 							app.globalData.owner, 
 							data.chat.pic.name,
 						).split(' 回复 ')[0]);
-				
 		},
 	},
 

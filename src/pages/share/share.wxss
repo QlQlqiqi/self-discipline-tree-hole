@@ -35,12 +35,15 @@
 .share-wrap .head-icon-background {
   height: 360rpx;
   position: relative;
+  overflow: hidden;
 }
 .share-wrap .head-icon-background .vir-image {
   position: absolute;
-  height: 360rpx;
-  width: 360rpx;
+  height: 750rpx;
+  width: 750rpx;
   opacity: 0.3;
+  filter: blur(10rpx);
+  top: -195rpx;
 }
 .share-wrap .head-icon-background .rea-image {
   position: absolute;

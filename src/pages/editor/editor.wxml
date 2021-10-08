@@ -10,7 +10,7 @@
 
 <view style="position: relative; height: {{ navHeight }}px;"></view>
 <!-- 导航栏 -->
-<navbar page-name="编辑代办">
+<navbar page-name="编辑待办">
 	<image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 24px; height: 24px;"></image>
 </navbar>
 <view style="position: relative;"></view>
