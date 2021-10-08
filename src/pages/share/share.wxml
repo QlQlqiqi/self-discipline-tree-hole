@@ -4,7 +4,7 @@
   <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" mode="aspectFit" style="width: 24px; height: 24px;"></image>
   <view slot="rightIcon" class="listSelectIconWrap" bind:tap="handleShowSelectList">
     <image class="listSelectIcon" src="/src/image/selectIcon0.png" mode="aspectFit" 
-      style="margin-left: {{ pageNames[pageNameCurrent].title.length * 30 }}rpx;"
+      style="left: {{ 150 / ratio + (pageNames[pageNameCurrent].title.length) * 8 }}px;"
     ></image>
   </view>
 </navbar>
