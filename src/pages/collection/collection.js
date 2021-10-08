@@ -29,7 +29,48 @@ Component({
 		pageName: "收集箱",
 	},
 
-	computed: {},
+	computed: {
+		// 显示的今日任务
+		todayTasksShow(data) {
+			let todayDate = util.getDawn(0);
+			let tommorrowDate = util.getDawn(1);
+			let res = data.tasks.filter(function (item) {
+				return (
+					item.date.localeCompare(todayDate) >= 0 &&
+					item.date.localeCompare(tommorrowDate) < 0 &&
+					!item.delete
+					&& (item.list.title === data.pageName || data.pageName === '收集箱')
+				);
+			});
+			res.sort((a, b) =>
+				a.priority !== b.priority
+					? a.priority < b.priority
+						? -1
+						: 1
+					: a.date.localeCompare(b.date)
+			);
+			return res;
+		},
+		// 显示的未来任务
+		futureTasksShow(data) {
+			let tommorrowDate = util.getDawn(1);
+			let res = data.tasks.filter(function (item) {
+				return (
+					item.date.localeCompare(tommorrowDate) >= 0 
+					&& !item.delete
+					&& (item.list.title === data.pageName || data.pageName === '收集箱')
+				);
+			});
+			res.sort((a, b) =>
+				a.priority !== b.priority
+					? a.priority < b.priority
+						? -1
+						: 1
+					: a.date.localeCompare(b.date)
+			);
+			return res;
+		}
+	},
 
 	watch: {
 		selectIconRotate: function (selectIconRotate) {

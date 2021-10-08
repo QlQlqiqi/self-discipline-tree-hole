@@ -52,13 +52,15 @@
       <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 32rpx; width: 32rpx; position: absolute; margin-top: 42rpx; margin-left: 24rpx;"></image>
       <view class="task-left-line" style="margin-left: 38rpx; margin-top: 64rpx; height: 32rpx;"></view>
     </view>
-    <view wx:for="{{ todayTasks }}" wx:key="index" class="collection-task-item-wrap">
+    <view wx:for="{{ todayTasksShow }}" wx:key="index" class="collection-task-item-wrap">
       <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 16rpx; width: 16rpx; position: absolute; margin-left: -30rpx;"></image>
-      <view class="task-left-line" style="height: {{ index + 1 < todayTasks.length? '224rpx': '177rpx' }};"></view>
+      <view class="task-left-line" style="height: {{ index + 1 < todayTasksShow.length? '224rpx': '177rpx' }};"></view>
       <task-item catch:tap="handleEditor" finish="{{ item.finish }}" data-id="{{ item.id }}" repeat="{{ item.repeat }}" content="{{ item.content }}" date="{{ item.date }}">
         <view slot="finish" catch:tap="handleTaskFinish" data-id="{{ item.id }}" style="width: 100%; height: 100%; padding: 14rpx; box-sizing: border-box;">
           <view slot="finish" style="display: inline-block; border: 4rpx solid {{ taskItemColor[item.priority] }}; position: absolute; width: 20rpx; height: 20rpx;"></view>
-          <image wx:if="{{ item.finish }}" slot="finish" src="/src/image/priority0.svg" style="display: inline-block; background-color: {{ taskItemColor[item.priority] }}; position: absolute; width: 26rpx; height: 26rpx;"></image>
+          <image wx:if="{{ item.finish }}" slot="finish" src="/src/image/priority0.svg" 
+            style="display: inline-block; background-color: {{ taskItemColor[item.priority] }}; position: absolute; width: 26rpx; height: 26rpx;"
+          ></image>
         </view>
       </task-item>
     </view>
@@ -68,13 +70,15 @@
       <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 32rpx; width: 32rpx; position: absolute; margin-top: 42rpx; margin-left: 24rpx;"></image>
       <view class="task-left-line" style="margin-left: 38rpx; margin-top: 64rpx; height: 32rpx;"></view>
     </view>
-    <view wx:for="{{ futureTasks }}" wx:key="index" class="collection-task-item-wrap">
+    <view wx:for="{{ futureTasksShow }}" wx:key="index" class="collection-task-item-wrap">
       <image src="/src/image/task-circle.png" mode="aspectFit" style="height: 16rpx; width: 16rpx; position: absolute; margin-left: -30rpx;"></image>
-      <view class="task-left-line" style="height: {{ index + 1 < todayTasks.length? '224rpx': '177rpx' }};"></view>
+      <view class="task-left-line" style="height: {{ index + 1 < futureTasksShow.length? '224rpx': '177rpx' }};"></view>
       <task-item catch:tap="handleEditor" finish="{{ item.finish }}" data-id="{{ item.id }}" repeat="{{ item.repeat }}" content="{{ item.content }}" date="{{ item.date }}">
         <view slot="finish" catch:tap="handleTaskFinish" data-id="{{ item.id }}" style="width: 100%; height: 100%; padding: 14rpx; box-sizing: border-box;">
           <view slot="finish" style="display: inline-block; border: 4rpx solid {{ taskItemColor[item.priority] }}; position: absolute; width: 20rpx; height: 20rpx;"></view>
-          <image wx:if="{{ item.finish }}" slot="finish" src="/src/image/priority0.svg" style="display: inline-block; background-color: {{ taskItemColor[item.priority] }}; position: absolute; width: 26rpx; height: 26rpx;"></image>
+          <image wx:if="{{ item.finish }}" slot="finish" src="/src/image/priority0.svg" 
+            style="display: inline-block; background-color: {{ taskItemColor[item.priority] }}; position: absolute; width: 26rpx; height: 26rpx;"
+          ></image>
         </view>
       </task-item>
     </view>
