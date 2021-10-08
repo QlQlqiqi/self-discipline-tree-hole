@@ -97,9 +97,44 @@ Component({
 			this.handleBack();
 		},
 		// 删除清单
-		handleDelete: function () {
-			// 直接返回上一个页面
+		handleDelete: async function () {
+			// 如果是新建清单，直接返回上一个页面
+			if(!this.data.edit) {
+				this.handleBack();
+				return;
+			}
+			// 删除原来的清单
+			let lists = this.data.lists;
+			wx.showLoading({
+				title: "正在保存数据...",
+				mask: true,
+			});
+			let { owner, token } = await util.getTokenAndOwner(app.globalData.url + "login/login/");
+			let urlSql, res = [];
+			for(let list of lists) {
+				if(list.title === this.data.readyTitle) {
+					urlSql = list.urlSql;
+					continue;
+				}
+				res.push(list);
+			}
+			await util.myRequest({
+				url: urlSql,
+				header: {Authorization: 'Token ' + token},
+				method: 'DELETE'
+			})
+			.then(res => console.log(res));
+			wx.setStorageSync('lists', JSON.stringify(res));
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: "已完成",
+						duration: 800,
+					});
+				},
+			});
 			this.handleBack();
+
 		},
 		dialogClose: function () {
 			this.setData({
@@ -175,9 +210,17 @@ Component({
 			// 如果 edit 为 true，则将结果修改至对应 title 的 list
 			let edit = JSON.parse(options.edit || JSON.stringify(false));
 			if(edit) {
+				let list = JSON.parse(options.list);
+				let selectedIcon = 0;
+				for(let i = 0; i < this.data.listIcon.length; i++) {
+					if(this.data.listIcon[i] === list.icon)
+						selectedIcon = i;
+				}
 				this.setData({
-					readyTitle: JSON.parse(options.title),
+					readyTitle: list.title,
 					edit,
+					listTitle: list.title,
+					selectedIcon,
 				})
 			}
 			// 设置机型相关信息

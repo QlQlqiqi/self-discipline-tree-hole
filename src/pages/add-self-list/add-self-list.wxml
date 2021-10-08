@@ -21,6 +21,8 @@
 <view class="cancel" bind:tap="handleBack">取消</view>
 <view class="ensure" bind:tap="handleEnsure">确定</view>
 <view class="delete" bind:tap="handleDelete">删除</view>
-<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ show }}" title="输入不得为空" 
+<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ show }}" title="提示" 
 	buttons="{{ [{text: '确定'}] }}" bind:buttontap="dialogClose"
-></mp-dialog>
+>
+	输入不得为空
+</mp-dialog>

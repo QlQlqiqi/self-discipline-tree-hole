@@ -209,9 +209,14 @@ Component({
 		},
 		// 改变该清单
 		handleChangeList(e) {
+			let list;
+			this.data.lists.forEach(item => {
+				if(item.title === this.data.pageName)
+					list = item;
+			})
 			wx.redirectTo({
 				url: '/src/pages/add-self-list/add-self-list?edit=' + JSON.stringify(true)
-					+ '&title=' + JSON.stringify(this.data.pageName),
+					+ '&list=' + JSON.stringify(list),
 			});
 		},
 	},

@@ -1,7 +1,9 @@
 <view style="position: relative; height: {{ navHeight }}px;"></view>
 <!-- 导航栏 -->
 <navbar page-name="{{ pageNames[pageNameCurrent].title }}">
-  <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" mode="aspectFit" style="width: 24px; height: 24px;"></image>
+  <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" 
+    mode="aspectFit" style="width: 24px; height: 24px;"
+  ></image>
   <view slot="rightIcon" class="listSelectIconWrap" bind:tap="handleShowSelectList">
     <image class="listSelectIcon" src="/src/image/selectIcon0.png" mode="aspectFit" 
       style="left: {{ 150 / ratio + (pageNames[pageNameCurrent].title.length) * 8 }}px;"
@@ -10,7 +12,9 @@
 </navbar>
 <!-- 导航栏的下拉框 -->
 <view class="listSelectWrap" style="left: {{ windowWidth / 2 - 45 }}px; height: 0;">
-  <view wx:for="{{ pageNames }}" wx:key="title" data-index="{{ index }}" catch:tap="handleSelectList" style="position: relative; background-color: {{ pageNameCurrent === index? 'rgb(243, 246, 249)': 'white'}};">
+  <view wx:for="{{ pageNames }}" wx:key="title" data-index="{{ index }}" catch:tap="handleSelectList" 
+    style="position: relative; background-color: {{ pageNameCurrent === index? 'rgb(243, 246, 249)': 'white'}};"
+  >
     <image src="{{ item.icon }}" style="position: absolute; left: 3px; top: 9px; height: 20px; width: 20px;"></image>
     <view style="padding-left: 20px; height: 35px; overflow-x: scroll;">{{ item.title }}</view>
     <view wx:if="{{ index + 1 < pageNames.length }}" style="border-top: 1px solid rgba(187, 187, 187, 1);"></view>
