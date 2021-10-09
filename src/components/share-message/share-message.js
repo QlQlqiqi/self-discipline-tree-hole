@@ -36,8 +36,11 @@ Component({
 			let idx = 0;
 			chat.comments.forEach(item => {
 				item.title = util.getCommentTitle(chat.owner, item.fromUser, item.toUser, owner, chat.pic.name);
+				if(item.content === '的')
+					console.log(item.title)
 				item.oldIndex = idx++;
 			});
+			console.log(chat.comments)
 			chat.comments = chat.comments.filter(item => {
 				return chat.owner === owner 
 					|| item.fromUser === owner

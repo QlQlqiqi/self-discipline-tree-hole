@@ -412,7 +412,7 @@ const getCommentTitle = function(picOwner, fromOwner, toOwner, owner, name) {
 		: anames[fromOwner % anames.length].name === name
 			? anames[(fromOwner + 1) % anames.length].name
 			: anames[fromOwner % anames.length].name;
-	title += (fromOwner !== toOwner && fromOwner !== owner)
+	title += (fromOwner !== toOwner)
 		? ' 回复 ' + ((toOwner === picOwner)
 			? '洞主'
 			: (anames[fromOwner % anames.length].name === name

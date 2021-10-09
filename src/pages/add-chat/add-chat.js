@@ -23,7 +23,7 @@ Component({
 			{ icon: "/src/image/add-chat-option2.svg", content: "分享范围" },
 		],
 		// 当弹出键盘时，显示下面的功能框
-		bottomOptionsShow: true,
+		bottomOptionsShow: false,
 		// 功能框距离下面的距离 px
 		optionsBottom: 100,
 		reviewShow: false,
@@ -246,7 +246,7 @@ Component({
 			// 因为 handleShowKeyBoard 会触发两次，覆盖掉该事件，所以需要延迟调用该方法
 			setTimeout(() => {
 				this.setData({
-					bottomOptionsShow: true,
+					bottomOptionsShow: false,
 					optionsBottom: 100,
 				});
 			}, 0);

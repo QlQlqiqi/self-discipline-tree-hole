@@ -15,6 +15,7 @@ App({
     let menuButtonObject = wx.getMenuButtonBoundingClientRect();
     wx.getSystemInfo({
       success: res => {
+        console.log(res)
         let statusBarHeight = res.statusBarHeight,
           navTop = menuButtonObject.top,
           navHeight = statusBarHeight + menuButtonObject.height + (menuButtonObject.top - statusBarHeight)*2;

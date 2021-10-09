@@ -25,6 +25,9 @@
 .share-message-wrap .share-message-content-wrap .share-message-content {
   margin: 26rpx 0 26rpx 0;
 }
+.share-message-wrap .share-message-content-wrap .share-message-content .content {
+  word-break: break-all;
+}
 .share-message-wrap .share-message-content-wrap .share-message-content .reivew-abridge {
   position: relative;
 }

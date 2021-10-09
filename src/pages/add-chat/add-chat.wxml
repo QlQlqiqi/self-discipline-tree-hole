@@ -1,7 +1,7 @@
 <view style="height: {{ navHeight }}px;"></view>
 <!-- 导航栏 -->
 <navbar page-name="新建说说">
-  <image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 24px; height: 24px;"></image>
+  <image slot="backIcon" src="/src/image/back.png" bind:tap="handleCancel" mode="aspectFit" style="width: 24px; height: 24px;"></image>
 </navbar>
 <view class="add-chat-wrap" style="height: {{ windowHeight - navHeight }}px;">
 	<!-- 今日回顾的缩略图 -->
@@ -26,12 +26,13 @@
 		<textarea class="chat-content" value="{{ chatContent }}" bindinput="handleInput" maxlength="{{ maxLength }}"
 			placeholder="请输入文字" placeholder-class="textarea" bindkeyboardheightchange="handleShowKeyBoard"
 			show-confirm-bar="{{ false }}" adjust-position="{{false}}" bindblur="handleCloseKeyBoard"
+			style="height: {{ bottomOptionsShow? '40%': '80%' }};"
 		></textarea>
 	</view>
 	<!-- 右下角字符计数 -->
 	<view class="char-count">{{ charInputLength }} / {{ maxLength }}</view>
 	<!-- 下面的功能区 -->
-	<view class="bottom-options-wrap" wx:if="{{ bottomOptionsShow }}" style="bottom: {{ optionsBottom }}px; background-color: {{ bottomOptionsShow? 'white': '' }}; padding: 5px;">
+	<view class="bottom-options-wrap" wx:if="{{ true }}" style="bottom: {{ optionsBottom }}px; background-color: {{ 'white' }}; padding: 5px;">
 	<!-- 缩略图 -->
 		<view class="option" bindtap="handleAddReviewAbridge">
 			<image src="/src/image/add-chat-option0.svg" mode="aspectFit" class="icon"></image>
