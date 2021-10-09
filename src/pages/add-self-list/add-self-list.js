@@ -96,6 +96,31 @@ Component({
 			});
 			this.handleBack();
 		},
+		// 询问是否删除
+		handleShowDialog(e) {
+			if(!this.data.readyTitle) {
+				this.handleBack();
+				return;
+			}
+			this.setData({
+				Dialogshow: true,
+			});
+		},
+		// dialog buttons
+		async handleDeleteButtons(e) {
+			let index = e.detail.index;
+			if(index === 1) {
+				this.setData({
+					Dialogshow: false,
+				});
+				await this.handleDelete();
+			}
+			else {
+				this.setData({
+					Dialogshow: false,
+				});
+			}
+		},
 		// 删除清单
 		handleDelete: async function () {
 			// 如果是新建清单，直接返回上一个页面
@@ -109,22 +134,34 @@ Component({
 				title: "正在保存数据...",
 				mask: true,
 			});
-			let { owner, token } = await util.getTokenAndOwner(app.globalData.url + "login/login/");
-			let urlSql, res = [];
-			for(let list of lists) {
-				if(list.title === this.data.readyTitle) {
-					urlSql = list.urlSql;
-					continue;
+			let readyTitle = this.data.readyTitle;
+			let tasks = [],
+				listsRemain = [],
+				tasksSave = [],
+				listDelete = null;
+			for (let list of lists)
+				list.title === readyTitle
+					? (listDelete = list)
+					: listsRemain.push(list);
+			for (let task of JSON.parse(wx.getStorageSync('tasks'))) {
+				if (task.list.title === readyTitle) {
+					task.list = {
+						icon: "/src/image/menu-self-list0.svg",
+						title: "个人清单",
+					};
+					tasksSave.push(task);
 				}
-				res.push(list);
+				tasks.push(task);
 			}
+			let { owner, token } = await util.getTokenAndOwner(app.globalData.url + "login/login/");
+			await store.saveTasksToSql(tasksSave, listsRemain, { owner, token });
 			await util.myRequest({
-				url: urlSql,
-				header: {Authorization: 'Token ' + token},
-				method: 'DELETE'
-			})
-			.then(res => console.log(res));
-			wx.setStorageSync('lists', JSON.stringify(res));
+				url: listDelete.urlSql,
+				header: { Authorization: "Token " + token },
+				method: "DELETE",
+			});
+			wx.setStorageSync("tasks", JSON.stringify(tasks));
+			wx.setStorageSync("lists", JSON.stringify(listsRemain));
 			wx.hideLoading({
 				success: () => {
 					wx.showToast({
@@ -136,7 +173,7 @@ Component({
 			this.handleBack();
 
 		},
-		dialogClose: function () {
+		handleDialogClose: function () {
 			this.setData({
 				show: false,
 			});

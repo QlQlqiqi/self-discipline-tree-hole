@@ -20,9 +20,14 @@
 ></input>
 <view class="cancel" bind:tap="handleBack">取消</view>
 <view class="ensure" bind:tap="handleEnsure">确定</view>
-<view class="delete" bind:tap="handleDelete">删除</view>
+<view class="delete" bind:tap="handleShowDialog">删除</view>
 <mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ show }}" title="提示" 
-	buttons="{{ [{text: '确定'}] }}" bind:buttontap="dialogClose"
+	buttons="{{ [{text: '确定'}] }}" bind:buttontap="handleDialogClose"
 >
 	输入不得为空
+</mp-dialog>
+<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ Dialogshow }}" title="提示" 
+	buttons="{{ [{text: '取消'}, {text: '确定'}] }}" bind:buttontap="handleDeleteButtons"
+>
+	是否删除清单「{{ readyTitle }}」？（清单内任务自动进入「个人清单」内）
 </mp-dialog>
