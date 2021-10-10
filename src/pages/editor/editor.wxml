@@ -22,7 +22,11 @@
 <!-- 任务内容 -->
 <view style="background-color: white; position: relative; margin-top: 40rpx; margin-left: 30rpx; width: 682rpx; height: 182rpx; border: 2rpx solid rgba(187, 187, 187, 1);">
 	<image src="/src/image/editor-pencil.svg" mode="aspectFit" style="height: 42rpx; width: 42rpx; position: absolute; left: 44rpx; top: 60rpx;"></image>
-	<input class="editor-task-content" value="{{ task.content }}" bind:input="contentInput" focus="{{ true }}" placeholder="请输入任务内容......" placeholder-style="color: rgba(66, 66, 66, 0.55); font-size: 24rpx;" maxlength="25" focus="{{ true }}"></input>
+	<input class="editor-task-content" value="{{ task.content }}" bind:input="contentInput" 
+		focus="{{ true }}" placeholder="请输入任务内容......" 
+		placeholder-style="color: rgba(66, 66, 66, 0.55); font-size: 24rpx;" 
+		maxlength="25" focus="{{ true }}"
+	></input>
 	<!-- 完成 -->
 </view>
 
@@ -32,7 +36,9 @@
 	<view class="editor-time-wrap">
 		<image src="/src/image/editor-date.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
 		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">时间</view>
-		<time class="editor-time-text" defaultTime="{{ task.date }}" timeLength="{{ 180 }}" catch:handleChangeTime="handleChangeTime"></time>
+		<time class="editor-time-text" defaultTime="{{ task.date }}" timeLength="{{ 180 }}" 
+			catch:handleChangeTime="handleChangeTime"
+		></time>
 	</view>
 
 	<view style="height: 2rpx; border-top: 2rpx rgba(255, 255, 255, 0.63) solid;"></view>
