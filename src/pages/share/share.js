@@ -66,7 +66,7 @@ Component({
 		chatsShow(data) {
 			let pageNameCurrent = data.pageNameCurrent;
 			let chats = data.chats.filter(item => {
-				return (pageNameCurrent && item.owner === app.globalData.owner)
+				return (pageNameCurrent && (item.owner === app.globalData.owner))
 				|| (!pageNameCurrent && !item.pic.shareRange);
 			})
 			chats.sort((a, b) => b.pic.date.localeCompare(a.pic.date));
@@ -219,10 +219,8 @@ Component({
 				}
 			});
 			let chatsRemind = dataSql[2].filter(item => {
-				console.log(item)
 				return item.report_json.receiver === owner;
 			}).map(item => {
-				console.log(item)
 				return {
 					fromUser: item.report_from_user,
 					toUser: item.report_to_user,

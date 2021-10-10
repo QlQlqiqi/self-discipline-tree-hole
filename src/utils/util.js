@@ -402,7 +402,7 @@ const formatChatsFromLocalToSql = function(chats) {
 // @param {Number} picOner 说说的创建者
 // @param {Number} fromOwner 评论的发送方
 // @param {Number} toOwner 评论的接收方
-// @param {Number} toOwner 评论者
+// @param {Number} owner 用户
 // @param {String} picName 说说创建者的昵称
 // @return {String} 评论的 title
 const getCommentTitle = function(picOwner, fromOwner, toOwner, owner, name) {
@@ -415,9 +415,9 @@ const getCommentTitle = function(picOwner, fromOwner, toOwner, owner, name) {
 	title += (fromOwner !== toOwner)
 		? ' 回复 ' + ((toOwner === picOwner)
 			? '洞主'
-			: (anames[fromOwner % anames.length].name === name
-				? anames[(fromOwner + 1) % anames.length].name
-				: anames[fromOwner % anames.length].name))
+			: (anames[toOwner % anames.length].name === name
+				? anames[(toOwner + 1) % anames.length].name
+				: anames[toOwner % anames.length].name))
 		: '';
 	return title;
 }
