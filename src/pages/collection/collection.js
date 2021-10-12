@@ -275,8 +275,14 @@ Component({
 			let res = [],
 				tasksPost = [],
 				flagNeedToShowDialog = false;
+			let tasksNoRepeatDelay = [];
+			let todayYMD = util.getDawn(0).substr(0, 10);
 			for (let task of tasksLocal) {
 				if (task.delete || !task.repeat) {
+					if(!task.delete && task.date.substr(0, 10).localeCompare(todayYMD) < 0) {
+						flagNeedToShowDialog = true;
+						tasksNoRepeatDelay.push(task);
+					}
 					res.push(task);
 					continue;
 				}
@@ -285,7 +291,6 @@ Component({
 				let oldDate = new Date(new Date(task.date).getTime() - 8 * 60 * 60 * 1000);
 				let addTime = [0, 1, 7, 30, 365][task.repeat] * 24 * 60 * 60 * 1000;
 				let oldDateYMD = util.formatDate(oldDate).substr(0, 10);
-				let todayYMD = util.getDawn(0).substr(0, 10);
 				// 第一种情况，即一个过期的重复任务（无论是否完成）
 				if (oldDateYMD.localeCompare(todayYMD) < 0) {
 					flagNeedToShowDialog = true;
@@ -367,12 +372,27 @@ Component({
 						delete item._newTask;
 					return true;
 				});
+				// 修改时间
+				tasksNoRepeatDelay.forEach(item => {
+					item.date = todayYMD + item.date.substr(10);
+					let taskSql = util.formatTasksFromLocalToSql([item], listsLocal, {owner, token})[0];
+					// taskSql.date = todayYMD + taskSql.date.substr(10);
+					util.myRequest({
+						url: item.urlSql,
+						header: { Authorization: "Token " + token },
+						method: 'PUT',
+						data: taskSql,
+					})
+					.then(res => console.log(res));
+				})
 				this.setData({
 					tasks: tasksLocal,
 					dialogShow: false,
 				});
+				
 				wx.setStorageSync("tasks", JSON.stringify(tasksLocal));
 			};
+			// 不延时所有过期任务
 			this._handleDialogCancel = () => {
 				tasksLocal = tasksLocal.filter(item => {
 					// 删除新增任务

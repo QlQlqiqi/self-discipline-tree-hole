@@ -25,9 +25,6 @@
   position: relative;
   background-color: white;
 }
-.abridge-wrap .abridge-tasks-wrap .abridge-tasks-title {
-  display: inline-block;
-}
 .abridge-wrap .abridge-tasks-wrap .abridge-history-icon {
   position: absolute;
 }

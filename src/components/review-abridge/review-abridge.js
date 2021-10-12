@@ -150,7 +150,7 @@ Component({
 		// {margin, font-size}
 		// @return {String}
 		abridgeTasksTitle: function(data) {
-			return `margin: ${13 * data.ratio}px; font-size: ${20 * data.ratio}px;`
+			return `padding: ${13 * data.ratio}px; font-size: ${20 * data.ratio}px;`
 		},
 
 		// 下面部分进入“历史”页面的 icon 的 style 

@@ -9,7 +9,7 @@
 		<view class="share-message-content">
 			<view class="content">{{ chat.pic.content }}</view>
 			<view wx:if="{{ chat.reviewAbridge.show }}" class="reivew-abridge">
-				<review-abridge wx:if="{{ chat.reviewAbridge.show }}" componentWidthMax="{{ componentWidthMax || windowWidth }}" componentHeightMin="{{ 100 }}"
+				<review-abridge wx:if="{{ chat.reviewAbridge.show }}" componentWidthMax="{{ componentWidthMax || windowWidth }}" componentHeightMin="{{ 140 }}"
 					starsNum="{{ chat.reviewAbridge.starsNum }}" tasks="{{ chat.reviewAbridge.tasks }}" safeAreaBottom="{{ bottomLineHeight }}"
 				></review-abridge>
 			</view>
