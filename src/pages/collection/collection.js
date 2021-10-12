@@ -278,11 +278,12 @@ Component({
 			let tasksNoRepeatDelay = [];
 			let todayYMD = util.getDawn(0).substr(0, 10);
 			for (let task of tasksLocal) {
+				// 未删除、未完成、过期的任务
+				if(!task.delete && !task.finish && task.date.substr(0, 10).localeCompare(todayYMD) < 0) {
+					flagNeedToShowDialog = true;
+					tasksNoRepeatDelay.push(task);
+				}
 				if (task.delete || !task.repeat) {
-					if(!task.delete && task.date.substr(0, 10).localeCompare(todayYMD) < 0) {
-						flagNeedToShowDialog = true;
-						tasksNoRepeatDelay.push(task);
-					}
 					res.push(task);
 					continue;
 				}
@@ -376,7 +377,6 @@ Component({
 				tasksNoRepeatDelay.forEach(item => {
 					item.date = todayYMD + item.date.substr(10);
 					let taskSql = util.formatTasksFromLocalToSql([item], listsLocal, {owner, token})[0];
-					// taskSql.date = todayYMD + taskSql.date.substr(10);
 					util.myRequest({
 						url: item.urlSql,
 						header: { Authorization: "Token " + token },
@@ -418,6 +418,18 @@ Component({
 					}
 					return true;
 				});
+				// 假删除
+				tasksNoRepeatDelay.forEach(item => {
+					item.delete = true;
+					let taskSql = util.formatTasksFromLocalToSql([item], listsLocal, {owner, token})[0];
+					util.myRequest({
+						url: item.urlSql,
+						header: { Authorization: "Token " + token },
+						method: 'PUT',
+						data: taskSql,
+					})
+					.then(res => console.log(res));
+				})
 				this.setData({
 					tasks: tasksLocal,
 					dialogShow: false,
