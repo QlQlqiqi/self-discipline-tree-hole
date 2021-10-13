@@ -278,8 +278,12 @@ Component({
 			let tasksNoRepeatDelay = [];
 			let todayYMD = util.getDawn(0).substr(0, 10);
 			for (let task of tasksLocal) {
-				// 未删除、未完成、过期的任务
-				if(!task.delete && !task.finish && task.date.substr(0, 10).localeCompare(todayYMD) < 0) {
+				// 非重复、未删除、未完成、过期的任务
+				if(!task.repeat 
+					&& !task.delete 
+					&& !task.finish 
+					&& task.date.substr(0, 10).localeCompare(todayYMD) < 0
+				) {
 					flagNeedToShowDialog = true;
 					tasksNoRepeatDelay.push(task);
 				}
@@ -365,7 +369,8 @@ Component({
 							url: item.urlSql,
 							header: { Authorization: "Token " + token },
 							method: "DELETE",
-						});
+						})
+						.then(res => console.log(res))
 						return false;
 					}
 					// 新增任务
