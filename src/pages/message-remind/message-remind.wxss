@@ -3,6 +3,18 @@
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
 }
+.message-remind-wrap .no-chats {
+  position: absolute;
+  left: 214rpx;
+  top: 272rpx;
+  width: 320rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  color: #154a19;
+  font-size: 40rpx;
+  text-align: left;
+  font-family: '方正准圆-标准';
+}
 .message-remind-wrap .message {
   background-color: white;
   position: relative;
