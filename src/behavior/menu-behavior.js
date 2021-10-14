@@ -79,7 +79,7 @@ module.exports = Behavior({
 					header: { Authorization: "Token " + token },
 					method: "PUT",
 					data: {
-						signText: signTextSql.signText,
+						signText: e.detail.signText,
 						owner: app.globalData.url + "login/user/" + owner + "/",
 					},
 				});
