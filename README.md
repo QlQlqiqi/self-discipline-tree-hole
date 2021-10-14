@@ -1,5 +1,7 @@
 ### 微信小程序——自律树洞
 
+![logo.jpg](https://i.loli.net/2021/10/14/1gVCqOp97fsXInJ.jpg)
+
 #### -1.0.0
 
 ##### 第一个 0 - 1 的项目
