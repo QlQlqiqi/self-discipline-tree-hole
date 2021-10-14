@@ -3,13 +3,14 @@
 	isEditorTask: {Boolean} 是否为任务编辑页面，默认 false，当为 false 时，则忽略 taskId
 	taskId：{Number} 指定的任务 id ，存在时忽略 task
 	task：{Object} 指定的任务 task ，存在默认值
+	list: {Object} 任务的清单，当以上都没有时生效
 	remindRange：可选提醒的数组，默认为：["不提醒", "提前5分钟", "提前2小时", "提前1天", "提前1周"]
 	listRange：可选清单的数组，默认为：["个人清单", "工作清单"]
 -->
 
 <view style="position: relative; height: {{ navHeight }}px;"></view>
 <!-- 导航栏 -->
-<navbar page-name="编辑代办">
+<navbar page-name="编辑待办">
 	<image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 24px; height: 24px;"></image>
 </navbar>
 <view style="position: relative;"></view>
@@ -21,7 +22,11 @@
 <!-- 任务内容 -->
 <view style="background-color: white; position: relative; margin-top: 40rpx; margin-left: 30rpx; width: 682rpx; height: 182rpx; border: 2rpx solid rgba(187, 187, 187, 1);">
 	<image src="/src/image/editor-pencil.svg" mode="aspectFit" style="height: 42rpx; width: 42rpx; position: absolute; left: 44rpx; top: 60rpx;"></image>
-	<input class="editor-task-content" value="{{ task.content }}" bind:input="contentInput" focus="{{ true }}" placeholder="请输入任务内容......" placeholder-style="color: rgba(66, 66, 66, 0.55); font-size: 24rpx;" maxlength="25" focus="{{ true }}"></input>
+	<input class="editor-task-content" value="{{ task.content }}" bind:input="contentInput" 
+		focus="{{ true }}" placeholder="请输入任务内容......" 
+		placeholder-style="color: rgba(66, 66, 66, 0.55); font-size: 24rpx;" 
+		maxlength="25" focus="{{ true }}"
+	></input>
 	<!-- 完成 -->
 </view>
 
@@ -31,7 +36,9 @@
 	<view class="editor-time-wrap">
 		<image src="/src/image/editor-date.svg" mode="aspectFit" style="top: 32rpx; left: 24rpx;"></image>
 		<view style="display: inline-block; margin-left: 84rpx; font-weight: bold;">时间</view>
-		<time class="editor-time-text" defaultTime="{{ task.date }}" timeLength="{{ 180 }}" catch:handleChangeTime="handleChangeTime"></time>
+		<time class="editor-time-text" defaultTime="{{ task.date }}" timeLength="{{ 180 }}" 
+			catch:handleChangeTime="handleChangeTime"
+		></time>
 	</view>
 
 	<view style="height: 2rpx; border-top: 2rpx rgba(255, 255, 255, 0.63) solid;"></view>
@@ -73,4 +80,6 @@
 </view>
 
 <!-- 提示 -->
-<mp-dialog show="{{ showErrorDialog }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" buttons="{{ [{text: '确定'}] }}" catch:buttontap="dialogClose">{{ errorDialogMsg }}</mp-dialog>
+<mp-dialog show="{{ showErrorDialog }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" 
+	buttons="{{ [{text: '确定'}] }}" catch:buttontap="dialogClose"
+>{{ errorDialogMsg }}</mp-dialog>

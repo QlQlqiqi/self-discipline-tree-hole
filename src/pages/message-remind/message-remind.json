@@ -1,0 +1,9 @@
+{
+	"component": true,
+	"usingComponents": {
+		"navbar": "/src/components/navbar/navbar",
+		"mp-dialog": "weui-miniprogram/dialog/dialog",
+		"share-message": "/src/components/share-message/share-message",
+		"mp-half-screen-dialog": "weui-miniprogram/half-screen-dialog/half-screen-dialog"
+	}
+}

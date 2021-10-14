@@ -1,0 +1,47 @@
+<view style="position: relative; height: {{ navHeight }}px;"></view>
+<!-- 导航栏 -->
+<navbar page-name="消息">
+  <image slot="backIcon" src="/src/image/back.png" bind:tap="handleBack" mode="aspectFit" style="width: 24px; height: 24px;"></image>
+</navbar>
+
+<scroll-view class="message-remind-wrap" scroll-y="{{ true }}" style="height: {{ windowHeight - navHeight }}px; padding-top: 20rpx;">
+	<view class="message" wx:for="{{ chatsRemind }}" wx:key="index">
+		<!-- 说说的缩略形式 -->
+		<view wx:if="{{ !item.open }}" class="non-open-wrap" data-index="{{ index }}" bindtap="handleSwitchChat">
+			<view class="remind">
+				<text class="title">{{ item.remind.title }}：</text>
+				<text class="content">{{ item.remind.contentShow }}</text>
+			</view>
+			<view class="chat">
+				<text class="title">{{ item.content.title }}：</text>
+				<text class="content">{{ item.content.contentShow }}</text>
+			</view>
+		</view>
+		<!-- 说说展开 -->
+		<view wx:else>
+			<share-message chat="{{ item.chat }}" options="{{ item.chat.options }}" componentWidthMax="{{ 616 / ratio }}"
+				bind:handleEnsureComment="handleEnsureComment" bindhandleSelectOption="handleSelectOption"
+      ></share-message>
+		</view>
+	</view>
+</scroll-view>
+
+<!-- 功能弹窗 -->
+<mp-dialog show="{{ optionShow }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" 
+  buttons="{{ optionButton }}" bindbuttontap="handleDialogButtons"
+>
+  {{ optionDialogContent }}
+</mp-dialog>
+<mp-half-screen-dialog show="{{ shareRangeShow }}" title="选择分享范围" buttons="{{ optionButton }}" 
+  bindbuttontap="handleDialogButtons" style="position: fixed; z-index: 11111;"
+>
+  <view slot="desc" style="height: 200rpx;">
+    <picker-view indicator-style="height: 40px;" style="width: 100%; height: 100%;" bindchange="handleChangeShareRange">
+      <picker-view-column>
+        <view wx:for="{{ optionDialogContent }}" wx:key="index" style="text-align: center; line-height: 40px;">
+          <text>{{ item }}</text>
+        </view>
+      </picker-view-column>
+    </picker-view>
+  </view>
+</mp-half-screen-dialog>

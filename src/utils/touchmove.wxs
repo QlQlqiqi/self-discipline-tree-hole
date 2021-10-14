@@ -8,8 +8,8 @@ var handleTouchStart = function(e) {
   // 设置相关信息
   obj.windowHeight = domDataset.windowHeight;
   obj.windowWidth = domDataset.windowWidth;
-  obj.height = domDataset.height;
-  obj.width = domDataset.width;
+  obj.height = domBCR.height;
+  obj.width = domBCR.width;
   obj.domRight = obj.windowWidth - domBCR.right;
   obj.domBottom = obj.windowHeight - domBCR.bottom;
   obj.mouseStartLeft = e.touches[0].pageX;
@@ -23,8 +23,8 @@ var handleTouchMove = function(e) {
   var leftAdd = e.touches[0].pageX - obj.mouseStartLeft;
   var topAdd = e.touches[0].pageY - obj.mouseStartTop;
   e.instance.setStyle({
-    'right': obj.domRight - leftAdd + 'px',
-    'bottom': obj.domBottom - topAdd + 'px'
+    'left': obj.windowWidth - obj.width - obj.domRight + leftAdd + 'px',
+    'top': obj.windowHeight - obj.height - obj.domBottom + topAdd + 'px'
   })
   return false;
 }

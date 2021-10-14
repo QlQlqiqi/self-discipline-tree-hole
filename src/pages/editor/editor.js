@@ -65,6 +65,11 @@ Component({
 				feeling: '',
 				finishDate: util.formatDate(new Date())
 			}));
+			// 如果指明了 list 
+			let list = JSON.parse(options.list || JSON.stringify(''));
+			if(list)
+				task.list = list;
+			console.log(list)
 			let taskId = JSON.parse(options.taskId || JSON.stringify(false));
 			let isEditorTask = JSON.parse(options.isEditorTask || JSON.stringify(false));
 			// 如果是新建任务
@@ -172,9 +177,12 @@ Component({
 				title: '正在保存数据...',
 				mask: true
 			})
+			// task.date = "2021-10-11T13:24:33Z"
+			// task.finish = true;
 			tasks = util.mergeById(tasks, [task]);
 			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
 			await store.saveTasksToSql([task], this.data.lists, {owner, token});
+			console.log(task)
 			wx.setStorageSync('tasks', JSON.stringify(tasks));
 			wx.hideLoading({
 				success: () => {

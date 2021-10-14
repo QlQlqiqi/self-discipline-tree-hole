@@ -1,0 +1,39 @@
+.abridge-wrap {
+  background-color: rgba(103, 167, 143, 0.7);
+  color: #1A5D1F;
+}
+.abridge-wrap .abridge-stars-wrap {
+  position: relative;
+  background-color: white;
+}
+.abridge-wrap .abridge-stars-wrap .abridge-stars-wrap-star {
+  position: absolute;
+}
+.abridge-wrap .abridge-evaluate-wrap {
+  position: relative;
+  background-color: white;
+  display: flex;
+}
+.abridge-wrap .abridge-evaluate-wrap .abridge-evaluate-title {
+  position: absolute;
+}
+.abridge-wrap .abridge-evaluate-wrap .abridge-evaluate-content {
+  position: absolute;
+  color: #FEC007;
+}
+.abridge-wrap .abridge-tasks-wrap {
+  position: relative;
+  background-color: white;
+}
+.abridge-wrap .abridge-tasks-wrap .abridge-history-icon {
+  position: absolute;
+}
+.abridge-wrap .abridge-tasks-wrap .abridge-task-wrap {
+  position: relative;
+}
+.abridge-wrap .abridge-tasks-wrap .abridge-task-wrap .abridge-task-finish-icon {
+  position: absolute;
+}
+.abridge-wrap .abridge-tasks-wrap .abridge-task-wrap .abridge-task-bottom-line {
+  position: absolute;
+}

@@ -14,6 +14,11 @@ Component({
       iconPath: "/src/image/tabbar-review-unselected.png",
       selectedIconPath: "/src/image/tabbar-review.png",
       text: "回顾"
+    }, {
+      pagePath: "/src/pages/share/share",
+      iconPath: "/src/image/tabbar-share-non.png",
+      selectedIconPath: "/src/image/tabbar-share.png",
+      text: "树洞"
     }]
   },
   attached() {

@@ -1,17 +1,33 @@
 <view style="position: relative; height: {{ navHeight }}px;"></view>
 <!-- 导航栏 -->
 <navbar page-name="添加清单">
-  <image slot="backIcon" src="/src/image/back.png" catch:tap="handleBack" mode="aspectFit" style="width: 24px; height: 24px;"></image>
+  <image slot="backIcon" src="/src/image/back.png" catch:tap="handleBack" mode="aspectFit" 
+		style="width: 24px; height: 24px;"
+	></image>
 </navbar>
 <!-- 选择图标 -->
 <view style="position: relative; margin: 200rpx 75rpx 0 75rpx;">
-	<image wx:for="{{ listIcon }}" wx:key="index" catch:tap="handleSelectedIcon" data-index="{{ index }}" src="{{ item }}" style="width: 48rpx; height: 48rpx; padding: 36rpx;"></image>
-	<image src="/src/image/menu-self-list-select.svg" mode="aspectFit" style="height: 48rpx; width: 48rpx; position: absolute; left: {{ 36 + selectedIcon * 120 }}rpx; top: 100rpx;"></image>
+	<image wx:for="{{ listIcon }}" wx:key="index" catch:tap="handleSelectedIcon" 
+		data-index="{{ index }}" src="{{ item }}" style="width: 48rpx; height: 48rpx; padding: 36rpx;"
+	></image>
+	<image src="/src/image/menu-self-list-select.svg" mode="aspectFit" 
+		style="height: 48rpx; width: 48rpx; position: absolute; left: {{ 36 + selectedIcon * 120 }}rpx; top: 100rpx;"
+	></image>
 </view>
 <!-- 输入清单名 -->
 <input model:value="{{ listTitle }}" placeholder="请输入清单名" maxlength="7" focus="{{ true }}" 
 	class="input-list" catch:input="input"
 ></input>
 <view class="cancel" bind:tap="handleBack">取消</view>
-<view class="ensure" bind:tap="ensure">确定</view>
-<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ show }}" title="输入不得为空" buttons="{{ [{text: '确定'}] }}" bind:buttontap="dialogClose"></mp-dialog>
+<view class="ensure" bind:tap="handleEnsure">确定</view>
+<view class="delete" bind:tap="handleShowDialog">删除</view>
+<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ show }}" title="提示" 
+	buttons="{{ [{text: '确定'}] }}" bind:buttontap="handleDialogClose"
+>
+	输入不得为空
+</mp-dialog>
+<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ Dialogshow }}" title="提示" 
+	buttons="{{ [{text: '取消'}, {text: '确定'}] }}" bind:buttontap="handleDeleteButtons"
+>
+	是否删除清单「{{ readyTitle }}」？（清单内任务自动进入「个人清单」内）
+</mp-dialog>

@@ -1,0 +1,127 @@
+.share-message-wrap {
+  position: relative;
+  box-shadow: 0px 0px 26rpx 0px rgba(132, 132, 132, 0.18);
+  border-radius: 24rpx;
+  box-sizing: border-box;
+  width: 668rpx;
+  background-color: white;
+  font-size: 36rpx;
+}
+.share-message-wrap .share-message-content-wrap {
+  padding: 26rpx;
+  position: relative;
+}
+.share-message-wrap .share-message-content-wrap .share-message-head-icon {
+  position: absolute;
+  width: 48rpx;
+  height: 48rpx;
+}
+.share-message-wrap .share-message-content-wrap .share-message-name {
+  margin-left: 76rpx;
+  height: 54rpx;
+  line-height: 54rpx;
+  color: #576B95;
+}
+.share-message-wrap .share-message-content-wrap .share-message-content {
+  margin: 26rpx 0 26rpx 0;
+}
+.share-message-wrap .share-message-content-wrap .share-message-content .content {
+  word-break: break-all;
+}
+.share-message-wrap .share-message-content-wrap .share-message-content .reivew-abridge {
+  position: relative;
+}
+.share-message-wrap .share-message-content-wrap .share-message-info {
+  position: relative;
+}
+.share-message-wrap .share-message-content-wrap .share-message-info .share-message-time {
+  position: absolute;
+  color: #B9B8B8;
+  font-size: 28rpx;
+}
+.share-message-wrap .share-message-content-wrap .share-message-info .share-message-chat-icon {
+  width: 48rpx;
+  height: 48rpx;
+  margin-left: 458rpx;
+}
+.share-message-wrap .share-message-content-wrap .share-message-info .share-message-option-icon {
+  width: 48rpx;
+  height: 48rpx;
+  margin-left: 52rpx;
+}
+.share-message-wrap .share-message-option-select {
+  position: absolute;
+  width: 198rpx;
+  right: 0;
+  box-shadow: 0px 0px 12rpx 0px rgba(0, 0, 0, 0.18);
+  border-radius: 22rpx;
+  background-color: white;
+  z-index: 1;
+}
+.share-message-wrap .share-message-option-select .share-message-option {
+  position: relative;
+  height: 74rpx;
+  line-height: 74rpx;
+}
+.share-message-wrap .share-message-option-select .share-message-option .option-icon {
+  position: absolute;
+  width: 34rpx;
+  height: 34rpx;
+  left: 26rpx;
+  top: 20rpx;
+}
+.share-message-wrap .share-message-option-select .share-message-option .option-content {
+  position: absolute;
+  left: 84rpx;
+  height: 75rpx;
+  line-height: 75rpx;
+}
+.share-message-wrap .share-message-option-select .share-message-option .option-divide {
+  border-top: 2rpx solid #bbbbbb;
+}
+.share-message-wrap .share-message-chats-wrap {
+  position: relative;
+}
+.share-message-wrap .share-message-chats-wrap .chats-content-wrap {
+  padding: 26rpx 46rpx 26rpx 26rpx;
+  max-height: 600rpx;
+  overflow-y: scroll;
+}
+.share-message-wrap .share-message-chats-wrap .chats-content-wrap .share-message-chat .chat-title,
+.share-message-wrap .share-message-chats-wrap .chats-content-wrap .share-message-chat .chat-content {
+  height: 54rpx;
+  line-height: 54rpx;
+  color: #576B95;
+}
+.share-message-wrap .share-message-chats-wrap .chats-content-wrap .share-message-chat .chat-content {
+  color: black;
+}
+.share-message-wrap .share-message-chats-wrap .share-message-comment-wrap {
+  display: flex;
+  padding: 16rpx;
+  font-size: 24rpx;
+}
+.share-message-wrap .share-message-chats-wrap .share-message-comment-wrap .comment-place-holder {
+  color: #888;
+  height: 64rpx;
+  line-height: 64rpx;
+  margin-left: 16rpx;
+}
+.share-message-wrap .share-message-chats-wrap .share-message-comment-wrap .input {
+  font-size: 28rpx;
+  flex: 5;
+  border-radius: 20rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  padding-left: 20rpx;
+  background-color: rgba(240, 240, 240, 0.5);
+}
+.share-message-wrap .share-message-chats-wrap .share-message-comment-wrap .ensure {
+  flex: 1;
+  height: 64rpx;
+  font-size: 24rpx;
+  line-height: 64rpx;
+  margin-left: 16rpx;
+  border-radius: 30rpx;
+  color: white;
+}

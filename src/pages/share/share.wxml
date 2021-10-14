@@ -1,1 +1,106 @@
-<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ showDialog }}" title="提示" buttons="{{ [{text: '确定'}] }}" bind:buttontap="dialogClose">树洞模式即将上线~</mp-dialog>
+<view style="position: relative; height: {{ navHeight }}px;"></view>
+<!-- 导航栏 -->
+<navbar page-name="{{ pageNames[pageNameCurrent].title }}">
+  <image slot="backIcon" src="/src/image/navbar-menu.svg" bind:tap="handleShowMenu" 
+    mode="aspectFit" style="width: 24px; height: 24px;"
+  ></image>
+  <view slot="rightIcon" class="listSelectIconWrap" bind:tap="handleShowSelectList">
+    <image class="listSelectIcon" src="/src/image/selectIcon0.png" mode="aspectFit" 
+      style="left: {{ 150 / ratio + (pageNames[pageNameCurrent].title.length) * 8 }}px;"
+    ></image>
+  </view>
+</navbar>
+<!-- 导航栏的下拉框 -->
+<view class="listSelectWrap" style="left: {{ windowWidth / 2 - 45 }}px; height: 0;">
+  <view wx:for="{{ pageNames }}" wx:key="title" data-index="{{ index }}" catch:tap="handleSelectList" 
+    style="position: relative; background-color: {{ pageNameCurrent === index? 'rgb(243, 246, 249)': 'white'}};"
+  >
+    <image src="{{ item.icon }}" style="position: absolute; left: 3px; top: 9px; height: 20px; width: 20px;"></image>
+    <view style="padding-left: 20px; height: 35px; overflow-x: scroll;">{{ item.title }}</view>
+    <view wx:if="{{ index + 1 < pageNames.length }}" style="border-top: 1px solid rgba(187, 187, 187, 1);"></view>
+  </view>
+</view>
+<!-- 弹窗背景点击遮掩 -->
+<view wx:if="{{ selectIconRotate }}" catchtap="handleShowSelectList" style="position: absolute; width: 100%; height: {{ windowHeight - 84 }}px; z-index: 1;"></view>
+<!-- 左侧栏背景遮掩 -->
+<view wx:if="{{ showMenu }}" class="menu-mask" style="height: {{ windowHeight * ratio }}rpx; top: {{ -navHeight }}px; z-index: 1;" 
+  bind:tap="handleCloseMask" catch:touchmove="catchTouchMove"
+></view>
+<!-- 左侧菜单 -->
+<view wx:if="{{ showMenu }}" style="position: relative; height: 0; top: {{ -navHeight }}px;">
+  <menu style="position: relative; width: 600rpx;" menuHeight="{{ windowHeight * ratio }}" 
+    menuBottomBlcakHeight="{{ 180 + bottomLineHeight * ratio }}" show="{{ showMenu }}" 
+    lists="{{ listsShow }}" todoListNum="{{ todayTasks.length }}" signText="{{ signText }}" 
+    catch:handleNavigateToAddList="handleNavigateToAddList" catch:handleNavigateToToday="handleNavigateToToday" 
+    catch:handleNavigateToFuture="handleNavigateToFuture" catch:handleNavigateToList="handleNavigateToList" 
+    catch:handleNavigateToFinished="handleNavigateToFinished" catch:handleNavigateToBeforeAndDelete="handleNavigateToBeforeAndDelete" 
+    catch:handleNavigateToShare="handleNavigateToShare" catch:handleSignTextEnsure="handleSignTextEnsure" catch:handleDeleteList="handleDeleteList"
+    catch:handleNavigateToMessageRemind="handleNavigateToMessageRemind"
+  ></menu>
+</view>
+
+<scroll-view class="share-wrap" refresher-enabled="{{ true }}" refresher-triggered="{{ pullDownRefresh }}" 
+  style="height: {{ (windowHeight - navHeight) * ratio }}rpx;" scroll-y="{{ true }}" 
+  bindrefresherrefresh="pullDownLoad" scroll-top="{{ scrollTop }}px;" bindscroll="handleScroll"
+>
+  <!-- 轮播图 -->
+  <swiper wx:if="{{ !pageNameCurrent }}" class="rotation-chart" indicator-dots="{{ true }}" autoplay="{{ true }}" interval="{{ 3000 }}" bindchange="handleChangeCurrentGallery">
+    <swiper-item wx:for="{{ gallerys }}" wx:key="index" bindtap="handleOpenOfficialAccount">
+      <image src="{{ item.icon }}" mode="aspectFit"></image>
+    </swiper-item>
+  </swiper>
+  <!-- 头像背景 -->
+  <view wx:else class="head-icon-background">
+    <open-data type="userAvatarUrl" class="vir-image"></open-data>
+    <open-data type="userAvatarUrl" class="rea-image"></open-data>
+  </view>
+  <!-- 消息提醒 -->
+  <view class="share-message-remind" bindtap="handleNavigateToMessageRemind">
+    <image src="/src/image/share-message-remind.svg" mode="aspectFit" class="remind-image"></image>
+    <view wx:if="{{ chatsRemindShow }}" class="remind-red-dot"></view>
+  </view>
+  <!-- 说说 -->
+  <view style="padding-top: 30rpx; margin-bottom: 300rpx;">
+    <view class="chat-wrap" wx:for="{{ chatsShow }}" wx:key="index">
+      <share-message chat="{{ item }}" options="{{ optionsSelect }}" componentWidthMax="{{ 616 / ratio }}" 
+        bind:handleEnsureComment="handleEnsureComment" bindhandleSelectOption="handleSelectOption"
+      ></share-message>
+      <image src="/src/image/task-circle.png" mode="aspectFit" class="left-circle-icon"></image>
+      <view class="task-left-line"></view>
+    </view>
+  </view>
+</scroll-view>
+
+<!-- 返回顶部 -->
+<view class="share-return-top-wrap" bindtap="handleReturnTop">
+  <image src="/src/image/return-top.svg" mode="aspectFit" class="image"></image>
+</view>
+
+<!-- 功能弹窗 -->
+<mp-dialog show="{{ optionShow }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" 
+  buttons="{{ optionButton }}" bindbuttontap="handleDialogButtons"
+>
+  {{ optionDialogContent }}
+</mp-dialog>
+<mp-half-screen-dialog show="{{ shareRangeShow }}" title="选择分享范围" buttons="{{ optionButton }}" 
+  bindbuttontap="handleDialogButtons" style="position: fixed; z-index: 11111;"
+>
+  <view slot="desc" style="height: 200rpx;">
+    <picker-view indicator-style="height: 40px;" style="width: 100%; height: 100%;" bindchange="handleChangeShareRange">
+      <picker-view-column>
+        <view wx:for="{{ optionDialogContent }}" wx:key="index" style="text-align: center; line-height: 40px;">
+          <text>{{ item }}</text>
+        </view>
+      </picker-view-column>
+    </picker-view>
+  </view>
+</mp-half-screen-dialog>
+
+<!-- 新增说说 -->
+<wxs module="touchmove" src="../../utils/touchmove.wxs"></wxs>
+<image id="some" data-window-width="{{windowWidth}}" data-window-height="{{windowHeight}}" 
+  src="/src/image/add-task.png" style="right: 50px; bottom: 170px;" catchtap="handleAddChat" 
+  catch:touchmove="{{ touchmove.handleTouchMove }}" mode="aspectFit" class="collection-add-icon" 
+  catch:touchend="{{ touchmove.handleTouchEnd }}" bindtouchstart="{{ touchmove.handleTouchStart }}"
+></image>
+

@@ -9,8 +9,7 @@
   "license": "ISC",
   "dependencies": {
     "miniprogram-computed": "^4.0.4",
-    "weui-miniprogram": "^1.0.8"
+    "weui-miniprogram": "^1.1.1"
   },
-  "devDependencies": {},
   "description": ""
 }

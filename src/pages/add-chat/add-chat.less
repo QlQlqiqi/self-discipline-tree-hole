@@ -1,0 +1,113 @@
+.add-chat-wrap {
+	position: relative;
+	height: 100%;
+	background-color: rgba(103, 166, 60, .09);
+	.add-review-wrap {
+		position: absolute;
+		height: 0;
+		z-index: 3;
+		top: 220rpx;
+		left: 100rpx;
+		.reivew-abridge {
+			position: fixed;
+			.image {
+				position: absolute;
+				z-index: 1;
+				height: 48rpx;
+				width: 48rpx;
+				top: 10rpx;
+				right: 10rpx;
+			}
+		}
+		.repeat-tip {
+			position: absolute;
+			width: 360rpx;
+			height: 88rpx;
+			left: 0;
+			line-height: 88rpx;
+			border-radius: 18rpx;
+			background-color: rgba(149, 149, 149, 1);
+			color: rgba(255, 255, 255, 1);
+			font-size: 28rpx;
+			text-align: center;
+			border: 2rpx solid rgba(187, 187, 187, 1);
+		}
+	}
+	.options-wrap {
+		box-sizing: border-box;
+		height: 6%;
+		display: flex;
+		padding: 26rpx;
+		width: 100%;
+		justify-content: space-between;
+		.cancel, .ensure {
+			width: 128rpx;
+			height: 48rpx;
+			line-height: 48rpx;
+			font-size: 28rpx;
+			text-align: center;
+			border-radius: 10rpx;
+			margin: 0;
+		}
+		.cancel {
+			color: black;
+			background-color: white;
+		}
+		.ensure {
+			color: white;
+			background-color: rgba(103, 166, 60, .86);
+		}
+	}
+	.chat-content-wrap {
+		padding: 24rpx;
+		box-sizing: border-box;
+		height: 94%;
+		.chat-content {
+			height: 80%;
+			line-height: 40rpx;
+			font-size: 28rpx; 
+			width: 80%;
+			margin: 40rpx auto;
+		}
+		.textarea {
+			font-size: 24rpx; 
+			color: #888; 
+			height: 40rpx;
+			line-height: 40rpx;
+		}
+	}
+	.char-count {
+		position: absolute;
+		left: 562rpx;
+		top: 1036rpx;
+		width: 156rpx;
+		height: 34rpx;
+		line-height: 34rpx;
+		border-radius: 8rpx;
+		color: rgba(16, 16, 16, 1);
+		font-size: 28rpx;
+		text-align: center;
+		border: 2rpx solid rgba(187, 187, 187, 1);
+	}
+	.bottom-options-wrap {
+		position: relative;
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+		height: 76rpx;
+		line-height: 76rpx;
+		.option {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			.icon {
+				width: 48rpx;
+				height: 48rpx;
+			}
+			.content {
+				height: 100%;
+				font-size: 28rpx;
+			}
+		}
+	}
+}

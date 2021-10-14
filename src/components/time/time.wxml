@@ -7,5 +7,5 @@
 	bindtap='pickerTap' bindcolumnchange="bindMultiPickerColumnChange" value="{{ multiIndex }}" 
 	range="{{ multiArray }}"
 >
-	{{ startDate }}
+	{{ showDate }}
 </picker>

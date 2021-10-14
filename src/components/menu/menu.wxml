@@ -58,22 +58,32 @@
 		</view>
 	</view>
 	<!-- 功能 -->
-	<view style="position: relative; height: 200rpx; margin-bottom: {{ menuBottomBlcakHeight }}rpx;">
+	<view style="position: relative; height: 250rpx; margin-bottom: {{ menuBottomBlcakHeight }}rpx;">
 		<text class="menu-list" style="left: 230rpx;">功能</text>
 		<!-- 我的分享 -->
 		<view>
 			<image class="menu-icon" src="/src/image/menu-share.svg" mode="aspectFit" style="left: 230rpx; top: 54rpx"></image>
 			<text catch:tap="handleNavigateToShare" class="menu-text" style="left: 284rpx; top: 54rpx">我的分享</text>
 		</view>
+		<!-- 消息通知 -->
+		<view>
+			<image class="menu-icon" src="/src/image/message-remind.svg" mode="aspectFit" style="left: 230rpx; top: 124rpx"></image>
+			<text catch:tap="handleNavigateToMessageRemind" class="menu-text" style="left: 284rpx; top: 124rpx">消息通知</text>
+		</view>
 		<!-- 问题反馈 -->
 		<view>
-			<image class="menu-icon" src="/src/image/menu-question.svg" mode="aspectFit" style="left: 230rpx; top: 124rpx"></image>
-			<text catch:tap="handleFeedBack" class="menu-text" style="left: 284rpx; top: 124rpx">问题反馈</text>
+			<image class="menu-icon" src="/src/image/menu-question.svg" mode="aspectFit" style="left: 230rpx; top: 194rpx"></image>
+			<text catch:tap="handleFeedBack" class="menu-text" style="left: 284rpx; top: 194rpx">问题反馈</text>
 		</view>
 	</view>
 </view>
 <!-- </view> -->
-<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ showDialog }}" title="{{ dialogTitle }}" buttons="{{ buttons }}" bindbuttontap="handleDialogButtons">
-	<textarea wx:if="{{ showTextArea }}" bind:input="handleSyncDialogTextArea" value="{{ dialogTextAreaValue }}" auto-focus="{{ true }}" placeholder="感谢您的反馈，我们会不断改进的~" style="height: 200rpx; margin-left: -30rpx; border: 2rpx black solid; border-radius: 20rpx;"></textarea>
+<mp-dialog mask="{{ true }}" mask-closable="{{ false }}" show="{{ showDialog }}" 
+	title="{{ dialogTitle }}" buttons="{{ buttons }}" bindbuttontap="handleDialogButtons"
+>
+	<textarea wx:if="{{ showTextArea }}" bind:input="handleSyncDialogTextArea" 
+		value="{{ dialogTextAreaValue }}" auto-focus="{{ true }}" placeholder="感谢您的反馈，我们会不断改进的~" 
+		style="height: 200rpx; margin-left: -30rpx; border: 2rpx black solid; border-radius: 20rpx;"
+	></textarea>
 	<view wx:else>{{ dialogContent }}</view>
 </mp-dialog>

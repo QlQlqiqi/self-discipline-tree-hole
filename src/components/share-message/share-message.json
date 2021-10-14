@@ -1,0 +1,6 @@
+{
+	"component": true,
+	"usingComponents": {
+		"review-abridge": "/src/components/review-abridge/review-abridge"
+	}
+}

@@ -1,0 +1,132 @@
+.listSelectIconWrap {
+	position: absolute;
+	width: 300rpx;
+	height: 33px;
+	top: 0;
+	left: 225rpx;
+}
+
+.listSelectIcon {
+	position: absolute;
+	top: 9px;
+	width: 12px; 
+	height: 12px;
+}
+
+.listSelectWrap {
+	position: absolute;
+	width: 90px; 
+	overflow: hidden;
+	line-height: 35px;
+	text-align: center;
+	font-size: 14px;
+	box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(220, 224, 231, 100);
+	z-index: 2;
+}
+
+.share-wrap {
+	position: relative;
+	.rotation-chart {
+		height: 360rpx;
+		width: 100%;
+		image {
+			height: 100%;
+			width: 100%;
+		}
+	}
+	.head-icon-background {
+		height: 360rpx;
+		position: relative;
+		overflow: hidden;
+		.vir-image {
+			position: absolute;
+			height: 750rpx;
+			width: 750rpx;
+			opacity: 0.3;
+			filter: blur(10rpx);
+			top: -195rpx;
+		}
+		.rea-image {
+			position: absolute;
+			top: 140rpx;
+			right: 0;
+			height: 220rpx;
+			width: 220rpx;
+		}
+	}
+	.share-message-remind {
+		position: absolute;
+		right: 24rpx;
+		top: 350rpx;
+		padding: 20rpx;
+		z-index: 1;
+		.remind-image {
+			position: relative;
+			width: 48rpx;
+			height: 48rpx;
+		}
+		.remind-red-dot {
+			position: absolute;
+			top: 24rpx;
+			border-radius: 10rpx;
+			width: 12rpx;
+			height: 12rpx;
+			background-color: red;
+		}
+	}
+	.chat-wrap {
+		position: relative;
+		padding: 28rpx 0 0 48rpx;
+		.left-circle-icon {
+			position: absolute;
+			height: 24rpx;
+			top: 20rpx;
+			left: 15rpx;
+			width: 24rpx;
+		}
+		.task-left-line {
+			position: absolute;
+			height: 1000rpx;
+			top: 0;
+			left: 24rpx;
+			border-left: 4rpx solid rgba(103, 167, 143, 0.7);
+		}
+	}
+}
+
+.share-return-top-wrap {
+	position: fixed;
+	box-sizing: border-box;
+	left: 668rpx;
+	top: 1348rpx;
+	width: 58rpx;
+	height: 54rpx;
+	line-height: 40rpx;
+	border-radius: 8rpx;
+	background-color: rgba(140, 140, 140, 1);
+	text-align: center;
+	border: 2rpx solid rgba(140, 140, 140, 1);
+	.image {
+		position: absolute;
+		top: 8rpx;
+		left: 10rpx;
+		width: 34rpx;
+		height: 34rpx;
+	}
+}
+
+.collection-add-icon {
+	position: fixed;
+	width: 100rpx;
+	height: 100rpx;
+}
+
+.menu-mask {
+	position: absolute;
+	right: 0;
+	width: 750rpx;
+	z-index: 11;
+	background-color: rgba(0, 0, 0, 0.6);
+	transition: all 0.2s ease;
+}

@@ -1,0 +1,55 @@
+<view class="share-message-wrap">
+	<!-- 主体内容 -->
+	<view class="share-message-content-wrap">
+		<!-- 头像 -->
+		<image class="share-message-head-icon" src="{{ chat.pic.headIcon }}" mode="aspectFit"></image>
+		<!-- 名字 -->
+		<view class="share-message-name">{{ chat.pic.name }}</view>
+		<!-- 说说内容 -->
+		<view class="share-message-content">
+			<view class="content">{{ chat.pic.content }}</view>
+			<view wx:if="{{ chat.reviewAbridge.show }}" class="reivew-abridge">
+				<review-abridge wx:if="{{ chat.reviewAbridge.show }}" componentWidthMax="{{ componentWidthMax || windowWidth }}" componentHeightMin="{{ 140 }}"
+					starsNum="{{ chat.reviewAbridge.starsNum }}" tasks="{{ chat.reviewAbridge.tasks }}" safeAreaBottom="{{ bottomLineHeight }}"
+				></review-abridge>
+			</view>
+		</view>
+		<!-- 说说相关信息 -->
+		<view class="share-message-info">
+		<!-- 左下角的时间 -->
+			<view class="share-message-time">{{ date }}</view>
+			<!-- 消息 icon -->
+			<image class="share-message-chat-icon" src="{{ chatShow? '/src/image/chat-icon-show.svg': '/src/image/chat-icon-non-show.svg' }}" 
+				mode="aspectFit" catch:tap="handleShowChat"
+			></image>
+			<!-- 功能 button -->
+			<image class="share-message-option-icon" src="/src/image/chat-option.svg" mode="aspectFit"
+				catch:tap="handleShowOptions"
+			></image>
+		</view>
+	</view>
+	<!-- 功能面板 -->
+	<view wx:if="{{ optionsShow }}" class="share-message-option-select">
+		<view wx:for="{{ options }}" wx:key="index" data-index="{{ index }}" class="share-message-option" bindtap="handleSelectOption">
+			<image class="option-icon" src="{{ item.icon }}" mode="aspectFit"></image>
+			<view class="option-content">{{ item.content }}</view>
+			<view wx:if="{{ index }}" class="option-divide"></view>
+		</view>
+	</view>
+	<!-- 评论区 -->
+	<view wx:if="{{ chatShow }}" class="share-message-chats-wrap">
+		<view class="chats-content-wrap">
+			<view wx:for="{{ chatFilter.comments }}" wx:key="index" data-index="{{ index }}" class="share-message-chat" bindtap="handleReplyWho">
+				<text class="chat-title">{{ item.title +'：' }}</text>
+				<text class="chat-content">{{ item.content }}</text>
+			</view>
+		</view>
+		<view class="share-message-comment-wrap">
+			<input class="input" value="{{ commentValue }}" placeholder="{{ commnetPlaceHolder }}" focus="{{ commentFocus }}"
+				placeholder-class="comment-place-holder" disabled="{{ disabled }}" maxlength="{{ maxlength }}"
+				bindinput="handleInputComment" bindblur="handleInputBlur"
+			/>
+			<button class="ensure" catch:tap="handleEnsureComment" style="background-color: {{ commentValue.length? '#66BA69': '#E6E6E6' }}">发送</button>
+		</view>
+	</view>
+</view>

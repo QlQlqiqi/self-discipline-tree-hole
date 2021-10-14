@@ -55,7 +55,15 @@ Component({
 	methods: {
 		// 控制 dialog 的 buttons 功能
 		handleDialogButtons: function(e) {
-			this._handleDialogButtons[e.detail.index](e);
+			if(this._handleDialogButtons == undefined)
+				this.setData({
+					dialogContent: '输入不得为空',
+					dialogTitle: '提示',
+					showDialog: false,
+					buttons: [{text: '确定'}],
+					showTextArea: false,
+				})
+			else this._handleDialogButtons[e.detail.index](e);
 			// 不可删除 _handleDialogButtons 字段，因为存在嵌套
 			// delete this._handleDialogButtons;
 		},
@@ -193,6 +201,10 @@ Component({
 		// 触发“我的分享”事件
 		handleNavigateToShare: function(e) {
 			this.triggerEvent("handleNavigateToShare");
+		},
+		// 触发“消息通知”事件
+		handleNavigateToMessageRemind(e) {
+			this.triggerEvent("handleNavigateToMessageRemind");
 		},
 		// 触发“问题反馈”事件
 		handleFeedBack: function(e) {
