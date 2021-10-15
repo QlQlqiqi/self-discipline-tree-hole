@@ -152,15 +152,42 @@ Component({
 			});
 		},
 		// 删除任务，保存数据并返回上一个页面
-		handleDelete: function(e) {
+		handleDelete: async function(e) {
 			// 如果是新增任务，则直接返回
 			if(!this.data.isEditorTask) {
 				this.handleBack();
 				return;
 			}
-			let task = this.data.task;
-			task.delete = true;
-			this.handleEnsure();
+			// 保存数据
+			wx.showLoading({
+				title: '正在保存数据...',
+				mask: true
+			})
+			let {tasks, task} = this.data;
+			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			for(let i = 0; i < tasks.length; i++)
+				if(tasks[i].id === task.id) {
+					await util.myRequest({
+						url: task.urlSql,
+						header: {Authorization: 'Token ' + token},
+						method: 'DELETE',
+					})
+					tasks.splice(i, 1);
+					break;
+				}
+			this.setData({
+				tasks
+			})
+			wx.setStorageSync('tasks', JSON.stringify(tasks));
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: '已完成',
+						duration: 800
+					})
+				},
+			})
+			this.handleBack();
 		},
 		// 点击完成，检查数据是否合法，保存数据，并返回上一个页面
 		handleEnsure: async function() {
@@ -177,8 +204,9 @@ Component({
 				title: '正在保存数据...',
 				mask: true
 			})
-			// task.date = "2021-10-11T13:24:33Z"
+			// task.date = "2021-10-13T13:24:33Z"
 			// task.finish = true;
+			// task.repeat = 1;
 			tasks = util.mergeById(tasks, [task]);
 			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
 			await store.saveTasksToSql([task], this.data.lists, {owner, token});

@@ -38,8 +38,7 @@ Component({
 				return (
 					item.date.localeCompare(todayDate) >= 0 &&
 					item.date.localeCompare(tommorrowDate) < 0 &&
-					!item.delete
-					&& (item.list.title === data.pageName || data.pageName === '收集箱')
+					(item.list.title === data.pageName || data.pageName === '收集箱')
 				);
 			});
 			res.sort((a, b) =>
@@ -57,7 +56,6 @@ Component({
 			let res = data.tasks.filter(function (item) {
 				return (
 					item.date.localeCompare(tommorrowDate) >= 0 
-					&& !item.delete
 					&& (item.list.title === data.pageName || data.pageName === '收集箱')
 				);
 			});
@@ -263,184 +261,94 @@ Component({
 
 			// 请求 tasks
 			let tasksLocal = util.formatTasksFromSqlToLocal(
-				await store.getDataFromSqlByUrl( app.globalData.url + "check/check/?owner="	+ JSON.stringify(owner), 
-				{token} ),
+				await store.getDataFromSqlByUrl( app.globalData.url + "check/check/?owner="	+ JSON.stringify(owner), {token} ),
 				listsLocal, { owner, token }
 			);
 			// 设置 id
 			tasksLocal.forEach(item => (item.id = util.getUniqueId()));
 
-			// 如果存在一个今天会发生的重复任务，则修改该任务为非重复任务，并自动产生一个日期顺延的重复任务
-			// 如果以前完成了一个重复任务，不管其设置的日期是什么时候，同上处理
-			let res = [],
-				tasksPost = [],
-				flagNeedToShowDialog = false;
-			let tasksNoRepeatDelay = [];
+			// 重新创建重复任务
+			let tasksNewRepeatPost = [], tasksOldRepeatPut = [], tasksDelay = [];
 			let todayYMD = util.getDawn(0).substr(0, 10);
-			for (let task of tasksLocal) {
-				// 非重复、未删除、未完成、过期的任务
-				if(!task.repeat 
-					&& !task.delete 
-					&& !task.finish 
-					&& task.date.substr(0, 10).localeCompare(todayYMD) < 0
-				) {
+			let flagNeedToShowDialog = false;
+			tasksLocal.forEach(item => {
+				// 延续非重复、未完成、过期、未“删除”任务
+				if(!item.delete && !item.repeat && !item.finish && item.date.substr(0, 10).localeCompare(todayYMD)) {
 					flagNeedToShowDialog = true;
-					tasksNoRepeatDelay.push(task);
+					tasksDelay.push(item);
 				}
-				if (task.delete || !task.repeat) {
-					res.push(task);
-					continue;
-				}
-				// 每天重复
-				// 此处 UTC+0 -> UTC+8，将世界时间转化为本地时间
-				let oldDate = new Date(new Date(task.date).getTime() - 8 * 60 * 60 * 1000);
-				let addTime = [0, 1, 7, 30, 365][task.repeat] * 24 * 60 * 60 * 1000;
-				let oldDateYMD = util.formatDate(oldDate).substr(0, 10);
-				// 第一种情况，即一个过期的重复任务（无论是否完成）
-				if (oldDateYMD.localeCompare(todayYMD) < 0) {
-					flagNeedToShowDialog = true;
-					let newTime = oldDate.getTime() + addTime;
-					let tomorrowTime = new Date(util.getDawn(1)).getTime();
-					do {
-						while(newTime + addTime < tomorrowTime)
-							newTime += addTime;
-						let tmpTask = JSON.parse(JSON.stringify(task));
-						tmpTask.id = util.getUniqueId();
-						tmpTask.date = util.formatDate(new Date(newTime));
-						tmpTask.finish = false;
-						tmpTask.desc = "";
-						tmpTask.rating = 1;
-						tmpTask.feeling = "";
-						tmpTask.repeat = 0;
-						// 根据用户选择是否延续任务
-						tmpTask._newTask = true;
-						tmpTask.repeat = task.repeat;
-						delete tmpTask.urlSql;
-						res.push(tmpTask);
-						tasksPost.push(tmpTask);
-						newTime += addTime;
-					} while (newTime < tomorrowTime);
-					task._oldTask = true;
-					task._self = true;
-					tasksPost.push(task);
-				}
-				// 第二种情况，即一个完成的任务（走到这里肯定不是过期任务）
-				else if (
-					task.finish &&
-					task.finishDate.localeCompare(util.getDawn(0)) >= 0
+				// 未“删除”、未完成、重复、过期，
+				// 未“删除”、完成、重复，即完成一个重复任务，创建一个新的，旧的则不再创建
+				if((!item.delete && !item.finish && item.repeat && item.date.substr(0, 10).localeCompare(todayYMD) < 0)
+					|| (!item.delete && item.finish && item.repeat)
 				) {
-					let newDate = new Date(oldDate.getTime() + addTime);
-					let tmpTask = JSON.parse(JSON.stringify(task));
-					tmpTask.id = util.getUniqueId();
-					tmpTask.date = util.formatDate(newDate);
-					tmpTask.finish = false;
-					tmpTask.desc = "";
-					tmpTask.rating = 1;
-					tmpTask.feeling = "";
-					delete tmpTask.urlSql;
-					res.push(tmpTask);
-					tasksPost.push(tmpTask);
-					task.repeat = 0;
-					tasksPost.push(task);
+					let oldDate = new Date(new Date(item.date).getTime());
+					let addTime = [0, 1, 7, 30, 365][item.repeat] * 24 * 60 * 60 * 1000;
+					let todayTime = new Date(util.getDawn(0)).getTime();
+					let oldTime = oldDate.getTime();
+					while(oldTime < todayTime)
+						oldTime += addTime;
+					// 如果是完成的任务
+					if(item.finish) {
+						oldTime = Math.max(oldTime, oldDate.getTime() + addTime);
+					}
+					let task = {
+						id: util.getUniqueId(),
+						priority: item.priority,
+						repeat: item.repeat,
+						date: util.formatDate(new Date(oldTime - 8 * 60 * 60 * 1000)),
+						remind: 0,
+						finish: false,
+						content: item.content,
+						desc: '',
+						list: JSON.parse(JSON.stringify(item.list)),
+						delete: false,
+						rating: 1,
+						feeling: '',
+						finishDate: item.finishDate,
+					}
+					tasksNewRepeatPost.push(task);
+					item.delete = true;
+					tasksOldRepeatPut.push(item);
 				}
-				console.log(task);
-				res.push(task);
-			}
+			})
 			// post 修改和增加过的数据
-			await store.saveTasksToSql(tasksPost, listsLocal, { owner, token });
-			tasksLocal = res;
-
+			await store.saveTasksToSql([...tasksNewRepeatPost, ...tasksOldRepeatPut], listsLocal, { owner, token });
+			tasksLocal.push(...tasksNewRepeatPost);
+			
 			// 展示弹窗是否延续任务
-			if (flagNeedToShowDialog)
+			if (flagNeedToShowDialog) {
 				this.setData({
 					dialogShow: true,
 					dialogTitle: "提示",
 					dialogContents: "检测存在过期任务，是否延续？",
 					dialogButtons: [{ text: "取消" }, { text: "确定" }],
 				});
+			}
 
-			// 延时所有过期任务
 			this._handleDialogDefine = async () => {
-				tasksLocal = tasksLocal.filter(item => {
-					// 删除原始任务
-					if (item._oldTask) {
-						delete item._oldTask;
-						util.myRequest({
-							url: item.urlSql,
-							header: { Authorization: "Token " + token },
-							method: "DELETE",
-						})
-						.then(res => console.log(res))
-						return false;
-					}
-					// 新增任务
-					else if(item._newTask)
-						delete item._newTask;
-					return true;
-				});
-				// 修改时间
-				tasksNoRepeatDelay.forEach(item => {
+				tasksDelay.forEach(item => {
 					item.date = todayYMD + item.date.substr(10);
-					let taskSql = util.formatTasksFromLocalToSql([item], listsLocal, {owner, token})[0];
-					util.myRequest({
-						url: item.urlSql,
-						header: { Authorization: "Token " + token },
-						method: 'PUT',
-						data: taskSql,
-					})
-					.then(res => console.log(res));
 				})
+				await store.saveTasksToSql(tasksDelay, listsLocal, { owner, token });
+				wx.setStorageSync('tasks', JSON.stringify(tasksLocal));
 				this.setData({
 					tasks: tasksLocal,
 					dialogShow: false,
-				});
-				
-				wx.setStorageSync("tasks", JSON.stringify(tasksLocal));
-			};
-			// 不延时所有过期任务
-			this._handleDialogCancel = () => {
-				tasksLocal = tasksLocal.filter(item => {
-					// 删除新增任务
-					if (item._newTask) {
-						delete item._newTask;
-						util.myRequest({
-							url: item.urlSql,
-							header: { Authorization: "Token " + token },
-							method: "DELETE",
-						});
-						return false;
-					}
-					// 设置原始任务为“删除”
-					else if(item._oldTask) {
-						delete item._oldTask;
-						item.delete = true;
-						util.myRequest({
-							url: item.urlSql,
-							header: { Authorization: "Token " + token },
-							method: "PUT",
-							data: util.formatTasksFromLocalToSql([item], listsLocal, { owner, token, })[0],
-						})
-					}
-					return true;
-				});
-				// 假删除
-				tasksNoRepeatDelay.forEach(item => {
+				})
+			}
+
+			this._handleDialogCancel = async () => {
+				tasksDelay.forEach(item => {
 					item.delete = true;
-					let taskSql = util.formatTasksFromLocalToSql([item], listsLocal, {owner, token})[0];
-					util.myRequest({
-						url: item.urlSql,
-						header: { Authorization: "Token " + token },
-						method: 'PUT',
-						data: taskSql,
-					})
-					.then(res => console.log(res));
 				})
+				await store.saveTasksToSql(tasksDelay, listsLocal, { owner, token });
+				wx.setStorageSync('tasks', JSON.stringify(tasksLocal));
 				this.setData({
 					tasks: tasksLocal,
 					dialogShow: false,
-				});
-				wx.setStorageSync("tasks", JSON.stringify(tasksLocal));
-			};
+				})
+			}
 
 			// 请求 signText
 			let signTextLocal = "好好学习 天天向上";

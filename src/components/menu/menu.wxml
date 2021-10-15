@@ -51,10 +51,10 @@
 			<image class="menu-icon" src="/src/image/menu-finish.svg" mode="aspectFit" style="left: 230rpx; top: 62rpx"></image>
 			<text class="menu-text" catch:tap="handleNavigateToFinished" style="left: 284rpx; top: 62rpx">已完成</text>
 		</view>
-		<!-- 过期 / 删除任务 -->
+		<!-- 过期任务 -->
 		<view>
 			<image class="menu-icon" src="/src/image/menu-out.svg" mode="aspectFit" style="left: 230rpx; top: 132rpx"></image>
-			<text class="menu-text" catch:tap="handleNavigateToBeforeAndDelete" style="left: 284rpx; top: 132rpx">过期/删除任务</text>
+			<text class="menu-text" catch:tap="handleNavigateToBeforeAndDelete" style="left: 284rpx; top: 132rpx">过期任务</text>
 		</view>
 	</view>
 	<!-- 功能 -->

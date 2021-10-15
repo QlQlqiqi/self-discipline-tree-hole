@@ -13,8 +13,7 @@ module.exports = Behavior({
 			let res = data.tasks.filter(function (item) {
 				return (
 					item.date.localeCompare(todayDate) >= 0 &&
-					item.date.localeCompare(tommorrowDate) < 0 &&
-					!item.delete
+					item.date.localeCompare(tommorrowDate) < 0
 				);
 			});
 			res.sort((a, b) =>
@@ -30,7 +29,7 @@ module.exports = Behavior({
 		futureTasks: function (data) {
 			let tommorrowDate = util.getDawn(1);
 			let res = data.tasks.filter(function (item) {
-				return item.date.localeCompare(tommorrowDate) >= 0 && !item.delete;
+				return item.date.localeCompare(tommorrowDate) >= 0;
 			});
 			res.sort((a, b) =>
 				a.priority !== b.priority
@@ -174,15 +173,16 @@ module.exports = Behavior({
 		// 导航到“已完成”页面
 		handleNavigateToFinished: function (e) {
 			wx.navigateTo({
-				url: "/src/pages/list/list?pageName=" + JSON.stringify("已完成"),
+				url: "/src/pages/list/list?pageName=" + JSON.stringify("已完成") +
+				"&disabled=" + JSON.stringify(true),
 			});
 		},
-		// 导航到“过期 / 删除任务”页面
+		// 导航到“过期任务”页面
 		handleNavigateToBeforeAndDelete: function (e) {
 			wx.navigateTo({
 				url:
 					"/src/pages/list/list?pageName=" +
-					JSON.stringify("过期 / 删除任务") +
+					JSON.stringify("过期任务") +
 					"&disabled=" +
 					JSON.stringify(true),
 			});

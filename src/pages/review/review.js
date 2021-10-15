@@ -43,8 +43,7 @@ Component({
 				return (
 					item.finish &&
 					item.finishDate.localeCompare(todayDate) >= 0 &&
-					item.finishDate.localeCompare(tommorrowDate) < 0 &&
-					!item.delete
+					item.finishDate.localeCompare(tommorrowDate) < 0
 				);
 			});
 			res.sort((a, b) => a.date.localeCompare(b.date));

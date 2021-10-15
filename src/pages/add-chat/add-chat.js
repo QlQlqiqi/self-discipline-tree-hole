@@ -61,8 +61,7 @@ Component({
 			let res = data.tasks.filter(function (item) {
 				return (
 					item.date.localeCompare(todayDate) >= 0 &&
-					item.date.localeCompare(tommorrowDate) < 0 &&
-					!item.delete
+					item.date.localeCompare(tommorrowDate) < 0
 				);
 			});
 			res.sort((a, b) =>
@@ -82,8 +81,7 @@ Component({
 				return (
 					item.finish &&
 					item.finishDate.localeCompare(todayDate) >= 0 &&
-					item.finishDate.localeCompare(tommorrowDate) < 0 &&
-					!item.delete
+					item.finishDate.localeCompare(tommorrowDate) < 0
 				);
 			});
 			res.sort((a, b) => a.date.localeCompare(b.date));

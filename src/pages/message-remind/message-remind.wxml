@@ -8,7 +8,7 @@
 	style="height: {{ windowHeight - navHeight }}px; padding-top: 20rpx;"
 >
 	<!-- 无消息 -->
-	<view class="no-chats">当前没有新消息哦</view>
+	<view class="no-chats" wx:if="{{ !chatsRemind.length }}">当前没有新消息哦</view>
 	<view class="message" wx:for="{{ chatsRemind }}" wx:key="index">
 		<!-- 说说的缩略形式 -->
 		<view wx:if="{{ !item.open }}" class="non-open-wrap" data-index="{{ index }}" bindtap="handleSwitchChat">

@@ -26,34 +26,30 @@ Component({
 		showTasks: function(data) {
 			let todayDate = util.getDawn(0), tomorrowDate = util.getDawn(1);
 			let res = [];
-			// 过期 / 删除任务
-			if(data.pageName === '过期 / 删除任务')
-				res = data.tasks.filter(item => item.date.localeCompare(todayDate) < 0 || item.delete);
+			// 过期任务
+			if(data.pageName === '过期任务')
+				res = data.tasks.filter(item => item.date.localeCompare(todayDate) < 0 && !item.finish);
 			// 今日待办
 			else if(data.pageName === '今日待办')
 				res = data.tasks.filter(item => 
 					item.date.localeCompare(tomorrowDate) < 0 
 					&& item.date.localeCompare(todayDate) >= 0
-					&& !item.delete
 				);
 			// 将来做
 			else if(data.pageName === '将来做')
 				res = data.tasks.filter(item => 
 					item.date.localeCompare(tomorrowDate) >= 0 
-					&& !item.delete
 				);
 			// 已完成
 			else if(data.pageName === '已完成')
 				res = data.tasks.filter(item => 
 					item.finish
-					&& !item.delete
 				);
 			// 各种清单
 			else 
 				res = data.tasks.filter(item => 
 					item.date.localeCompare(todayDate) >= 0
 					&& !item.list.title.localeCompare(data.pageName)
-					&& !item.delete
 				);
 			res.sort((a, b) => a.date.localeCompare(b.date) );
 			return res;

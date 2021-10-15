@@ -52,7 +52,6 @@ Component({
 			let res = data.tasks.filter(function(item) {
 				return item.date.localeCompare(todayDateYMD) >= 0 
 					&& item.date.localeCompare(tommorrowDateYMD) < 0
-					&& !item.delete;
 			});
 			res.sort((a, b) => a.priority !== b.priority
 				? (a.priority < b.priority? -1: 1)
@@ -67,7 +66,6 @@ Component({
 				return item.finish
 					&& item.finishDate.localeCompare(todayDateYMD) >= 0 
 					&& item.finishDate.localeCompare(tommorrowDateYMD) < 0
-					&& !item.delete;
 			});
 			res.sort((a, b) => a.date.localeCompare(b.date) );
 			return res;

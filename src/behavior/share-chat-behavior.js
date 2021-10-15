@@ -44,7 +44,12 @@ module.exports = Behavior({
 				// 这块是为了 message-remind 页面
 				if(typeof this._changeChatsRemind === 'function')
 					this._changeChatsRemind(chats[idx]);
-
+				console.log(JSON.stringify({
+					report_from_user: owner,
+					report_to_user: chats[idx].owner,
+					report_pic_url: chats[idx].urlSql,
+					reoprt_text: chats[idx].pic.content,
+				}))
 				util.myRequest({
 					url: app.globalData.url + 'notice/report/',
 					header: {Authorization: 'Token ' + token},

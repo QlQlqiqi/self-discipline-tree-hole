@@ -194,7 +194,7 @@ Component({
 		handleNavigateToFinished: function(e) {
 			this.triggerEvent("handleNavigateToFinished");
 		},
-		// 触发“过期 / 删除任务”事件
+		// 触发“过期任务”事件
 		handleNavigateToBeforeAndDelete: function(e) {
 			this.triggerEvent("handleNavigateToBeforeAndDelete");
 		},

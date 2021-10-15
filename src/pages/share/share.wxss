@@ -75,7 +75,11 @@
 }
 .share-wrap .chat-wrap {
   position: relative;
-  padding: 28rpx 0 0 48rpx;
+}
+.share-wrap .chat-wrap .chat {
+  margin-left: 24rpx;
+  padding: 15rpx 0 15rpx 24rpx;
+  border-left: 4rpx solid rgba(103, 167, 143, 0.7);
 }
 .share-wrap .chat-wrap .left-circle-icon {
   position: absolute;
@@ -83,13 +87,6 @@
   top: 20rpx;
   left: 15rpx;
   width: 24rpx;
-}
-.share-wrap .chat-wrap .task-left-line {
-  position: absolute;
-  height: 1000rpx;
-  top: 0;
-  left: 24rpx;
-  border-left: 4rpx solid rgba(103, 167, 143, 0.7);
 }
 .share-return-top-wrap {
   position: fixed;

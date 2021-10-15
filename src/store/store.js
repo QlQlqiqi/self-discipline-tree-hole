@@ -42,7 +42,7 @@ const saveTasksToSql = async function (
 	let tasksPostPr = util
 		.formatTasksFromLocalToSql(tasksPost, listsLocal, { owner, token })
 		.map(item => {
-			console.log("post", item, JSON.stringify(item));
+			console.log("post", item);
 			let pr = util
 				.myRequest({
 					url:
