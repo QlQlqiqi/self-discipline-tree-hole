@@ -56,7 +56,7 @@
 .share-wrap .share-message-remind {
   position: absolute;
   right: 24rpx;
-  top: 350rpx;
+  top: 330rpx;
   padding: 20rpx;
   z-index: 1;
 }

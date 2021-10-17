@@ -205,6 +205,24 @@ Component({
 			wx.setStorageSync('chatsRemind', JSON.stringify(chatsRemind));
 			console.log(chatsRemind)
 		},
+		// 删除评论 dialog
+		handleDeleteDialogShow(e) {
+			let {deleteShow, chatId, commentId} = e.detail;
+			this.setData({
+				deleteShow,
+				deleteChatId: chatId,
+				deleteCommentId: commentId,
+			})
+		},
+		// 删除评论 dialog buttons
+		handleDeleteDialog(e) {
+			let {deleteChatId, deleteCommentId} = this.data;
+			if(e.detail.index)
+				this.handleDeleteComment({chatId: deleteChatId, commentId: deleteCommentId});
+			this.setData({
+				deleteShow: false
+			})
+		},
 		
 		// 加载数据
 		onLoad: async function(options) {

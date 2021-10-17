@@ -5,14 +5,14 @@
 </navbar>
 <view class="add-chat-wrap" style="height: {{ windowHeight - navHeight }}px;">
 	<!-- 今日回顾的缩略图 -->
-	<view class="add-review-wrap" style="top: 200rpx;">
+	<view class="add-review-wrap" wx:if="{{ false }}" style="top: 200rpx;">
 		<wxs module="touchmove" src="../../utils/touchmove.wxs"></wxs>
 		<view wx:if="{{ reviewShow }}" class="reivew-abridge"
 			data-window-width="{{windowWidth}}" data-window-height="{{windowHeight}}" data-width="{{100}}" data-height="{{100}}" 
 			catch:touchmove="{{ touchmove.handleTouchMove }}" bindtouchstart="{{ touchmove.handleTouchStart }}"
 		>
 			<image src="/src/image/reivew-abridge-delete.svg" catchtap="handleCloseReviewAbridge" mode="aspectFit" class="image"></image>
-			<review-abridge  componentWidthMax="{{ windowWidth }}" componentHeightMin="{{ 100 }}"
+			<review-abridge componentWidthMax="{{ windowWidth }}" componentHeightMin="{{ 100 }}"
 				starsNum="{{ starsNumber }}" tasks="{{ review.tasks }}" safeAreaBottom="{{ bottomLineHeight }}"
 			></review-abridge>
 		</view>
@@ -22,27 +22,29 @@
 		<button class="cancel" bindtap="handleCancel">取消</button>
 		<button class="ensure" bindtap="handleEnsure">确认</button>
 	</view>
-	<view class="chat-content-wrap" style="height: {{ windowHeight - navHeight - 88 / ratio }}px;">
+	<view class="chat-content-wrap">
+		<image src="/src/image/add-chat-edit.svg" class="image" mode="aspectFit"></image>
 		<textarea class="chat-content" value="{{ chatContent }}" bindinput="handleInput" maxlength="{{ maxLength }}"
-			placeholder="请输入文字" placeholder-class="textarea" bindkeyboardheightchange="handleShowKeyBoard"
+			placeholder="把你的感想和树洞说说吧~" placeholder-class="textarea" bindkeyboardheightchange="handleShowKeyBoard"
 			show-confirm-bar="{{ false }}" adjust-position="{{false}}" bindblur="handleCloseKeyBoard"
-			style="height: {{ bottomOptionsShow? '40%': '80%' }};"
 		></textarea>
+		<!-- 右下角字符计数 -->
+		<view class="char-count">{{ charInputLength }} / {{ maxLength }}</view>
 	</view>
-	<!-- 右下角字符计数 -->
-	<view class="char-count">{{ charInputLength }} / {{ maxLength }}</view>
 	<!-- 下面的功能区 -->
-	<view class="bottom-options-wrap" wx:if="{{ true }}" style="bottom: {{ optionsBottom }}px; background-color: {{ 'white' }}; padding: 5px;">
+	<view class="bottom-options-wrap">
 	<!-- 缩略图 -->
 		<view class="option" bindtap="handleAddReviewAbridge">
 			<image src="/src/image/add-chat-option0.svg" mode="aspectFit" class="icon"></image>
 			<text class="content">添加今日回顾单</text>
+			<view wx:if="{{ reviewShow }}" class="image" style="color: #4B844D; text-align: center;">✔</view>
 		</view>
 		<!-- 匿名 -->
 		<view>
 			<view class="option" bindtap="handleShowAnameSelect">
 				<image src="{{ anameRange[currentAnameIndex].icon }}" mode="aspectFit" class="icon"></image>
-				<view>{{ anameRange[currentAnameIndex].name }}</view>
+				<view class="content">{{ anameRange[currentAnameIndex].name }}</view>
+				<image src="/src/image/add-chat-select.svg" class="image" mode="aspectFit" style="rotate: 270deg;"></image>
 			</view>
 			<mp-half-screen-dialog show="{{ anameShow }}" title="选择匿名身份" buttons="{{ buttons }}" 
 				bindclose="handleCloseAnameSelect" bindbuttontap="handleAnameButtonTap"
@@ -63,7 +65,8 @@
 		<view>
 			<view class="option" bindtap="handleShowShareSelect">
 				<image src="/src/image/add-chat-option2.svg" mode="aspectFit" class="icon"></image>
-				<view>{{ shareRange[currentShareIndex].content }}</view>
+				<view class="content">{{ shareRange[currentShareIndex].content }}</view>
+				<image src="/src/image/add-chat-select.svg" class="image" mode="aspectFit" style="rotate: 270deg;"></image>
 			</view>
 			<mp-half-screen-dialog show="{{ shareShow }}" title="选择分享范围" buttons="{{ buttons }}" 
 				bindclose="handleCloseShareSelect" bindbuttontap="handleShareButtonTap"

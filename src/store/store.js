@@ -133,6 +133,7 @@ const saveChatsToSql = async function(chatsLocal, {owner, token}) {
 		for (let tmpChat of chatsPost) {
 			if (tmpChat.owner === chatSql.owner && tmpChat.id === chatSql.data.pic.picId) {
 				tmpChat.urlSql = app.globalData.url + 'community/blog/' + chatSql.picid + '/';
+				tmpChat.id = chatSql.picid;
 				break;
 			}
 		}

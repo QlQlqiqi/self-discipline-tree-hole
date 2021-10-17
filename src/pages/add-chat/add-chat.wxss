@@ -61,16 +61,27 @@
   background-color: rgba(103, 166, 60, 0.86);
 }
 .add-chat-wrap .chat-content-wrap {
-  padding: 24rpx;
+  padding: 40rpx 32rpx 40rpx 38rpx;
   box-sizing: border-box;
-  height: 94%;
+  position: relative;
+}
+.add-chat-wrap .chat-content-wrap .image {
+  position: absolute;
+  width: 42rpx;
+  height: 42rpx;
+  top: 92rpx;
+  left: 74rpx;
+  z-index: 1;
 }
 .add-chat-wrap .chat-content-wrap .chat-content {
-  height: 80%;
+  width: 680rpx;
+  height: 572rpx;
   line-height: 40rpx;
   font-size: 28rpx;
-  width: 80%;
-  margin: 40rpx auto;
+  box-shadow: 0 0 12rpx 0 rgba(172, 171, 171, 0.4);
+  background-color: white;
+  box-sizing: border-box;
+  padding: 64rpx 98rpx 64rpx 98rpx;
 }
 .add-chat-wrap .chat-content-wrap .textarea {
   font-size: 24rpx;
@@ -78,37 +89,46 @@
   height: 40rpx;
   line-height: 40rpx;
 }
-.add-chat-wrap .char-count {
+.add-chat-wrap .chat-content-wrap .char-count {
   position: absolute;
-  left: 562rpx;
-  top: 1036rpx;
-  width: 156rpx;
-  height: 34rpx;
-  line-height: 34rpx;
+  left: 613rpx;
+  top: 559rpx;
+  width: 92rpx;
+  height: 40rpx;
+  line-height: 40rpx;
   border-radius: 8rpx;
   color: #101010;
-  font-size: 28rpx;
+  font-size: 24rpx;
   text-align: center;
   border: 2rpx solid #bbbbbb;
 }
 .add-chat-wrap .bottom-options-wrap {
   position: relative;
-  display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 76rpx;
-  line-height: 76rpx;
+  height: 286rpx;
 }
 .add-chat-wrap .bottom-options-wrap .option {
-  height: 100%;
+  border-bottom: white 2rpx solid;
+  background-color: rgba(170, 170, 170, 0.1);
+  height: 94rpx;
   display: flex;
   align-items: center;
+  padding-left: 72rpx;
 }
 .add-chat-wrap .bottom-options-wrap .option .icon {
   width: 48rpx;
   height: 48rpx;
 }
 .add-chat-wrap .bottom-options-wrap .option .content {
-  height: 100%;
+  margin-left: 16rpx;
+  height: 94rpx;
+  line-height: 94rpx;
   font-size: 28rpx;
+}
+.add-chat-wrap .bottom-options-wrap .option .image {
+  width: 48rpx;
+  height: 48rpx;
+  position: absolute;
+  right: 80rpx;
 }

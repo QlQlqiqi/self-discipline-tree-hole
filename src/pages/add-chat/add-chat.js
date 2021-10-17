@@ -35,7 +35,7 @@ Component({
 		// 待选择的匿名，每个元素{icon, name}
 		anameRange: app.globalData.anames,
 		// 当前选择的匿名的 index
-		currentAnameIndex: 0,
+		currentAnameIndex: 1,
 		anameShow: false,
 		buttons: [
 			{ text: "取消", type: "default" },
@@ -183,7 +183,7 @@ Component({
 			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
 			let {anames} = app.globalData;
 			let chat = {
-				id: util.getUniqueId(),
+				// id: util.getUniqueId(),
 				owner,
 				reviewAbridge: this.data.review,
 				pic: {
@@ -251,30 +251,34 @@ Component({
 		},
 		// 触发“添加今日回顾清单”
 		handleAddReviewAbridge(e) {
-			// 如果已经添加了，显示不能重复添加
-			if (this.data.reviewShow) {
-				let { windowHeight, navHeight, ratio } = this.data;
-				this.setData({
-					repeatTipShow: true,
-					repeatTipTop:
-						windowHeight -
-						navHeight -
-						this.data.optionsBottom -
-						(76 + 88 + 200) / ratio,
-				});
-				// 3000ms 后消失，如果期间再次点击，则重新计算时间
-				if (this._repeatTipTimeId) clearTimeout(this._repeatTipTimeId);
-				this._repeatTipTimeId = setTimeout(() => {
-					this.setData({
-						repeatTipShow: false,
-					});
-					delete this._repeatTipTimeId;
-				}, 3000);
-				return;
-			}
 			this.setData({
-				reviewShow: true,
-			});
+				reviewShow: !this.data.reviewShow
+			})
+			// 如果已经添加了，显示不能重复添加（这是旧的）
+			// 如果已经添加，取消添加
+			// if (this.data.reviewShow) {
+			// 	let { windowHeight, navHeight, ratio } = this.data;
+			// 	this.setData({
+			// 		repeatTipShow: true,
+			// 		repeatTipTop:
+			// 			windowHeight -
+			// 			navHeight -
+			// 			this.data.optionsBottom -
+			// 			(76 + 88 + 700) / ratio,
+			// 	});
+			// 	// 3000ms 后消失，如果期间再次点击，则重新计算时间
+			// 	if (this._repeatTipTimeId) clearTimeout(this._repeatTipTimeId);
+			// 	this._repeatTipTimeId = setTimeout(() => {
+			// 		this.setData({
+			// 			repeatTipShow: false,
+			// 		});
+			// 		delete this._repeatTipTimeId;
+			// 	}, 3000);
+			// 	return;
+			// }
+			// this.setData({
+			// 	reviewShow: true,
+			// });
 		},
 		// 关闭缩略图
 		handleCloseReviewAbridge(e) {

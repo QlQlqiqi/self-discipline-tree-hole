@@ -1,6 +1,7 @@
 {
 	"component": true,
 	"usingComponents": {
-		"review-abridge": "/src/components/review-abridge/review-abridge"
+		"review-abridge": "/src/components/review-abridge/review-abridge",
+		"mp-dialog": "weui-miniprogram/dialog/dialog"
 	}
 }

@@ -25,6 +25,7 @@
 		<view wx:else>
 			<share-message chat="{{ item.chat }}" options="{{ item.chat.options }}" componentWidthMax="{{ 616 / ratio }}"
 				bind:handleEnsureComment="handleEnsureComment" bindhandleSelectOption="handleSelectOption"
+				bind:handleDeleteComment="handleDeleteComment" bind:handleDeleteDialogShow="handleDeleteDialogShow"
       ></share-message>
 		</view>
 	</view>
@@ -49,3 +50,10 @@
     </picker-view>
   </view>
 </mp-half-screen-dialog>
+
+<!-- 删除评论弹窗 -->
+<mp-dialog show="{{ deleteShow }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" 
+  buttons="{{ [{text: '否'}, {text: '是'}] }}" bindbuttontap="handleDeleteDialog"
+>
+  是否删除该评论？
+</mp-dialog>

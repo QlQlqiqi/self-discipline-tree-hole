@@ -26,6 +26,18 @@ Component({
 		componentWidthMax: Number
 	},
 
+	/**
+	 * 组件的初始数据
+	 */
+	data: {
+		chatShow: false,
+		optionsShow: false,
+		commentValue: '',
+		// -1 代表洞主
+		replyIndex: -1,
+		commentFocus: false,
+	},
+
 	computed: {
 		date(data) {
 			return util.dateInToOut(data.chat.pic.date);
@@ -64,18 +76,6 @@ Component({
 							data.chat.pic.name,
 						).split(' 回复 ')[0]);
 		},
-	},
-
-	/**
-	 * 组件的初始数据
-	 */
-	data: {
-		chatShow: false,
-		optionsShow: false,
-		commentValue: '',
-		// -1 代表洞主
-		replyIndex: -1,
-		commentFocus: false,
 	},
 
 	/**
@@ -154,6 +154,19 @@ Component({
 			this.setData({
 				commentValue: '',
 				replyIndex: -1
+			})
+		},
+		// 弹窗是否删除自己评论
+		handleDeleteCommentShow(e) {
+			// 只可以删除自己的
+			let chatFilter = this.data.chatFilter;
+			let index = e.currentTarget.dataset.index;
+			if(chatFilter.comments[index].fromUser !== app.globalData.owner)	
+				return;
+			this.triggerEvent('handleDeleteDialogShow', {
+				deleteShow: true,
+				chatId: chatFilter.id,
+				commentId: chatFilter.comments[index].id,
 			})
 		},
 		// 输入评论

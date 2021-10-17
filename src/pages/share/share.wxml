@@ -65,6 +65,7 @@
       <view class="chat">
         <share-message chat="{{ item }}" options="{{ optionsSelect }}" componentWidthMax="{{ 616 / ratio }}" 
           bind:handleEnsureComment="handleEnsureComment" bindhandleSelectOption="handleSelectOption"
+          bind:handleDeleteComment="handleDeleteComment" bind:handleDeleteDialogShow="handleDeleteDialogShow"
         ></share-message>
       </view>
       <image src="/src/image/task-circle.png" mode="aspectFit" class="left-circle-icon"></image>
@@ -106,3 +107,10 @@
   catch:touchend="{{ touchmove.handleTouchEnd }}" bindtouchstart="{{ touchmove.handleTouchStart }}"
 ></image>
 
+
+<!-- 删除评论弹窗 -->
+<mp-dialog show="{{ deleteShow }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" 
+  buttons="{{ [{text: '否'}, {text: '是'}] }}" bindbuttontap="handleDeleteDialog"
+>
+  是否删除该评论？
+</mp-dialog>

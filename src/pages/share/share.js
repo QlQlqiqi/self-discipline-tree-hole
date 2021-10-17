@@ -160,41 +160,6 @@ Component({
 		},
 		// 下拉刷新，加载数据，这里暂时为全部时间段的
 		async pullDownLoad() {
-			// let chsats = [
-			// 	{
-			// 		picid: 1,
-			// 		owner: app.globalData.owner,
-			// 		data: {
-			// 			reviewAbridge: {
-			// 				safeAreaBottom: this.data.safeAreaBottom,
-			// 				componentHeightMin: 100,
-			// 				componentWidthMax: this.data.windowWidth,
-			// 				starsNum: 4,
-			// 				tasks: [{content: "哈"},],
-			// 			},
-			// 			pic: {
-			// 				picId: 1,
-			// 				headIcon: "/src/image/head-icon-yellow.svg",
-			// 				name: "黄黄",
-			// 				date: "2020-12-21T12:12:12Z",
-			// 				content: "说说",
-			// 				shareRange: 0
-			// 			},
-			// 		},
-			// 		time: "2020-12-21T12:12:12.111222Z",
-			// 		article: [
-			// 			{
-			// 				pic_id: 1,
-			// 				url: "url/1/",
-			// 				content: "some",
-			// 				time: "2020-12-21T12:12:12.111222Z",
-			// 				pic: "url/1/",
-			// 				from_user: "url/" + app.globalData.owner + '/',
-			// 				to_user: "url/" + app.globalData.owner + '/',
-			// 			},
-			// 		],
-			// 	},
-			// ];
 			this.setData({
 				pullDownRefresh: true,
 			});
@@ -207,9 +172,9 @@ Component({
 			let chatsRemindSqlPr = store.getDataFromSqlByUrl(app.globalData.url + 'notice/notice/', {owner, token});
 			let dataSql = await Promise.all([chatsSqlPr, gallerysSqlPr, chatsRemindSqlPr])
 			let chats = util.formatChatsFromSqlToLocal(dataSql[0]);
-			chats.forEach(item => {
-				item.id = util.getUniqueId();
-			});
+			// chats.forEach(item => {
+			// 	item.id = util.getUniqueId();
+			// });
 			console.log(chats)
 			let gallerys = dataSql[1].map(item => {
 				return {
@@ -239,6 +204,24 @@ Component({
 			wx.setStorageSync('chats', JSON.stringify(chats));
 			wx.setStorageSync('gallerys', JSON.stringify(gallerys));
 			wx.setStorageSync('chatsRemind', JSON.stringify(chatsRemind));
+		},
+		// 删除评论 dialog
+		handleDeleteDialogShow(e) {
+			let {deleteShow, chatId, commentId} = e.detail;
+			this.setData({
+				deleteShow,
+				deleteChatId: chatId,
+				deleteCommentId: commentId,
+			})
+		},
+		// 删除评论 dialog buttons
+		handleDeleteDialog(e) {
+			let {deleteChatId, deleteCommentId} = this.data;
+			if(e.detail.index)
+				this.handleDeleteComment({chatId: deleteChatId, commentId: deleteCommentId});
+			this.setData({
+				deleteShow: false
+			})
 		},
 		// 点击回到顶部
 		handleReturnTop() {

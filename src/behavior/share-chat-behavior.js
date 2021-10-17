@@ -203,28 +203,23 @@ module.exports = Behavior({
 		},
 		// 发送评论
 		async handleEnsureComment(e) {
-			// 本应该后续检查是否 post 成功，这里预留一个
-			// 先改变本地，然后异步同步到后端
-			// 这里同步不会 get ，只是 post
+			wx.showLoading({
+				title: '正在发送...',
+				mask: true
+			})
 			let { comment: commentLocal, chatId } = e.detail;
-			let chats = this.data.chats, chat;
-			console.log(commentLocal, chatId)
+			let chats = this.data.chats, chat, idx;
+			console.log(chats, commentLocal, chatId)
 			for(let i = 0; i < chats.length; i++) {
 				chat = chats[i];
 				if(chat.id === chatId) {
-					chat.comments.push(commentLocal);
-					let key = `chats[${i}].comments`;
-					this.setData({
-						[key]: chat.comments
-					})
-					// 这块是为了 message-remind 页面
-					if(typeof this._changeChatsRemind === 'function')
-						this._changeChatsRemind(chat);
+					idx = i;
 					break;
 				}
 			}
+			console.log(idx)
 			// 下面是 post
-			let commentSql = {
+			let commentPost = {
 				comment_uid: util.getUniqueId(),
 				pic: chat.urlSql,
 				content: commentLocal.content,
@@ -232,13 +227,32 @@ module.exports = Behavior({
 				to_user: app.globalData.url + 'login/user/' + commentLocal.toUser + '/'
 			};
 			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
-			util.myRequest({
+			await util.myRequest({
 				url: app.globalData.url + 'community/comment/',
 				header: {Authorization: "Token " + token},
 				method: 'POST',
-				data: commentSql
+				data: commentPost
 			})
-			.then(res => console.log(res))
+			let tmp = chat.urlSql.split('\/');
+			let commentsSql = await store.getDataFromSqlByUrl(
+				app.globalData.url + 'community/comment/?pic=' + JSON.stringify(+tmp[tmp.length - 2]),
+				{token}
+			);
+			commentsSql.forEach(item => {
+				if(item.comment_uid === commentPost.comment_uid)
+					commentLocal.urlSql = item.url;
+			})
+			chat.comments.push(commentLocal);
+			let key = `chats[${idx}].comments`;
+			this.setData({
+				[key]: chat.comments
+			})
+			// 这块是为了 message-remind 页面
+			if(typeof this._changeChatsRemind === 'function')
+				this._changeChatsRemind(chat);
+			
+			wx.setStorageSync('chats', JSON.stringify(chats));
+
 			// 消息提醒
 			// 回复别人，接收者为他
 			if(commentLocal.fromUser !== commentLocal.toUser) {
@@ -274,6 +288,61 @@ module.exports = Behavior({
 					}
 				})
 			}
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: "已完成",
+						duration: 800,
+					});
+				},
+			});
 		},
+		// 删除评论
+		async handleDeleteComment({chatId, commentId}) {
+			wx.showLoading({
+				title: '正在删除...',
+				mask: true
+			})
+			let chat = null, comment = null, chats = this.data.chats;
+			for(let i = 0; i < chats.length; i++) {
+				chat = chats[i];
+				if(chat.id === chatId) {
+					for(let j = 0; j < chat.comments.length; j++) {
+						comment = chat.comments[j];
+						console.log(comment)
+						if(comment.id === commentId) {
+							chat.comments.splice(j, 1);
+							let key = `chats[${i}].comments`;
+							this.setData({
+								[key]: chat.comments,
+							})
+							break;
+						}
+					}
+					break;
+				}
+			}
+			// 这块是为了 message-remind 页面
+			if(typeof this._changeChatsRemind === 'function')
+				this._changeChatsRemind(chat);
+				
+			wx.setStorageSync('chats', JSON.stringify(chats));
+			let {owner, token} = await util.getTokenAndOwner(app.globalData.url + 'login/login/');
+			console.log(comment)
+			await util.myRequest({
+				url: comment.urlSql,
+				header: {Authorization: 'Token ' + token},
+				method: 'DELETE'
+			})
+			.then(res => console.log(res))
+			wx.hideLoading({
+				success: () => {
+					wx.showToast({
+						title: "已完成",
+						duration: 800,
+					});
+				},
+			});
+		}
 	}
 })
