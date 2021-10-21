@@ -273,7 +273,7 @@ Component({
 			let flagNeedToShowDialog = false;
 			tasksLocal.forEach(item => {
 				// 延续非重复、未完成、过期、未“删除”任务
-				if(!item.delete && !item.repeat && !item.finish && item.date.substr(0, 10).localeCompare(todayYMD)) {
+				if(!item.delete && !item.repeat && !item.finish && item.date.substr(0, 10).localeCompare(todayYMD) < 0) {
 					flagNeedToShowDialog = true;
 					tasksDelay.push(item);
 				}
