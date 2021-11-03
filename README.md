@@ -1,4 +1,4 @@
-### 微信小程序——自律树洞
+### 微信小程序——自律树洞（尚未上线 v2）
 
 ![logo.jpg](https://i.loli.net/2021/10/14/1gVCqOp97fsXInJ.jpg)
 
