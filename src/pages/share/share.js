@@ -105,9 +105,9 @@ Component({
 		pageNameCurrent: function (pageNameCurrent) {
 			// [树洞区，个人空间]
 		},
-		chatShowCounts: function (chatShowCounts) {
-			this._updateChatsShow();
-		},
+		// chatShowCounts: function (chatShowCounts) {
+		// 	this._updateChatsShow();
+		// },
 	},
 
 	/**
@@ -171,8 +171,9 @@ Component({
 			});
 		},
 		// 更新显示的 chatsShow
-		_updateChatsShow() {
+		_updateChatsShow(reload = false) {
 			let { pageNameCurrent, chats, chatShowCounts, chatsShow } = this.data;
+			if(reload) chatsShow = [];
 			if (chatShowCounts === chats.length) return;
 			let bound = Math.min(chatShowCounts + 5, chats.length);
 			// 设置显示的 chats
@@ -185,7 +186,7 @@ Component({
 					chatsShow.push(item);
 			}
 			// console.log(chatsShow);
-			chatsShow.sort((a, b) => b.pic.date.localeCompare(a.pic.date));
+			// chatsShow.sort((a, b) => b.pic.date.localeCompare(a.pic.date));
 			this.setData({
 				chatsShow,
 			});
@@ -196,6 +197,7 @@ Component({
 				chatShowCounts = this.data.chatShowCounts;
 			if (len <= chatShowCounts) return;
 			chatShowCounts = Math.min(chatShowCounts + 5, len);
+			this._updateChatsShow();
 			this.setData({
 				chatShowCounts,
 			});
@@ -251,7 +253,7 @@ Component({
 										url: item.url,
 									};
 								});
-
+							chats.sort((a, b) => b.pic.date.localeCompare(a.pic.date));
 							// console.log(chatsRemind)
 							this.setData({
 								chats,
@@ -259,13 +261,13 @@ Component({
 								pullDownRefresh: false,
 								chatsRemindShow: Boolean(chatsRemind.length),
 							});
+							this._updateChatsShow(true);
 							wx.setStorageSync("chats", JSON.stringify(chats));
 							wx.setStorageSync("gallerys", JSON.stringify(gallerys));
 							wx.setStorageSync("chatsRemind", JSON.stringify(chatsRemind));
 						}
 					);
 				});
-			this._updateChatsShow();
 		},
 		// 删除评论 dialog
 		handleDeleteDialogShow(e) {

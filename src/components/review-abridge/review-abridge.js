@@ -212,7 +212,7 @@ Component({
 			// 如果正在缩放，则忽略此次缩放
 			if(ratioEnlarge > 1 && Math.abs(ratioMax - ratioEnlarge) > 0.1)
 				return;
-			let ratioAdd = ratioEnlarge <= 1? 0.5: -0.5;
+			let ratioAdd = ratioEnlarge <= 1? 0.1: -0.1;
 			let timeId = setInterval(() => {
 				ratioEnlarge += ratioAdd;
 				if(ratioEnlarge > ratioMax) {
