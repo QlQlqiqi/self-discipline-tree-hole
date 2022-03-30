@@ -48,6 +48,7 @@ Component({
 		pullDownRefresh: false,
 		scrollTop: 0,
 		chatsRemindShow: false,
+		chatShowCounts: 10,
 	},
 
 	computed: {
@@ -62,7 +63,6 @@ Component({
 				);
 			}
 		},
-		// 当前页面展示的说说
 		chatsShow(data) {
 			let pageNameCurrent = data.pageNameCurrent;
 			let chats = data.chats.filter(item => {
@@ -72,6 +72,11 @@ Component({
 			chats.sort((a, b) => b.pic.date.localeCompare(a.pic.date));
 			return chats;
 		},
+
+		// 当前页面展示的说说
+		// chatsShow(data) {
+		// 	return data._chatsShow.slice(0, data.chatShowCounts);
+		// }
 	},
 
 	watch: {
@@ -156,6 +161,16 @@ Component({
 			wx.navigateTo({
 				url: '/src/pages/web-view/web-view?src=' + JSON.stringify(gallery.url)
 					+ '&title=' + JSON.stringify(gallery.title),
+			})
+		},
+		// 触底刷新
+		handleLowerRefresh() {
+			let len = this.data.chats.length,  chatShowCounts = this.data.chatShowCounts;
+			if(len <= chatShowCounts)
+				return;
+			chatShowCounts = Math.min(chatShowCounts + 10, len);
+			this.setData({
+				chatShowCounts,
 			})
 		},
 		// 下拉刷新，加载数据，这里暂时为全部时间段的

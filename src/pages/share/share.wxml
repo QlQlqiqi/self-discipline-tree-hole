@@ -42,6 +42,7 @@
 <scroll-view class="share-wrap" refresher-enabled="{{ true }}" refresher-triggered="{{ pullDownRefresh }}" 
   style="height: {{ (windowHeight - navHeight) * ratio }}rpx;" scroll-y="{{ true }}" 
   bindrefresherrefresh="pullDownLoad" scroll-top="{{ scrollTop }}px;" bindscroll="handleScroll"
+	bindscrolltolower="handleLowerRefresh"
 >
   <!-- 轮播图 -->
   <swiper wx:if="{{ !pageNameCurrent }}" class="rotation-chart" indicator-dots="{{ true }}" autoplay="{{ true }}" interval="{{ 3000 }}" bindchange="handleChangeCurrentGallery">

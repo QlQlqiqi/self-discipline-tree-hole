@@ -9,7 +9,7 @@
   </view>
 </navbar>
 <!-- 导航栏的下拉框 -->
-<view class="listSelectWrap" style="left: {{ windowWidth / 2 - 45 }}px; height: 0;">
+<view class="listSelectWrap" style="left: {{ windowWidth / 2 - 45 }}px; height: 0; {{ !selectIconRotate? 'border:0;': '' }}">
   <scroll-view scroll-y="{{ true }}" style="max-height: {{ 36 * 8 }}px;">
     <view catchtap="handleSelectList" style="background-color: {{ pageName === '收集箱'? 'rgb(243, 246, 249)': 'white'}};">
       <view style="height: 35px;">收集箱</view>
