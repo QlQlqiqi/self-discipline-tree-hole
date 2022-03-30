@@ -4,5 +4,6 @@
 @import "./src/styles/remixicon.wxss";
 
 page {
-  background-color: rgba(242, 242, 242, 0.81);
+	background-color: rgba(242, 242, 242, 0.81);
+	-webkit-overflow-scrolling: touch
 }

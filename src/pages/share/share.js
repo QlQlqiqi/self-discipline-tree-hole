@@ -48,7 +48,8 @@ Component({
 		pullDownRefresh: false,
 		scrollTop: 0,
 		chatsRemindShow: false,
-		chatShowCounts: 10,
+		chatShowCounts: 0,
+		chatsShow: [],
 	},
 
 	computed: {
@@ -63,15 +64,17 @@ Component({
 				);
 			}
 		},
-		chatsShow(data) {
-			let pageNameCurrent = data.pageNameCurrent;
-			let chats = data.chats.filter(item => {
-				return (pageNameCurrent && (item.owner === app.globalData.owner))
-				|| (!pageNameCurrent && !item.pic.shareRange);
-			})
-			chats.sort((a, b) => b.pic.date.localeCompare(a.pic.date));
-			return chats;
-		},
+		// chatsShow(data) {
+		// 	let pageNameCurrent = data.pageNameCurrent;
+		// 	let chats = data.chats.filter(item => {
+		// 		return (
+		// 			(pageNameCurrent && item.owner === app.globalData.owner) ||
+		// 			(!pageNameCurrent && !item.pic.shareRange)
+		// 		);
+		// 	});
+		// 	chats.sort((a, b) => b.pic.date.localeCompare(a.pic.date));
+		// 	return chats;
+		// },
 
 		// 当前页面展示的说说
 		// chatsShow(data) {
@@ -102,6 +105,9 @@ Component({
 		pageNameCurrent: function (pageNameCurrent) {
 			// [树洞区，个人空间]
 		},
+		chatShowCounts: function (chatShowCounts) {
+			this._updateChatsShow();
+		},
 	},
 
 	/**
@@ -109,9 +115,7 @@ Component({
 	 */
 	methods: {
 		// 包裹说说的滚轮滑动
-		handleScroll(e) {
-			
-		},
+		handleScroll(e) {},
 		// 关闭左侧栏背景遮掩
 		handleCloseMask: function (e) {
 			this.setData({
@@ -152,114 +156,162 @@ Component({
 		// 当前轮播图 index 改变
 		handleChangeCurrentGallery(e) {
 			this.setData({
-				currentGallery: e.detail.current
-			})
+				currentGallery: e.detail.current,
+			});
 		},
 		// 跳转 web-view
 		handleOpenOfficialAccount(e) {
 			let gallery = this.data.gallerys[this.data.currentGallery];
 			wx.navigateTo({
-				url: '/src/pages/web-view/web-view?src=' + JSON.stringify(gallery.url)
-					+ '&title=' + JSON.stringify(gallery.title),
-			})
+				url:
+					"/src/pages/web-view/web-view?src=" +
+					JSON.stringify(gallery.url) +
+					"&title=" +
+					JSON.stringify(gallery.title),
+			});
+		},
+		// 更新显示的 chatsShow
+		_updateChatsShow() {
+			let { pageNameCurrent, chats, chatShowCounts, chatsShow } = this.data;
+			if (chatShowCounts === chats.length) return;
+			let bound = Math.min(chatShowCounts + 5, chats.length);
+			// 设置显示的 chats
+			for (let i = chatShowCounts; i < bound; i++) {
+				let item = chats[i];
+				if (
+					(pageNameCurrent && item.owner === app.globalData.owner) ||
+					(!pageNameCurrent && !item.pic.shareRange)
+				)
+					chatsShow.push(item);
+			}
+			// console.log(chatsShow);
+			chatsShow.sort((a, b) => b.pic.date.localeCompare(a.pic.date));
+			this.setData({
+				chatsShow,
+			});
 		},
 		// 触底刷新
 		handleLowerRefresh() {
-			let len = this.data.chats.length,  chatShowCounts = this.data.chatShowCounts;
-			if(len <= chatShowCounts)
-				return;
-			chatShowCounts = Math.min(chatShowCounts + 10, len);
+			let len = this.data.chats.length,
+				chatShowCounts = this.data.chatShowCounts;
+			if (len <= chatShowCounts) return;
+			chatShowCounts = Math.min(chatShowCounts + 5, len);
 			this.setData({
 				chatShowCounts,
-			})
+			});
 		},
 		// 下拉刷新，加载数据，这里暂时为全部时间段的
-		async pullDownLoad() {
+		pullDownLoad() {
 			this.setData({
 				pullDownRefresh: true,
+				chatShowCounts: 0,
 			});
-			let { owner, token } = await util.getTokenAndOwner(app.globalData.url + "login/login/");
-			// 说说
-			let chatsSqlPr = store.getDataFromSqlByUrl(app.globalData.url + 'community/blog/', {owner, token});
-			// 轮播图
-			let gallerysSqlPr = store.getDataFromSqlByUrl(app.globalData.url + 'oppicture/op/', {owner, token});
-			// 消息提示
-			let chatsRemindSqlPr = store.getDataFromSqlByUrl(app.globalData.url + 'notice/notice/', {owner, token});
-			let dataSql = await Promise.all([chatsSqlPr, gallerysSqlPr, chatsRemindSqlPr])
-			let chats = util.formatChatsFromSqlToLocal(dataSql[0]);
-			// chats.forEach(item => {
-			// 	item.id = util.getUniqueId();
-			// });
-			console.log(chats)
-			let gallerys = dataSql[1].map(item => {
-				return {
-					icon: item.op_picture,
-					url: item.art_url,
-					title: item.op_title
-				}
-			});
-			let chatsRemind = dataSql[2].filter(item => {
-				return item.report_json.receiver === owner;
-			}).map(item => {
-				return {
-					fromUser: item.report_from_user,
-					toUser: item.report_to_user,
-					chat: item.report_json.chat,
-					content: item.report_json.content,
-					url: item.url,
-				}
-			})
-			console.log(chatsRemind)
-			this.setData({
-				chats,
-				gallerys,
-				pullDownRefresh: false,
-				chatsRemindShow: Boolean(chatsRemind.length)
-			});
-			wx.setStorageSync('chats', JSON.stringify(chats));
-			wx.setStorageSync('gallerys', JSON.stringify(gallerys));
-			wx.setStorageSync('chatsRemind', JSON.stringify(chatsRemind));
+			util
+				.getTokenAndOwner(app.globalData.url + "login/login/")
+				.then(({ owner, token }) => {
+					// 说说
+					let chatsSqlPr = store.getDataFromSqlByUrl(
+						app.globalData.url + "community/blog/",
+						{ owner, token }
+					);
+					// 轮播图
+					let gallerysSqlPr = store.getDataFromSqlByUrl(
+						app.globalData.url + "oppicture/op/",
+						{ owner, token }
+					);
+					// 消息提示
+					let chatsRemindSqlPr = store.getDataFromSqlByUrl(
+						app.globalData.url + "notice/notice/",
+						{ owner, token }
+					);
+					Promise.all([chatsSqlPr, gallerysSqlPr, chatsRemindSqlPr]).then(
+						dataSql => {
+							let chats = util.formatChatsFromSqlToLocal(dataSql[0]);
+							// chats.forEach(item => {
+							// 	item.id = util.getUniqueId();
+							// });
+							console.log(chats);
+							let gallerys = dataSql[1].map(item => {
+								return {
+									icon: item.op_picture,
+									url: item.art_url,
+									title: item.op_title,
+								};
+							});
+							let chatsRemind = dataSql[2]
+								.filter(item => {
+									return item.report_json.receiver === owner;
+								})
+								.map(item => {
+									return {
+										fromUser: item.report_from_user,
+										toUser: item.report_to_user,
+										chat: item.report_json.chat,
+										content: item.report_json.content,
+										url: item.url,
+									};
+								});
+
+							// console.log(chatsRemind)
+							this.setData({
+								chats,
+								gallerys,
+								pullDownRefresh: false,
+								chatsRemindShow: Boolean(chatsRemind.length),
+							});
+							wx.setStorageSync("chats", JSON.stringify(chats));
+							wx.setStorageSync("gallerys", JSON.stringify(gallerys));
+							wx.setStorageSync("chatsRemind", JSON.stringify(chatsRemind));
+						}
+					);
+				});
+			this._updateChatsShow();
 		},
 		// 删除评论 dialog
 		handleDeleteDialogShow(e) {
-			let {deleteShow, chatId, commentId} = e.detail;
+			let { deleteShow, chatId, commentId } = e.detail;
 			this.setData({
 				deleteShow,
 				deleteChatId: chatId,
 				deleteCommentId: commentId,
-			})
+			});
 		},
 		// 删除评论 dialog buttons
 		handleDeleteDialog(e) {
-			let {deleteChatId, deleteCommentId} = this.data;
-			if(e.detail.index)
-				this.handleDeleteComment({chatId: deleteChatId, commentId: deleteCommentId});
+			let { deleteChatId, deleteCommentId } = this.data;
+			if (e.detail.index)
+				this.handleDeleteComment({
+					chatId: deleteChatId,
+					commentId: deleteCommentId,
+				});
 			this.setData({
-				deleteShow: false
-			})
+				deleteShow: false,
+			});
 		},
 		// 点击回到顶部
 		handleReturnTop() {
 			this.setData({
-				scrollTop: 0
-			})
+				scrollTop: 0,
+			});
 		},
 		// 从本地获取全部数据
 		_getAllDataFromLocal: function () {
 			// 获取任务
-			let tasks = JSON.parse(wx.getStorageSync("tasks") || JSON.stringify([]));
+			let tasks = JSON.parse(wx.getStorageSync("tasks") || "[]");
 			// 获取清单
-			let lists = JSON.parse(wx.getStorageSync("lists") || JSON.stringify([]));
+			let lists = JSON.parse(wx.getStorageSync("lists") || "[]");
 			// 用户昵称
-			let signText = JSON.parse(wx.getStorageSync("signText") || JSON.stringify(''));
-			let chats = JSON.parse(wx.getStorageSync('chats') || JSON.stringify([]));
-			let gallerys = JSON.parse(wx.getStorageSync('gallerys') || JSON.stringify([]));
-			let chatsRemind = JSON.parse(wx.getStorageSync('chatsRemind') || JSON.stringify([]));
+			let signText = JSON.parse(
+				wx.getStorageSync("signText") || JSON.stringify("")
+			);
+			let chats = JSON.parse(wx.getStorageSync("chats") || "[]");
+			let gallerys = JSON.parse(wx.getStorageSync("gallerys") || "[]");
+			let chatsRemind = JSON.parse(wx.getStorageSync("chatsRemind") || "[]");
 			this.setData({
+				chats,
 				tasks,
 				lists,
 				signText,
-				chats,
 				gallerys,
 				chatsRemind,
 				chatsRemindShow: Boolean(chatsRemind.length),

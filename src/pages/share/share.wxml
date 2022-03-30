@@ -11,7 +11,7 @@
   </view>
 </navbar>
 <!-- 导航栏的下拉框 -->
-<view class="listSelectWrap" style="left: {{ windowWidth / 2 - 45 }}px; height: 0;">
+<view wx:if="{{ showMenu }}" class="listSelectWrap" style="left: {{ windowWidth / 2 - 45 }}px; height: 0;">
   <view wx:for="{{ pageNames }}" wx:key="title" data-index="{{ index }}" catch:tap="handleSelectList" 
     style="position: relative; background-color: {{ pageNameCurrent === index? 'rgb(243, 246, 249)': 'white'}};"
   >
