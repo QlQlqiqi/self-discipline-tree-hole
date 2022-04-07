@@ -232,7 +232,7 @@ Component({
 							// chats.forEach(item => {
 							// 	item.id = util.getUniqueId();
 							// });
-							console.log(chats);
+							// console.log(chats);
 							let gallerys = dataSql[1].map(item => {
 								return {
 									icon: item.op_picture,
