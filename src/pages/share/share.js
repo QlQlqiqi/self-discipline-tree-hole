@@ -49,7 +49,7 @@ Component({
 		scrollTop: 0,
 		chatsRemindShow: false,
 		chatShowCounts: 0,
-		chatsShow: [],
+		// chatsShow: [],
 	},
 
 	computed: {
@@ -64,22 +64,16 @@ Component({
 				);
 			}
 		},
-		// chatsShow(data) {
-		// 	let pageNameCurrent = data.pageNameCurrent;
-		// 	let chats = data.chats.filter(item => {
-		// 		return (
-		// 			(pageNameCurrent && item.owner === app.globalData.owner) ||
-		// 			(!pageNameCurrent && !item.pic.shareRange)
-		// 		);
-		// 	});
-		// 	chats.sort((a, b) => b.pic.date.localeCompare(a.pic.date));
-		// 	return chats;
-		// },
-
-		// 当前页面展示的说说
-		// chatsShow(data) {
-		// 	return data._chatsShow.slice(0, data.chatShowCounts);
-		// }
+		chatsShow(data) {
+			let { pageNameCurrent, chatShowCounts, chats } = data;
+			let chatsShow = chats.filter(item => {
+				return (
+					(pageNameCurrent && item.owner === app.globalData.owner) ||
+					(!pageNameCurrent && !item.pic.shareRange)
+				);
+			});
+			return chatsShow.slice(0, Math.min(chatShowCounts, chatsShow.length));
+		},
 	},
 
 	watch: {
@@ -102,12 +96,6 @@ Component({
 				200
 			);
 		},
-		pageNameCurrent: function (pageNameCurrent) {
-			// [树洞区，个人空间]
-		},
-		// chatShowCounts: function (chatShowCounts) {
-		// 	this._updateChatsShow();
-		// },
 	},
 
 	/**
@@ -150,7 +138,7 @@ Component({
 		// 新建说说
 		handleAddChat(e) {
 			wx.navigateTo({
-				url: "/src/pages/add-chat/add-chat",
+				url: "/src/pages/add-chat/add-chat?",
 			});
 		},
 		// 当前轮播图 index 改变
@@ -170,43 +158,64 @@ Component({
 					JSON.stringify(gallery.title),
 			});
 		},
-		// 更新显示的 chatsShow
-		_updateChatsShow(reload = false) {
-			let { pageNameCurrent, chats, chatShowCounts, chatsShow } = this.data;
-			if(reload) chatsShow = [];
-			if (chatShowCounts === chats.length) return;
-			let bound = Math.min(chatShowCounts + 5, chats.length);
-			// 设置显示的 chats
-			for (let i = chatShowCounts; i < bound; i++) {
-				let item = chats[i];
-				if (
-					(pageNameCurrent && item.owner === app.globalData.owner) ||
-					(!pageNameCurrent && !item.pic.shareRange)
-				)
-					chatsShow.push(item);
+		// 执行说说功能：改变说说权限，删除说说等
+		handleSelectOption(e) {
+			const {
+				detail: { chatId, index },
+			} = e;
+			const { pageNameCurrent, chats } = this.data;
+			for (let i = 0, chat; i < chats.length; i++) {
+				chat = chats[i];
+				if (chat.id == chatId) {
+					// 树洞区
+					if (!pageNameCurrent) {
+					}
+					// 个人空间
+					// 修改权限
+					else if (!index) {
+						chat.shareRange = (chat.shareRange + 1) % 2;
+						// util
+						// 	.getTokenAndOwner(app.globalData.url + "login/login/")
+						// 	.then(({ owner, token }) => {
+						// 		store.saveChatsToSql([chat], { owner, token });
+						// 	});
+					}
+					// 删除说说
+					else {
+						chats.splice(i, 1);
+						util
+							.getTokenAndOwner(app.globalData.url + "login/login/")
+							.then(({ owner, token }) => {
+								util.myRequest({
+									url: chat.urlSql,
+									header: { Authorization: "Token " + token },
+									method: "DELETE",
+								});
+							});
+					}
+					break;
+				}
 			}
-			// console.log(chatsShow);
-			// chatsShow.sort((a, b) => b.pic.date.localeCompare(a.pic.date));
+			// console.log(chats);
+			// console.log(chats, this.data.chatsShow, chatId, index);
 			this.setData({
-				chatsShow,
+				chats,
+				// chatsShow,
 			});
 		},
 		// 触底刷新
 		handleLowerRefresh() {
 			let len = this.data.chats.length,
-				chatShowCounts = this.data.chatShowCounts;
+				{ chatShowCounts } = this.data;
 			if (len <= chatShowCounts) return;
-			chatShowCounts = Math.min(chatShowCounts + 5, len);
-			this._updateChatsShow();
 			this.setData({
-				chatShowCounts,
+				chatShowCounts: Math.min(chatShowCounts + 5, len),
 			});
 		},
 		// 下拉刷新，加载数据，这里暂时为全部时间段的
 		pullDownLoad() {
 			this.setData({
 				pullDownRefresh: true,
-				chatShowCounts: 0,
 			});
 			util
 				.getTokenAndOwner(app.globalData.url + "login/login/")
@@ -229,10 +238,6 @@ Component({
 					Promise.all([chatsSqlPr, gallerysSqlPr, chatsRemindSqlPr]).then(
 						dataSql => {
 							let chats = util.formatChatsFromSqlToLocal(dataSql[0]);
-							// chats.forEach(item => {
-							// 	item.id = util.getUniqueId();
-							// });
-							// console.log(chats);
 							let gallerys = dataSql[1].map(item => {
 								return {
 									icon: item.op_picture,
@@ -256,12 +261,12 @@ Component({
 							chats.sort((a, b) => b.pic.date.localeCompare(a.pic.date));
 							// console.log(chatsRemind)
 							this.setData({
+								chatShowCounts: 5,
 								chats,
 								gallerys,
 								pullDownRefresh: false,
 								chatsRemindShow: Boolean(chatsRemind.length),
 							});
-							this._updateChatsShow(true);
 							wx.setStorageSync("chats", JSON.stringify(chats));
 							wx.setStorageSync("gallerys", JSON.stringify(gallerys));
 							wx.setStorageSync("chatsRemind", JSON.stringify(chatsRemind));

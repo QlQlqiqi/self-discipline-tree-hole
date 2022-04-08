@@ -198,7 +198,8 @@ Component({
 			}
 			chat.reviewAbridge.show = Boolean(this.data.reviewShow);
 			// chat.pic.picId = chat.id;
-			chats.push(chat);
+			// chats.push(chat);
+			chats.unshift(chat);
 			await store.saveChatsToSql([chat], {owner, token});
 			// 改变选中的
 			this.setData({

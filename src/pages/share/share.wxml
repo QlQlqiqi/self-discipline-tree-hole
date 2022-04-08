@@ -61,7 +61,7 @@
     <view wx:if="{{ chatsRemindShow }}" class="remind-red-dot"></view>
   </view>
   <!-- 说说 -->
-  <view style="padding-top: 30rpx; margin-bottom: 300rpx;">
+  <view style="padding-top: 30rpx; margin-bottom: 300rpx; padding-bottom: 400rpx;">
     <view class="chat-wrap" wx:for="{{ chatsShow }}" wx:key="index">
       <view class="chat">
         <share-message chat="{{ item }}" options="{{ optionsSelect }}" componentWidthMax="{{ 616 / ratio }}" 
