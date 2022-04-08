@@ -38,7 +38,7 @@ Component({
 				return (
 					item.date.localeCompare(todayDate) >= 0 &&
 					item.date.localeCompare(tommorrowDate) < 0 &&
-					(item.list.title === data.pageName || data.pageName === '收集箱')
+					(item.list.title === data.pageName || data.pageName === "收集箱")
 				);
 			});
 			res.sort((a, b) =>
@@ -55,8 +55,8 @@ Component({
 			let tommorrowDate = util.getDawn(1);
 			let res = data.tasks.filter(function (item) {
 				return (
-					item.date.localeCompare(tommorrowDate) >= 0 
-					&& (item.list.title === data.pageName || data.pageName === '收集箱')
+					item.date.localeCompare(tommorrowDate) >= 0 &&
+					(item.list.title === data.pageName || data.pageName === "收集箱")
 				);
 			});
 			res.sort((a, b) =>
@@ -67,7 +67,7 @@ Component({
 					: a.date.localeCompare(b.date)
 			);
 			return res;
-		}
+		},
 	},
 
 	watch: {
@@ -138,9 +138,8 @@ Component({
 			for (let item of this.data.tasks) {
 				if (item.id === e.currentTarget.dataset.id) {
 					item.finish = !item.finish;
-					if (item.finish) 
-						item.finishDate = util.formatDate(new Date());
-					console.log(item)
+					if (item.finish) item.finishDate = util.formatDate(new Date());
+					console.log(item);
 					await store.saveTasksToSql([item], this.data.lists, { owner, token });
 				}
 				tasks.push(item);
@@ -195,7 +194,9 @@ Component({
 			// 获取清单
 			let lists = JSON.parse(wx.getStorageSync("lists") || JSON.stringify([]));
 			// 用户昵称
-			let signText = JSON.parse(wx.getStorageSync("signText") || JSON.stringify(''));
+			let signText = JSON.parse(
+				wx.getStorageSync("signText") || JSON.stringify("")
+			);
 			this.setData({
 				tasks: tasks,
 				lists: lists,
@@ -210,6 +211,18 @@ Component({
 		},
 		// 拉取并设置数据
 		onLoad: async function () {
+			// 设置机型相关信息
+			let { navHeight, navTop, windowHeight, windowWidth } = app.globalData;
+			this.setData({
+				navHeight,
+				navTop,
+				windowHeight,
+				windowWidth,
+				ratio: 750 / windowWidth,
+				bottomLineHeight: app.globalData.bottomLineHeight,
+				noticeUpdateContent: app.globalData.noticeUpdateContent || false,
+			});
+			
 			let { token, owner } = await util.getTokenAndOwner(
 				app.globalData.url + "login/login/"
 			);
@@ -222,7 +235,8 @@ Component({
 			let listsLocal = [];
 			let lists = util.formatListsFromSqlToLocal(
 				await store.getDataFromSqlByUrl(
-					app.globalData.url + "check/taglist/?owner=" + JSON.stringify(owner), {token}
+					app.globalData.url + "check/taglist/?owner=" + JSON.stringify(owner),
+					{ token }
 				)
 			);
 			// 如果没有清单，则自动为其补充两个
@@ -237,7 +251,8 @@ Component({
 						return util.myRequest({
 							url:
 								app.globalData.url +
-								"check/taglist/?owner=" + JSON.stringify(owner),
+								"check/taglist/?owner=" +
+								JSON.stringify(owner),
 							header: { Authorization: "Token " + token },
 							method: "POST",
 							data: item,
@@ -261,35 +276,49 @@ Component({
 
 			// 请求 tasks
 			let tasksLocal = util.formatTasksFromSqlToLocal(
-				await store.getDataFromSqlByUrl( app.globalData.url + "check/check/?owner="	+ JSON.stringify(owner), {token} ),
-				listsLocal, { owner, token }
+				await store.getDataFromSqlByUrl(
+					app.globalData.url + "check/check/?owner=" + JSON.stringify(owner),
+					{ token }
+				),
+				listsLocal,
+				{ owner, token }
 			);
 			// 设置 id
 			tasksLocal.forEach(item => (item.id = util.getUniqueId()));
 
 			// 重新创建重复任务
-			let tasksNewRepeatPost = [], tasksOldRepeatPut = [], tasksDelay = [];
+			let tasksNewRepeatPost = [],
+				tasksOldRepeatPut = [],
+				tasksDelay = [];
 			let todayYMD = util.getDawn(0).substr(0, 10);
 			let flagNeedToShowDialog = false;
 			tasksLocal.forEach(item => {
 				// 延续非重复、未完成、过期、未“删除”任务
-				if(!item.delete && !item.repeat && !item.finish && item.date.substr(0, 10).localeCompare(todayYMD) < 0) {
+				if (
+					!item.delete &&
+					!item.repeat &&
+					!item.finish &&
+					item.date.substr(0, 10).localeCompare(todayYMD) < 0
+				) {
 					flagNeedToShowDialog = true;
 					tasksDelay.push(item);
 				}
 				// 未“删除”、未完成、重复、过期，
 				// 未“删除”、完成、重复，即完成一个重复任务，创建一个新的，旧的则不再创建
-				if((!item.delete && !item.finish && item.repeat && item.date.substr(0, 10).localeCompare(todayYMD) < 0)
-					|| (!item.delete && item.finish && item.repeat)
+				if (
+					(!item.delete &&
+						!item.finish &&
+						item.repeat &&
+						item.date.substr(0, 10).localeCompare(todayYMD) < 0) ||
+					(!item.delete && item.finish && item.repeat)
 				) {
 					let oldDate = new Date(new Date(item.date).getTime());
 					let addTime = [0, 1, 7, 30, 365][item.repeat] * 24 * 60 * 60 * 1000;
 					let todayTime = new Date(util.getDawn(0)).getTime();
 					let oldTime = oldDate.getTime();
-					while(oldTime < todayTime)
-						oldTime += addTime;
+					while (oldTime < todayTime) oldTime += addTime;
 					// 如果是完成的任务
-					if(item.finish) {
+					if (item.finish) {
 						oldTime = Math.max(oldTime, oldDate.getTime() + addTime);
 					}
 					let task = {
@@ -300,22 +329,26 @@ Component({
 						remind: 0,
 						finish: false,
 						content: item.content,
-						desc: '',
+						desc: "",
 						list: JSON.parse(JSON.stringify(item.list)),
 						delete: false,
 						rating: 1,
-						feeling: '',
+						feeling: "",
 						finishDate: item.finishDate,
-					}
+					};
 					tasksNewRepeatPost.push(task);
 					item.delete = true;
 					tasksOldRepeatPut.push(item);
 				}
-			})
+			});
 			// post 修改和增加过的数据
-			await store.saveTasksToSql([...tasksNewRepeatPost, ...tasksOldRepeatPut], listsLocal, { owner, token });
+			await store.saveTasksToSql(
+				[...tasksNewRepeatPost, ...tasksOldRepeatPut],
+				listsLocal,
+				{ owner, token }
+			);
 			tasksLocal.push(...tasksNewRepeatPost);
-			
+
 			// 展示弹窗是否延续任务
 			if (flagNeedToShowDialog) {
 				this.setData({
@@ -329,26 +362,26 @@ Component({
 			this._handleDialogDefine = async () => {
 				tasksDelay.forEach(item => {
 					item.date = todayYMD + item.date.substr(10);
-				})
+				});
 				await store.saveTasksToSql(tasksDelay, listsLocal, { owner, token });
-				wx.setStorageSync('tasks', JSON.stringify(tasksLocal));
+				wx.setStorageSync("tasks", JSON.stringify(tasksLocal));
 				this.setData({
 					tasks: tasksLocal,
 					dialogShow: false,
-				})
-			}
+				});
+			};
 
 			this._handleDialogCancel = async () => {
 				tasksDelay.forEach(item => {
 					item.delete = true;
-				})
+				});
 				await store.saveTasksToSql(tasksDelay, listsLocal, { owner, token });
-				wx.setStorageSync('tasks', JSON.stringify(tasksLocal));
+				wx.setStorageSync("tasks", JSON.stringify(tasksLocal));
 				this.setData({
 					tasks: tasksLocal,
 					dialogShow: false,
-				})
-			}
+				});
+			};
 
 			// 请求 signText
 			let signTextLocal = "好好学习 天天向上";
@@ -372,23 +405,13 @@ Component({
 			}
 			wx.setStorageSync("signText", JSON.stringify(signTextLocal));
 
-			// 设置机型相关信息
-			let { navHeight, navTop, windowHeight, windowWidth } = app.globalData;
-
 			this.setData({
 				tasks: tasksLocal,
 				lists: listsLocal,
 				signText: signTextLocal,
-				navHeight,
-				navTop,
-				windowHeight,
-				windowWidth,
-				ratio: 750 / windowWidth,
-				bottomLineHeight: app.globalData.bottomLineHeight,
-				noticeUpdateContent: app.globalData.noticeUpdateContent || false,
 			});
 			this._saveAllDataToLocal();
-			// 保存 owner 
+			// 保存 owner
 			app.globalData.owner = owner;
 			console.log(this.data);
 
