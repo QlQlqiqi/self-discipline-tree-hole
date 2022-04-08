@@ -61,7 +61,7 @@
     <view wx:if="{{ chatsRemindShow }}" class="remind-red-dot"></view>
   </view>
   <!-- 说说 -->
-  <view style="padding-top: 30rpx; margin-bottom: 300rpx; padding-bottom: 400rpx;">
+  <view style="padding-top: 60rpx; margin-bottom: 300rpx; padding-bottom: 400rpx;">
     <view class="chat-wrap" wx:for="{{ chatsShow }}" wx:key="index">
       <view class="chat">
         <share-message chat="{{ item }}" options="{{ optionsSelect }}" componentWidthMax="{{ 616 / ratio }}" 
@@ -82,23 +82,23 @@
 
 <!-- 功能弹窗 -->
 <mp-dialog show="{{ optionShow }}" title="提示" mask="{{ true }}" mask-closable="{{ false }}" 
-  buttons="{{ optionButton }}" bindbuttontap="handleDialogButtons"
+  buttons="{{ optionButton }}" bindbuttontap="handleOptionDialogButtons"
 >
   {{ optionDialogContent }}
 </mp-dialog>
-<mp-half-screen-dialog show="{{ shareRangeShow }}" title="选择分享范围" buttons="{{ optionButton }}" 
-  bindbuttontap="handleDialogButtons" style="position: fixed; z-index: 11111;"
+<!-- <mp-half-screen-dialog show="{{ shareRangeShow }}" title="选择分享范围" buttons="{{ optionButton }}" 
+  bindbuttontap="handleShareRangeDialogButtons" style="position: fixed; z-index: 11111;"
 >
   <view slot="desc" style="height: 200rpx;">
     <picker-view indicator-style="height: 40px;" style="width: 100%; height: 100%;" bindchange="handleChangeShareRange">
       <picker-view-column>
-        <view wx:for="{{ optionDialogContent }}" wx:key="index" style="text-align: center; line-height: 40px;">
+        <view wx:for="{{ shareRangeDialogContent }}" wx:key="index" style="text-align: center; line-height: 40px;">
           <text>{{ item }}</text>
         </view>
       </picker-view-column>
     </picker-view>
   </view>
-</mp-half-screen-dialog>
+</mp-half-screen-dialog> -->
 
 <!-- 新增说说 -->
 <wxs module="touchmove" src="../../utils/touchmove.wxs"></wxs>

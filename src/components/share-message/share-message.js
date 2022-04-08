@@ -1,6 +1,5 @@
 const computedBehavior = require("miniprogram-computed").behavior;
 const util = require("../../utils/util");
-const store = require("../../store/store");
 const app = getApp();
 Component({
 	behaviors: [computedBehavior],

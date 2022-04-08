@@ -56,10 +56,11 @@ Component({
 		// 当前页面使用的功能
 		optionsSelect: function (data) {
 			// 树洞区为举报，个人空间为权限和删除
-			if (data.pageNameCurrent === 0) {
-				return data.options.filter(item => item.content === "举报");
-			} else if (data.pageNameCurrent === 1) {
-				return data.options.filter(
+			const { pageNameCurrent, options } = data;
+			if (pageNameCurrent === 0) {
+				return options.filter(item => item.content === "举报");
+			} else if (pageNameCurrent === 1) {
+				return options.filter(
 					item => item.content === "权限" || item.content === "删除"
 				);
 			}
@@ -164,25 +165,55 @@ Component({
 				detail: { chatId, index },
 			} = e;
 			const { pageNameCurrent, chats } = this.data;
+			let targetIdx = 0;
 			for (let i = 0, chat; i < chats.length; i++) {
 				chat = chats[i];
 				if (chat.id == chatId) {
-					// 树洞区
-					if (!pageNameCurrent) {
+					targetIdx = i;
+					break;
+				}
+			}
+			const chat = chats[targetIdx];
+			this._targetIdx = targetIdx;
+			this._chatOptionDialogHandler = {
+				// 取消
+				0: () => {},
+				// 确定
+				1: () => {
+					// 举报
+					if (!pageNameCurrent && !index) {
+						const report = util.getReportByChat(chat);
+						util
+							.getTokenAndOwner(app.globalData.url + "login/login/")
+							.then(({ owner, token }) => {
+								util.myRequest({
+									url: "https://witime.wizzstudio.com/notice/report/",
+									header: { Authorization: "Token " + token },
+									method: "POST",
+									data: report,
+								});
+							});
+						wx.showToast({
+							title: "成功",
+							icon: "success",
+						});
 					}
-					// 个人空间
-					// 修改权限
-					else if (!index) {
-						chat.shareRange = (chat.shareRange + 1) % 2;
-						// util
-						// 	.getTokenAndOwner(app.globalData.url + "login/login/")
-						// 	.then(({ owner, token }) => {
-						// 		store.saveChatsToSql([chat], { owner, token });
-						// 	});
+					// 改变权限
+					else if (pageNameCurrent && !index) {
+						chat.pic.shareRange = (chat.pic.shareRange + 1) % 2;
+						util
+							.getTokenAndOwner(app.globalData.url + "login/login/")
+							.then(({ owner, token }) => {
+								store.saveChatsToSql([chat], { owner, token });
+							});
+						wx.showToast({
+							title: "成功",
+							icon: "success",
+						});
 					}
 					// 删除说说
-					else {
-						chats.splice(i, 1);
+					if (pageNameCurrent && index == 1) {
+						chats.splice(this._targetIdx, 1);
 						util
 							.getTokenAndOwner(app.globalData.url + "login/login/")
 							.then(({ owner, token }) => {
@@ -192,16 +223,43 @@ Component({
 									method: "DELETE",
 								});
 							});
+						wx.showToast({
+							title: "成功",
+							icon: "success",
+						});
 					}
-					break;
-				}
-			}
-			// console.log(chats);
-			// console.log(chats, this.data.chatsShow, chatId, index);
+					this.setData({
+						chats,
+					});
+				},
+				// 无论无何最终都会做的
+				finalThing: () => {
+					delete this._chatOptionDialogHandler;
+					delete this._targetIdx;
+					this.setData({
+						optionShow: false,
+					});
+				},
+			};
 			this.setData({
-				chats,
-				// chatsShow,
+				optionShow: true,
+				optionDialogContent: pageNameCurrent
+					? index
+						? "是否删除分享？"
+						: "是否修改分享的展示权限？"
+					: "是否举报该分享？",
 			});
+			return;
+		},
+		// 选择说说相关功能：改变权限、删除、举报等
+		handleOptionDialogButtons(e) {
+			const {
+				detail: { index },
+			} = e;
+			try {
+				this._chatOptionDialogHandler[index]();
+				this._chatOptionDialogHandler["finalThing"]();
+			} catch (err) {}
 		},
 		// 触底刷新
 		handleLowerRefresh() {
@@ -267,6 +325,7 @@ Component({
 								pullDownRefresh: false,
 								chatsRemindShow: Boolean(chatsRemind.length),
 							});
+							console.log(chats);
 							wx.setStorageSync("chats", JSON.stringify(chats));
 							wx.setStorageSync("gallerys", JSON.stringify(gallerys));
 							wx.setStorageSync("chatsRemind", JSON.stringify(chatsRemind));

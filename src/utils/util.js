@@ -340,7 +340,7 @@ const formatTasksFromLocalToSql = function (
 		};
 		res.push(task);
 	});
-	console.log(res)
+	console.log(res);
 	return res;
 };
 
@@ -352,7 +352,7 @@ const formatChatsFromSqlToLocal = function (chats) {
 		let chat = {
 			id: item.picid,
 			owner: item.owner,
-			urlSql: app.globalData.url + 'community/blog/' + item.picid + '/',
+			urlSql: app.globalData.url + "community/blog/" + item.picid + "/",
 			reviewAbridge: item.data.reviewAbridge,
 			pic: item.data.pic,
 			comments: item.article.map(item => {
@@ -368,7 +368,7 @@ const formatChatsFromSqlToLocal = function (chats) {
 				tmp = item.to_user.split("/");
 				comment.toUser = +tmp[tmp.length - 2];
 				return comment;
-			})
+			}),
 		};
 		return chat;
 	});
@@ -377,26 +377,26 @@ const formatChatsFromSqlToLocal = function (chats) {
 // 给定本地格式的说说，返回后端格式的说说
 // @param {Array} chats 后端的说说数据格式
 // @return {Array} 说说的后端格式
-const formatChatsFromLocalToSql = function(chats) {
-	console.log(chats)
-  return chats.map(item => {
-    let chat = {
+const formatChatsFromLocalToSql = function (chats) {
+	console.log(chats);
+	return chats.map(item => {
+		let chat = {
 			owner: item.owner,
 			data: {
 				reviewAbridge: item.reviewAbridge,
-				pic: item.pic
+				pic: item.pic,
 			},
 			wilist: item.reviewAbridge.show
-			? [
-				...item.comments.map(item => item.content), 
-				...item.reviewAbridge.tasks.map(item => item.content)
-			] 
-			: []
+				? [
+						...item.comments.map(item => item.content),
+						...item.reviewAbridge.tasks.map(item => item.content),
+				  ]
+				: [],
 		};
 		chat.data.pic.picId = item.id;
-    return chat;
+		return chat;
 	});
-}
+};
 
 // 给定说说的创建者、评论的发送方、接收方和评论者，返回评论的 title
 // @param {Number} picOner 说说的创建者
@@ -405,22 +405,46 @@ const formatChatsFromLocalToSql = function(chats) {
 // @param {Number} owner 用户
 // @param {String} picName 说说创建者的昵称
 // @return {String} 评论的 title
-const getCommentTitle = function(picOwner, fromOwner, toOwner, owner, name) {
-	let {anames} = app.globalData;
-	let title = picOwner === fromOwner
-		? '洞主'
-		: anames[fromOwner % anames.length].name === name
+const getCommentTitle = function (picOwner, fromOwner, toOwner, owner, name) {
+	let { anames } = app.globalData;
+	let title =
+		picOwner === fromOwner
+			? "洞主"
+			: anames[fromOwner % anames.length].name === name
 			? anames[(fromOwner + 1) % anames.length].name
 			: anames[fromOwner % anames.length].name;
-	title += (fromOwner !== toOwner)
-		? ' 回复 ' + ((toOwner === picOwner)
-			? '洞主'
-			: (anames[toOwner % anames.length].name === name
-				? anames[(toOwner + 1) % anames.length].name
-				: anames[toOwner % anames.length].name))
-		: '';
+	title +=
+		fromOwner !== toOwner
+			? " 回复 " +
+			  (toOwner === picOwner
+					? "洞主"
+					: anames[toOwner % anames.length].name === name
+					? anames[(toOwner + 1) % anames.length].name
+					: anames[toOwner % anames.length].name)
+			: "";
 	return title;
-}
+};
+
+/**
+ * 举报说说
+ * @param {Object} chat 本地格式的 chat
+ * @param {String} text 举报内容
+ * @returns {Object} 举报的 data 格式，null for error
+ */
+const getReportByChat = function (chat, text = "该分享存在异常") {
+	const report_from_user = app.globalData.owner;
+	const report_to_user = chat.owner;
+	const report_pic_url = chat.urlSql;
+	const reoprt_text = text;
+	if (!report_from_user || !report_to_user || !report_pic_url || !reoprt_text)
+		return null;
+	return {
+		report_from_user,
+		report_to_user,
+		report_pic_url,
+		reoprt_text,
+	};
+};
 
 module.exports = {
 	formatDate,
@@ -439,7 +463,8 @@ module.exports = {
 	formatListsFromLocalToSql,
 	formatTasksFromSqlToLocal,
 	formatTasksFromLocalToSql,
-  formatChatsFromSqlToLocal,
+	formatChatsFromSqlToLocal,
 	formatChatsFromLocalToSql,
 	getCommentTitle,
+	getReportByChat,
 };
