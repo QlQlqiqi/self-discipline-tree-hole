@@ -1,5 +1,6 @@
 const computedBehavior = require("miniprogram-computed").behavior;
 const util = require('../../utils/util');
+const app = getApp();
 Component({
 	behaviors: [computedBehavior],
 	/**
@@ -245,18 +246,25 @@ Component({
 				dialogTextAreaValue: e.detail.value
 			})
 		},
-		some(e) {
-			console.log(e)
+		handleChangeUserInfo({detail: {avatarUrl}}) {
+			const {userInfo} = this.data;
+			userInfo.avatarUrl = avatarUrl;
+			app.globalData.userInfo = userInfo;
+			this.setData({
+				userInfo
+			})
+			wx.setStorageSync('userInfo', JSON.stringify(userInfo));
 		}
 	},
 	lifetimes: {
 		attached: function() {
-			
+			this.setData({
+				userInfo: app.globalData.userInfo
+			})
 		}
 	},
 	pageLifetimes: {
 		show: function() {
-
 		}
 	},
 	hide: function() {

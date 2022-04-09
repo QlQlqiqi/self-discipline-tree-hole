@@ -52,8 +52,11 @@
   </swiper>
   <!-- 头像背景 -->
   <view wx:else class="head-icon-background">
-    <open-data type="userAvatarUrl" class="vir-image"></open-data>
-    <open-data type="userAvatarUrl" class="rea-image"></open-data>
+    <!-- <open-data type="userAvatarUrl" class="vir-image"></open-data>
+    <open-data type="userAvatarUrl" class="rea-image"></open-data> -->
+		<image src="{{ userInfo.avatarUrl }}" class="vir-image"></image>
+		<image src="{{ userInfo.avatarUrl }}" class="rea-image"></image>
+		<button open-type="chooseAvatar" bindchooseavatar="handleChangeUserInfo" class="vir-image" style="opacity: 0;"></button>
   </view>
   <!-- 消息提醒 -->
   <view class="share-message-remind" bindtap="handleNavigateToMessageRemind">

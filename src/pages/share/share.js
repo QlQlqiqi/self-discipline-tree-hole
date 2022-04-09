@@ -97,6 +97,16 @@ Component({
 				200
 			);
 		},
+
+		// 用户头像
+		pageNameCurrent: function(pageNameCurrent) {
+			// 切换个人空间
+			if(pageNameCurrent) {
+				this.setData({
+					userInfo: app.globalData.userInfo
+				})
+			}
+		}
 	},
 
 	/**
@@ -359,6 +369,16 @@ Component({
 			this.setData({
 				scrollTop: 0,
 			});
+		},
+		// 改变用户头像
+		handleChangeUserInfo({detail: {avatarUrl}}) {
+			const {userInfo} = this.data;
+			userInfo.avatarUrl = avatarUrl;
+			app.globalData.userInfo = userInfo;
+			this.setData({
+				userInfo
+			})
+			wx.setStorageSync('userInfo', JSON.stringify(userInfo));
 		},
 		// 从本地获取全部数据
 		_getAllDataFromLocal: function () {

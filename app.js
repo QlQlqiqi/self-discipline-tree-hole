@@ -8,7 +8,11 @@ App({
 			{ icon: "/src/image/anameGreen.svg", name: "小绿" },
 			{ icon: "/src/image/anameYellow.svg", name: "小黄" },
 			{ icon: "/src/image/anameBlue.svg", name: "小蓝" },
-		]
+		],
+		userInfo: {
+			avatarUrl: 'https://s2.loli.net/2022/04/09/uo9KiPVClUSQnps.jpg',
+			nickname: '帮帮',
+		}
   },
   onLaunch() {
     // 获取设备相关信息
@@ -32,8 +36,14 @@ App({
       },
       fail(err) {
         console.error(err);
-      }
+			}
     })
+		
+		// 用户头像和昵称
+		const userInfo = wx.getStorageSync('userInfo');
+		if(userInfo) {
+			this.globalData.userInfo = JSON.parse(userInfo);
+		}
 
     // 提示用户更新内容
     if(!wx.getStorageSync('noticeUpdateContent')) {
